@@ -2,7 +2,7 @@ import TWEEN from '@tweenjs/tween.js';
 
 // This object contains the state of the app
 export default {
-  isDev: false,
+  isDev: true,
   isShowingStats: false,
   isLoaded: false,
   isTweening: false,
@@ -46,12 +46,12 @@ export default {
   },
   camera: {
     fov: 40,
-    near: 2,
+    near: 100,
     far: 1000,
     aspect: 1,
     posX: 0,
-    posY: 10,
-    posZ: 40
+    posY: 0,
+    posZ: 0
   },
   controls: {
     autoRotate: true,

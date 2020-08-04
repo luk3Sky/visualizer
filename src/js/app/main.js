@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
 // Local imports -
+
 // Components
 import Renderer from './components/renderer';
 import Camera from './components/camera';
@@ -57,9 +58,9 @@ export default class Main {
       lights.forEach((light) => this.light.place(light));
 
       // Create and place geo in scene
-      this.geometry = new Geometry(this.scene);
-      this.geometry.make('plane')(150, 150, 10, 10);
-      this.geometry.place([0, -20, 0], [Math.PI / 2, 0, 0]);
+      //this.geometry = new Geometry(this.scene);
+      //this.geometry.make('plane')(150, 150, 10, 10);
+      //this.geometry.place([0, 0, 0], [Math.PI / 2, 0, 0]);
 
       // Set up rStats if dev environment
       if(Config.isDev && Config.isShowingStats) {
@@ -81,15 +82,50 @@ export default class Main {
 
          // Textures loaded, load model
          this.model = new Model(this.scene, this.manager, this.texture.textures);
-         this.model.load(Config.models[Config.model.selected].type);
+         //this.model.load(Config.models[Config.model.selected].type);
+
+         // -- Added by Nuwan ---------
+         var geometry = new THREE.PlaneBufferGeometry( 150, 150 );
+         var material = new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } );
+         var ground = new THREE.Mesh(geometry, material );
+         ground.position.set( 0,0, 0 );
+         ground.rotation.x = - Math.PI / 2;
+         ground.receiveShadow = true;
+         this.scene.add( ground );
+
+         var grid = new THREE.GridHelper( 150, 15, 0x000000, 0x000000 );
+         grid.position.y = - 0;
+         grid.material.opacity = 0.2;
+         grid.material.transparent = true;
+         this.scene.add( grid );
+
+         var geometry = new THREE.BoxGeometry(15,15,15);
+
+         var material = new THREE.MeshPhongMaterial( {
+            color: 0x00ff00,
+            flatShading: true,
+            morphTargets: true
+         } );
+
+         var cube = new THREE.Mesh( geometry, material );
+         cube.receiveShadow = true;
+         cube.position.set(0,7.5,0);
+         this.scene.add( cube );
+
+         // -------------------------------------
 
          // onProgress callback
          this.manager.onProgress = (item, loaded, total) => {
             console.log(`${item}: ${loaded} ${total}`);
          };
 
+         // Controls panel
+         this.gui.load(this, this.model.obj);
+
          // All loaders done now
          this.manager.onLoad = () => {
+            alert('Loaded');
+
             // Set up interaction manager with the app now that the model is finished loading
             new Interaction(this.renderer.threeRenderer, this.scene, this.camera.threeCamera, this.controls.threeControls);
 
@@ -97,7 +133,6 @@ export default class Main {
             if(Config.isDev) {
                this.meshHelper = new MeshHelper(this.scene, this.model.obj);
                if (Config.mesh.enableHelper) this.meshHelper.enable();
-
                this.gui.load(this, this.model.obj);
             }
 
@@ -108,7 +143,9 @@ export default class Main {
       });
 
       // Start render which does not wait for model fully loaded
+
       this.render();
+      this.container.querySelector('#loading').style.display = 'none';
    }
 
    render() {
