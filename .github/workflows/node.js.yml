@@ -19,11 +19,26 @@ jobs:
         node-version: [10.x]
 
     steps:
-    - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm ci
+
+    - name: Install and Build
+      run: npm ci
    # - run: npm test
-    - run: npm run deploy --if-present
+
+    - name: Deploy to github pages
+      run: npm run deploy
+
+    - name: Deploy to gh-pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        publish_dir: ./build
+
+# Genetare Public and Private Keys using, ssh-keygen -t rsa -b 4096 -C "$(git config nuwanjaliyagoda@gmail.com)" -f gh-pages-actions -N ""
+# based on https://medium.com/swlh/deploy-create-react-app-to-github-pages-using-github-actions-4e95ae7fd65f 

@@ -1,3 +1,5 @@
+![Node.js CI](https://github.com/NuwanJ/FYP-simulator-gui/workflows/Node.js%20CI/badge.svg?branch=master)
+
 
 A basic boilerplate for a Three.js project including the use of Webpack and ES6 syntax via Babel.
 
