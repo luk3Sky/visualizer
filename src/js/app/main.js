@@ -69,9 +69,9 @@ export default class Main {
       }
 
       // Set up gui
-      if (Config.isDev) {
-         this.gui = new DatGUI(this)
-      }
+      //if (Config.isDev) {
+      //   this.gui = new DatGUI(this)
+      //}
 
       // Instantiate texture class
       this.texture = new Texture();
