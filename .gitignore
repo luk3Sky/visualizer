@@ -1,0 +1,8 @@
+node_modules
+/build
+*.log*
+.DS_Store
+*.code-workspace
+
+gh-pages-actions
+gh-pages-actions.pub
