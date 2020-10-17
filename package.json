@@ -18,7 +18,6 @@
       "dev:js": "webpack --env.NODE_ENV=dev",
       "build:dir": "copyfiles -a -u 2 src/public/assets/**/*.* build/",
       "build:js": "webpack --env.NODE_ENV=prod --progress --color --verbose",
-
       "test": "echo \"Error: no test specified\" && exit 1",
       "predeploy": "npm run build",
       "deploy": "gh-pages -d build"
@@ -61,6 +60,7 @@
    "dependencies": {
       "@tweenjs/tween.js": "^18.6.0",
       "es6-promise": "^4.2.8",
+      "paho-mqtt": "^1.1.0",
       "three": "^0.118.3"
    }
 }

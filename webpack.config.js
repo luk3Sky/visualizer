@@ -39,6 +39,7 @@ module.exports = env => {
    console.log(`    - nodeModulesPath: ${nodeModulesPath}`);
 
    return {
+
       // Here the application starts executing
       // and webpack starts bundling
       entry: [
