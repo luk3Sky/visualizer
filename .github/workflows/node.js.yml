@@ -32,6 +32,7 @@ jobs:
       run: npm run build
 
     - name: Deploy to gh-pages
+      if: github.repository == 'NuwanJ/FYP-simulator-gui'
       uses: peaceiris/actions-gh-pages@v3
       with:
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
