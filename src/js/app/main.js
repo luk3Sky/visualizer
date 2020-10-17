@@ -99,7 +99,7 @@ export default class Main {
       this.scene.fog = new THREE.FogExp2(Config.fog.color, Config.fog.near);
 
       // Get Device Pixel Ratio first for retina
-      if(window.devicePixelRatio) {
+      if (window.devicePixelRatio) {
          Config.dpr = window.devicePixelRatio;
       }
 
@@ -121,7 +121,7 @@ export default class Main {
       //this.geometry.place([0, 0, 0], [Math.PI / 2, 0, 0]);
 
       // Set up rStats if dev environment
-      if(Config.isDev && Config.isShowingStats) {
+      if (Config.isDev && Config.isShowingStats) {
          this.stats = new Stats(this.renderer);
          this.stats.setUp();
       }
@@ -143,32 +143,47 @@ export default class Main {
          //this.model.load(Config.models[Config.model.selected].type);
 
          // -- Added by Nuwan ---------
-         var geometry = new THREE.PlaneBufferGeometry( 150, 150 );
-         var material = new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } );
-         var ground = new THREE.Mesh(geometry, material );
-         ground.position.set( 0,0, 0 );
+         var geometry = new THREE.PlaneBufferGeometry(150, 150);
+         var material = new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false });
+         var ground = new THREE.Mesh(geometry, material);
+         ground.position.set(0, 0, 0);
          ground.rotation.x = - Math.PI / 2;
          ground.receiveShadow = true;
-         this.scene.add( ground );
+         this.scene.add(ground);
 
-         var grid = new THREE.GridHelper( 150, 15, 0x000000, 0x000000 );
+         var grid = new THREE.GridHelper(150, 15, 0x000000, 0x000000);
          grid.position.y = - 0;
          grid.material.opacity = 0.2;
          grid.material.transparent = true;
-         this.scene.add( grid );
+         this.scene.add(grid);
 
-         var geometry = new THREE.BoxGeometry(15,15,15);
+         var geometry = new THREE.BoxGeometry(15, 15, 15);
 
-         var material = new THREE.MeshPhongMaterial( {
+         var material = new THREE.MeshPhongMaterial({
             color: 0x00ff00,
             flatShading: true,
             morphTargets: true
-         } );
+         });
 
-         var cube = new THREE.Mesh( geometry, material );
-         cube.receiveShadow = true;
-         cube.position.set(0,7.5,0);
-         this.scene.add( cube );
+         //--------------test----------------------------
+         function create_robot(id, x, y) {
+            var material = new THREE.MeshBasicMaterial({ color: 0xD3D3D3 });
+            var robot = new THREE.Mesh(geometry, material);
+            robot.name ="id_" + id;
+            robot.position.set(x, y, 0);
+            this.scene.add(robot);
+         }
+
+         function update_robot(id,x,y){
+            var robot = scene.getObjectByName("id_" + id);
+            robot.position.set(x, y, 0);
+         }
+
+         function get_coordinates(id) {
+            var robot = scene.getObjectByName("id_" + id);
+            //var robot = scene.getObjectByName("id", true); //to recursively search the scene graph
+            alert(robot.position.x + ',' + robot.position.y + ',' + robot.position.z);
+         }
 
          // -------------------------------------
 
@@ -188,7 +203,7 @@ export default class Main {
             new Interaction(this.renderer.threeRenderer, this.scene, this.camera.threeCamera, this.controls.threeControls);
 
             // Add dat.GUI controls if dev
-            if(Config.isDev) {
+            if (Config.isDev) {
                this.meshHelper = new MeshHelper(this.scene, this.model.obj);
                if (Config.mesh.enableHelper) this.meshHelper.enable();
                this.gui.load(this, this.model.obj);
@@ -208,7 +223,7 @@ export default class Main {
 
    render() {
       // Render rStats if Dev
-      if(Config.isDev && Config.isShowingStats) {
+      if (Config.isDev && Config.isShowingStats) {
          Stats.start();
       }
 
@@ -216,7 +231,7 @@ export default class Main {
       this.renderer.render(this.scene, this.camera.threeCamera);
 
       // rStats has finished determining render call now
-      if(Config.isDev && Config.isShowingStats) {
+      if (Config.isDev && Config.isShowingStats) {
          Stats.end();
       }
 
