@@ -1,18 +1,11 @@
 // Global imports -
-
+//require('expose-loader?libraryName!./file.js');
 
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
-// Local imports -
-
 // MQTT ------------------
-/*
-var $script = require("scriptjs");
-$script("//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js", function() {
-  $('body').html('It works!')
-});
-*/
+
 const mqtt_server = "test.mosquitto.org";
 const mqtt_port = 8080;
 
@@ -84,6 +77,25 @@ import DatGUI from './managers/datGUI';
 // data
 import Config from './../data/config';
 // -- End of imports
+
+function create_robot(id, x, y) {
+   var material = new THREE.MeshBasicMaterial({ color: 0xD3D3D3 });
+   var robot = new THREE.Mesh(geometry, material);
+   robot.name ="id_" + id;
+   robot.position.set(x, y, 0);
+   this.scene.add(robot);
+}
+
+function update_robot(id,x,y){
+   var robot = scene.getObjectByName("id_" + id);
+   robot.position.set(x, y, 0);
+}
+
+function get_coordinates(id) {
+   var robot = scene.getObjectByName("id_" + id);
+   //var robot = scene.getObjectByName("id", true); //to recursively search the scene graph
+   alert(robot.position.x + ',' + robot.position.y + ',' + robot.position.z);
+}
 
 // This class instantiates and ties all of the components together, starts the loading process and renders the main loop
 export default class Main {
@@ -166,24 +178,8 @@ export default class Main {
          });
 
          //--------------test----------------------------
-         function create_robot(id, x, y) {
-            var material = new THREE.MeshBasicMaterial({ color: 0xD3D3D3 });
-            var robot = new THREE.Mesh(geometry, material);
-            robot.name ="id_" + id;
-            robot.position.set(x, y, 0);
-            this.scene.add(robot);
-         }
 
-         function update_robot(id,x,y){
-            var robot = scene.getObjectByName("id_" + id);
-            robot.position.set(x, y, 0);
-         }
-
-         function get_coordinates(id) {
-            var robot = scene.getObjectByName("id_" + id);
-            //var robot = scene.getObjectByName("id", true); //to recursively search the scene graph
-            alert(robot.position.x + ',' + robot.position.y + ',' + robot.position.z);
-         }
+         var material = new THREE.MeshBasicMaterial({ color: 0xD3D3D3 });
 
          // -------------------------------------
 
