@@ -1,6 +1,6 @@
 // Global imports -
 import * as THREE from 'three';
-import TWEEN from '@tweenjs/tween.js';
+import TWEEN, { update } from '@tweenjs/tween.js';
 
 // Local imports -
 
@@ -107,26 +107,45 @@ export default class Main {
             morphTargets: true
          });
 
-         //--------------test----------------------------
-         function create_robot(id, x, y) {
-            var material = new THREE.MeshBasicMaterial({ color: 0xD3D3D3 });
-            var robot = new THREE.Mesh(geometry, material);
-            robot.name ="id_" + id;
-            robot.position.set(x, y, 0);
-            this.scene.add(robot);
-         }
+         var animate = function () {
+            requestAnimationFrame(animate);
 
-         function update_robot(id,x,y){
-            var robot = scene.getObjectByName("id_" + id);
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+
+            renderer.render(scene, camera);
+         };
+
+         //---------------------------------------//
+         var robot;
+
+         function create_robot(id, x, y) {
+            var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
+            var material = new THREE.MeshBasicMaterial({ color: 0xD3D3D3 });
+            robot = new THREE.Mesh(geometry, material);
+            robot.name = id;
             robot.position.set(x, y, 0);
+            return robot;
          }
+         var robot1 = new create_robot("0", 0, 0.7);
+         this.scene.add(robot1);
+
+         function update_robot(id, x, y) {
+            if (robot.name === id) {
+               robot.position.set(x, y, 0);
+            }
+            return robot;
+         }
+         robot1 = new update_robot("0", 0, 70);
+         this.scene.add(robot1);
 
          function get_coordinates(id) {
-            var robot = scene.getObjectByName("id_" + id);
-            //var robot = scene.getObjectByName("id", true); //to recursively search the scene graph
-            alert(robot.position.x + ',' + robot.position.y + ',' + robot.position.z);
+            if (robot.name === id) {
+               alert(`${robot.position.x},${robot.position.y},${robot.position.z}`);
+            }
+            return robot;
          }
-
+         robot1 = new get_coordinates("0");
          // -------------------------------------
 
          // onProgress callback
