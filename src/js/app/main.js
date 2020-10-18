@@ -1,8 +1,66 @@
 // Global imports -
+
+
 import * as THREE from 'three';
-import TWEEN from '@tweenjs/tween.js';
+import TWEEN, { update } from '@tweenjs/tween.js';
 
 // Local imports -
+
+// MQTT ------------------
+/*
+var $script = require("scriptjs");
+$script("//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js", function() {
+  $('body').html('It works!')
+});
+*/
+const mqtt_server = "test.mosquitto.org";
+const mqtt_port = 8080;
+
+//var mqtt    = require('mqtt');
+//var client  = mqtt.connect('mqtt://broker.mqttdashboard.com');
+
+
+//const client = Paho.MQTT.Client(mqtt_server, mqtt_port, "client31146");
+
+/*
+// set event handlers
+client.on('connectionLost', (responseObject) => {
+  if (responseObject.errorCode !== 0) {
+    console.log(responseObject.errorMessage);
+  }
+});
+client.on('messageReceived', (message) => {
+  console.log(message.payloadString);
+});
+*/
+
+/*
+client.connect()
+.then(() => {
+   // Once a connection has been made, make a subscription and send a message.
+   console.log('onConnect');
+   return client.subscribe('World');
+})
+.then(() => {
+   const message = new Message('Hello');
+   message.destinationName = 'World';
+   client.send(message);
+})
+.catch((responseObject) => {
+   if (responseObject.errorCode !== 0) {
+      console.log('onConnectionLost:' + responseObject.errorMessage);
+   }
+});
+*/
+
+// -----------------------
+
+
+
+
+
+
+
 
 // Components
 import Renderer from './components/renderer';
@@ -107,26 +165,45 @@ export default class Main {
             morphTargets: true
          });
 
-         //--------------test----------------------------
-         function create_robot(id, x, y) {
-            var material = new THREE.MeshBasicMaterial({ color: 0xD3D3D3 });
-            var robot = new THREE.Mesh(geometry, material);
-            robot.name ="id_" + id;
-            robot.position.set(x, y, 0);
-            this.scene.add(robot);
-         }
+         var animate = function () {
+            requestAnimationFrame(animate);
 
-         function update_robot(id,x,y){
-            var robot = scene.getObjectByName("id_" + id);
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+
+            renderer.render(scene, camera);
+         };
+
+         //---------------------------------------//
+         var robot;
+
+         function create_robot(id, x, y) {
+            var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
+            var material = new THREE.MeshBasicMaterial({ color: 0xD3D3D3 });
+            robot = new THREE.Mesh(geometry, material);
+            robot.name = id;
             robot.position.set(x, y, 0);
+            return robot;
          }
+         var robot1 = new create_robot("0", 0, 0.7);
+         this.scene.add(robot1);
+
+         function update_robot(id, x, y) {
+            if (robot.name === id) {
+               robot.position.set(x, y, 0);
+            }
+            return robot;
+         }
+         robot1 = new update_robot("0", 0, 70);
+         this.scene.add(robot1);
 
          function get_coordinates(id) {
-            var robot = scene.getObjectByName("id_" + id);
-            //var robot = scene.getObjectByName("id", true); //to recursively search the scene graph
-            alert(robot.position.x + ',' + robot.position.y + ',' + robot.position.z);
+            if (robot.name === id) {
+               alert(`${robot.position.x},${robot.position.y},${robot.position.z}`);
+            }
+            return robot;
          }
-
+         robot1 = new get_coordinates("0");
          // -------------------------------------
 
          // onProgress callback
