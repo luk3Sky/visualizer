@@ -104,61 +104,22 @@ export default class Main {
          this.scene.add(ground);
 
          var grid = new THREE.GridHelper(150, 15, 0x000000, 0x000000);
-         grid.position.y = - 0;
+         grid.position.y = 0;
          grid.material.opacity = 0.2;
          grid.material.transparent = true;
          this.scene.add(grid);
 
-         var geometry = new THREE.BoxGeometry(15, 15, 15);
-         var material = new THREE.MeshPhongMaterial({
-            color: 0x00ff00,
-            flatShading: true,
-            morphTargets: true
-         });
          var animate = function () {
             requestAnimationFrame(animate);
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
             renderer.render(scene, camera);
          };
 
          //---------------------------------------//
 
-         function create_robot(scene, id, x, y) {
-            var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
-            var material = new THREE.MeshPhongMaterial({
-               color: 0xD3D3D3,flatShading: true,morphTargets: true
-            });
-            var robot = new THREE.Mesh(geometry, material);
-            robot.name = "id_" + id;
-            robot.position.set(x, 4, y);
-            scene.add(robot);
-            return robot;
-         }
+         this.robot.create(2,50,0);
+         this.robot.update_robot(2, -50, -50);
+         this.robot.get_coordinates(2);
 
-         function update_robot(scene, id, x, y) {
-            var robot = scene.getObjectByName("id_" + id);
-            var position = { x : robot.position.x, y: robot.position.z };
-            var tween = new TWEEN.Tween(position).to({x:x, y:y}, 1000)
-            .easing(TWEEN.Easing.Quartic.InOut)
-            .onUpdate(function(){
-               robot.position.x = position.x;
-               robot.position.z = position.y;
-            }).delay(500).start();
-            return robot;
-         }
-
-         function get_coordinates(scene, id) {
-            var robot = scene.getObjectByName("id_" + id);
-            if (robot != undefined) {
-               console.log(`${robot.position.x},${robot.position.y},${robot.position.z}`);
-            }
-            return robot;
-         }
-
-         create_robot(this.scene, 0, 0, 0)
-         update_robot(this.scene, 0, 50, 50);
-         get_coordinates(this.scene, 0);
 
          //this.mqtt.publish('v1/localization/info', 'hello !');
 
@@ -217,6 +178,7 @@ export default class Main {
 
       // Call any vendor or module frame updates here
       TWEEN.update();
+      this.robot.update();
       this.controls.threeControls.update();
 
       // RAF

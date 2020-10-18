@@ -12,13 +12,10 @@ var scene;
 var robot;
 
 export default class MQTTClient {
-   
-   constructor(scene, robot) {
 
+   constructor(scene, robot) {
       this.scene = scene;
       this.robot = robot;
-
-      console.log(this.robot);
 
       this.client = new MQTT.Client(mqtt_server, mqtt_port, "");
 
@@ -35,6 +32,7 @@ export default class MQTTClient {
 
             this.client.onMessageArrived = this.onMessageArrived;
             this.client.onConnectionLost = this.onConnectionLost;
+
          }
       });
    }
@@ -48,18 +46,19 @@ export default class MQTTClient {
    updateRobot(data){
       console.log(scene);//(data.id, data.x, data.y);
    }
+
    onMessageArrived(packet) {
       const msg =  packet.payloadString.trim();
       const topic =  packet.destinationName;
-      console.log('MQTT: ' + topic + ' > ' + msg );
+      //console.log('MQTT: ' + topic + ' > ' + msg );
 
       if(topic==TOPIC_CREATE){
          var data = JSON.parse(msg);
          console.log(this);
-         //this.updateRobot(data);
+         // How to access robot object from here ?
 
       }else if(topic == TOPIC_INFO){
-         console.log('Info msg invoked');
+         //console.log('Info msg invoked');
       }
    }
 
