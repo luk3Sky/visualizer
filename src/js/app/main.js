@@ -4,64 +4,6 @@
 import * as THREE from 'three';
 import TWEEN, { update } from '@tweenjs/tween.js';
 
-// Local imports -
-
-// MQTT ------------------
-/*
-var $script = require("scriptjs");
-$script("//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js", function() {
-  $('body').html('It works!')
-});
-*/
-const mqtt_server = "test.mosquitto.org";
-const mqtt_port = 8080;
-
-//var mqtt    = require('mqtt');
-//var client  = mqtt.connect('mqtt://broker.mqttdashboard.com');
-
-
-//const client = Paho.MQTT.Client(mqtt_server, mqtt_port, "client31146");
-
-/*
-// set event handlers
-client.on('connectionLost', (responseObject) => {
-  if (responseObject.errorCode !== 0) {
-    console.log(responseObject.errorMessage);
-  }
-});
-client.on('messageReceived', (message) => {
-  console.log(message.payloadString);
-});
-*/
-
-/*
-client.connect()
-.then(() => {
-   // Once a connection has been made, make a subscription and send a message.
-   console.log('onConnect');
-   return client.subscribe('World');
-})
-.then(() => {
-   const message = new Message('Hello');
-   message.destinationName = 'World';
-   client.send(message);
-})
-.catch((responseObject) => {
-   if (responseObject.errorCode !== 0) {
-      console.log('onConnectionLost:' + responseObject.errorMessage);
-   }
-});
-*/
-
-// -----------------------
-
-
-
-
-
-
-
-
 // Components
 import Renderer from './components/renderer';
 import Camera from './components/camera';
@@ -81,13 +23,19 @@ import Model from './model/model';
 import Interaction from './managers/interaction';
 import DatGUI from './managers/datGUI';
 
+// Implemented by Nuwan
+import MQTTClient from './managers/mqttclient';
+import Robot from './components/robot';
+
 // data
 import Config from './../data/config';
 // -- End of imports
 
+
 // This class instantiates and ties all of the components together, starts the loading process and renders the main loop
 export default class Main {
    constructor(container) {
+
       // Set container property to container element
       this.container = container;
 
@@ -97,6 +45,10 @@ export default class Main {
       // Main scene creation
       this.scene = new THREE.Scene();
       this.scene.fog = new THREE.FogExp2(Config.fog.color, Config.fog.near);
+
+      // Defined by Nuwan
+      this.robot = new Robot(this.scene);
+      this.mqtt = new MQTTClient(this.scene, this.robot);
 
       // Get Device Pixel Ratio first for retina
       if (window.devicePixelRatio) {
@@ -158,52 +110,58 @@ export default class Main {
          this.scene.add(grid);
 
          var geometry = new THREE.BoxGeometry(15, 15, 15);
-
          var material = new THREE.MeshPhongMaterial({
             color: 0x00ff00,
             flatShading: true,
             morphTargets: true
          });
-
          var animate = function () {
             requestAnimationFrame(animate);
-
             cube.rotation.x += 0.01;
             cube.rotation.y += 0.01;
-
             renderer.render(scene, camera);
          };
 
          //---------------------------------------//
-         var robot;
 
-         function create_robot(id, x, y) {
+         function create_robot(scene, id, x, y) {
             var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
-            var material = new THREE.MeshBasicMaterial({ color: 0xD3D3D3 });
-            robot = new THREE.Mesh(geometry, material);
-            robot.name = id;
-            robot.position.set(x, y, 0);
+            var material = new THREE.MeshPhongMaterial({
+               color: 0xD3D3D3,flatShading: true,morphTargets: true
+            });
+            var robot = new THREE.Mesh(geometry, material);
+            robot.name = "id_" + id;
+            robot.position.set(x, 4, y);
+            scene.add(robot);
             return robot;
          }
-         var robot1 = new create_robot("0", 0, 0.7);
-         this.scene.add(robot1);
 
-         function update_robot(id, x, y) {
-            if (robot.name === id) {
-               robot.position.set(x, y, 0);
+         function update_robot(scene, id, x, y) {
+            var robot = scene.getObjectByName("id_" + id);
+            var position = { x : robot.position.x, y: robot.position.z };
+            var tween = new TWEEN.Tween(position).to({x:x, y:y}, 1000)
+            .easing(TWEEN.Easing.Quartic.InOut)
+            .onUpdate(function(){
+               robot.position.x = position.x;
+               robot.position.z = position.y;
+            }).delay(500).start();
+            return robot;
+         }
+
+         function get_coordinates(scene, id) {
+            var robot = scene.getObjectByName("id_" + id);
+            if (robot != undefined) {
+               console.log(`${robot.position.x},${robot.position.y},${robot.position.z}`);
             }
             return robot;
          }
-         robot1 = new update_robot("0", 0, 70);
-         this.scene.add(robot1);
 
-         function get_coordinates(id) {
-            if (robot.name === id) {
-               alert(`${robot.position.x},${robot.position.y},${robot.position.z}`);
-            }
-            return robot;
-         }
-         robot1 = new get_coordinates("0");
+         create_robot(this.scene, 0, 0, 0)
+         update_robot(this.scene, 0, 50, 50);
+         get_coordinates(this.scene, 0);
+
+         //this.mqtt.publish('v1/localization/info', 'hello !');
+
          // -------------------------------------
 
          // onProgress callback
