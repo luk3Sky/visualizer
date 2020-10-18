@@ -58,3 +58,7 @@ You can run any of these individually if you'd like with the `npm run` command:
 * Arrow controls will pan
 * Mouse left click will rotate/right click will pan
 * Scroll wheel zooms in and out
+
+## Latest build
+
+You can see the latest deployment of this repository from [https://nuwanj.github.io/FYP-simulator-gui/](https://nuwanj.github.io/FYP-simulator-gui/)
