@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["main"],{
 
 /***/ "./src/css/app.scss":
@@ -310,3 +311,29 @@ eval("module.exports = __webpack_require__(/*! ./src/js/app.js */\"./src/js/app.
 /***/ })
 
 },[[0,"runtime","vendors"]]]);
+=======
+import Config from './data/config';
+import Detector from './utils/detector';
+import Main from './app/main';
+
+// Styles
+import './../css/app.scss';
+
+// Check environment and set the Config helper
+if(__ENV__ === 'dev') {
+   console.log('----- RUNNING IN DEV ENVIRONMENT! -----');
+   Config.isDev = true;
+}
+
+function init() {
+   // Check for webGL capabilities
+   if(!Detector.webgl) {
+      Detector.addGetWebGLMessage();
+   } else {
+      const container = document.getElementById('appContainer');
+      new Main(container);
+   }
+}
+
+init();
+>>>>>>> 9de5c4734d1cddcf2bcdde8df3473feec4af5849
