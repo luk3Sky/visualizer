@@ -54,12 +54,12 @@ export default {
     posZ: 0
   },
   controls: {
-    autoRotate: true,
+    autoRotate: false,
     autoRotateSpeed: -0.5,
-    rotateSpeed: 2.5,
+    rotateSpeed: 0.5,
     zoomSpeed: 0.8,
-    minDistance: 200,
-    maxDistance: 600,
+    minDistance: 300,
+    maxDistance: 800,
     minPolarAngle: Math.PI / 5,
     maxPolarAngle: Math.PI / 2,
     minAzimuthAngle: -Infinity,

@@ -95,7 +95,7 @@ export default class Main {
          //this.model.load(Config.models[Config.model.selected].type);
 
          // -- Added by Nuwan ---------
-         var geometry = new THREE.PlaneBufferGeometry(150, 150);
+         var geometry = new THREE.PlaneBufferGeometry(200,200);
          var material = new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false });
          var ground = new THREE.Mesh(geometry, material);
          ground.position.set(0, 0, 0);
@@ -103,123 +103,82 @@ export default class Main {
          ground.receiveShadow = true;
          this.scene.add(ground);
 
-         var grid = new THREE.GridHelper(150, 15, 0x000000, 0x000000);
-         grid.position.y = - 0;
+         var grid = new THREE.GridHelper(200, 20, 0x000000, 0x5b5b5b);
+         grid.position.set(0,0,0);
          grid.material.opacity = 0.2;
          grid.material.transparent = true;
          this.scene.add(grid);
 
-         var geometry = new THREE.BoxGeometry(15, 15, 15);
-         var material = new THREE.MeshPhongMaterial({
-            color: 0x00ff00,
-            flatShading: true,
-            morphTargets: true
-         });
-         var animate = function () {
-            requestAnimationFrame(animate);
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
-            renderer.render(scene, camera);
-         };
+         //this.robot.create(0,80,80);
+         //this.robot.create(2,80,60);
+         /*this.robot.move(2, -50, 50, ()=>{
+         this.robot.move(2, 0, 0);
+      });*/
+      //this.robot.get_coordinates(2);
 
-         //---------------------------------------//
+      //---------------------------------------//
 
-         function create_robot(scene, id, x, y) {
-            var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
-            var material = new THREE.MeshPhongMaterial({
-               color: 0xD3D3D3,flatShading: true,morphTargets: true
-            });
-            var robot = new THREE.Mesh(geometry, material);
-            robot.name = "id_" + id;
-            robot.position.set(x, 4, y);
-            scene.add(robot);
-            return robot;
+
+      //this.mqtt.publish('v1/localization/info', 'hello !');
+
+      // -------------------------------------
+
+      // onProgress callback
+      this.manager.onProgress = (item, loaded, total) => {
+         console.log(`${item}: ${loaded} ${total}`);
+      };
+
+      // Controls panel
+      this.gui.load(this, this.model.obj);
+
+      // All loaders done now
+      this.manager.onLoad = () => {
+         alert('Loaded');
+
+         // Set up interaction manager with the app now that the model is finished loading
+         new Interaction(this.renderer.threeRenderer, this.scene, this.camera.threeCamera, this.controls.threeControls);
+
+         // Add dat.GUI controls if dev
+         if (Config.isDev) {
+            this.meshHelper = new MeshHelper(this.scene, this.model.obj);
+            if (Config.mesh.enableHelper) this.meshHelper.enable();
+            this.gui.load(this, this.model.obj);
          }
 
-         function update_robot(scene, id, x, y) {
-            var robot = scene.getObjectByName("id_" + id);
-            var position = { x : robot.position.x, y: robot.position.z };
-            var tween = new TWEEN.Tween(position).to({x:x, y:y}, 1000)
-            .easing(TWEEN.Easing.Quartic.InOut)
-            .onUpdate(function(){
-               robot.position.x = position.x;
-               robot.position.z = position.y;
-            }).delay(500).start();
-            return robot;
-         }
+         // Everything is now fully loaded
+         Config.isLoaded = true;
+         this.container.querySelector('#loading').style.display = 'none';
+      };
+   });
 
-         function get_coordinates(scene, id) {
-            var robot = scene.getObjectByName("id_" + id);
-            if (robot != undefined) {
-               console.log(`${robot.position.x},${robot.position.y},${robot.position.z}`);
-            }
-            return robot;
-         }
+   // Start render which does not wait for model fully loaded
 
-         create_robot(this.scene, 0, 0, 0)
-         update_robot(this.scene, 0, 50, 50);
-         get_coordinates(this.scene, 0);
+   this.render();
+   this.container.querySelector('#loading').style.display = 'none';
+}
 
-         //this.mqtt.publish('v1/localization/info', 'hello !');
-
-         // -------------------------------------
-
-         // onProgress callback
-         this.manager.onProgress = (item, loaded, total) => {
-            console.log(`${item}: ${loaded} ${total}`);
-         };
-
-         // Controls panel
-         this.gui.load(this, this.model.obj);
-
-         // All loaders done now
-         this.manager.onLoad = () => {
-            alert('Loaded');
-
-            // Set up interaction manager with the app now that the model is finished loading
-            new Interaction(this.renderer.threeRenderer, this.scene, this.camera.threeCamera, this.controls.threeControls);
-
-            // Add dat.GUI controls if dev
-            if (Config.isDev) {
-               this.meshHelper = new MeshHelper(this.scene, this.model.obj);
-               if (Config.mesh.enableHelper) this.meshHelper.enable();
-               this.gui.load(this, this.model.obj);
-            }
-
-            // Everything is now fully loaded
-            Config.isLoaded = true;
-            this.container.querySelector('#loading').style.display = 'none';
-         };
-      });
-
-      // Start render which does not wait for model fully loaded
-
-      this.render();
-      this.container.querySelector('#loading').style.display = 'none';
+render() {
+   // Render rStats if Dev
+   if (Config.isDev && Config.isShowingStats) {
+      Stats.start();
    }
 
-   render() {
-      // Render rStats if Dev
-      if (Config.isDev && Config.isShowingStats) {
-         Stats.start();
-      }
+   // Call render function and pass in created scene and camera
+   this.renderer.render(this.scene, this.camera.threeCamera);
 
-      // Call render function and pass in created scene and camera
-      this.renderer.render(this.scene, this.camera.threeCamera);
-
-      // rStats has finished determining render call now
-      if (Config.isDev && Config.isShowingStats) {
-         Stats.end();
-      }
-
-      // Delta time is sometimes needed for certain updates
-      //const delta = this.clock.getDelta();
-
-      // Call any vendor or module frame updates here
-      TWEEN.update();
-      this.controls.threeControls.update();
-
-      // RAF
-      requestAnimationFrame(this.render.bind(this)); // Bind the main class instead of window object
+   // rStats has finished determining render call now
+   if (Config.isDev && Config.isShowingStats) {
+      Stats.end();
    }
+
+   // Delta time is sometimes needed for certain updates
+   //const delta = this.clock.getDelta();
+
+   // Call any vendor or module frame updates here
+   TWEEN.update();
+   this.controls.threeControls.update();
+
+   // RAF
+   requestAnimationFrame(this.render.bind(this)); // Bind the main class instead of window object
+}
 }
