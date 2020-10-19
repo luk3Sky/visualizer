@@ -1,8 +1,8 @@
 // Global imports -
-//require('expose-loader?libraryName!./file.js');
+
 
 import * as THREE from 'three';
-import TWEEN from '@tweenjs/tween.js';
+import TWEEN, { update } from '@tweenjs/tween.js';
 
 // Components
 import Renderer from './components/renderer';
@@ -23,32 +23,19 @@ import Model from './model/model';
 import Interaction from './managers/interaction';
 import DatGUI from './managers/datGUI';
 
+// Implemented by Nuwan
+import MQTTClient from './managers/mqttclient';
+import Robot from './components/robot';
+
 // data
 import Config from './../data/config';
 // -- End of imports
 
-function create_robot(id, x, y) {
-   var material = new THREE.MeshBasicMaterial({ color: 0xD3D3D3 });
-   var robot = new THREE.Mesh(geometry, material);
-   robot.name ="id_" + id;
-   robot.position.set(x, y, 0);
-   this.scene.add(robot);
-}
-
-function update_robot(id,x,y){
-   var robot = scene.getObjectByName("id_" + id);
-   robot.position.set(x, y, 0);
-}
-
-function get_coordinates(id) {
-   var robot = scene.getObjectByName("id_" + id);
-   //var robot = scene.getObjectByName("id", true); //to recursively search the scene graph
-   alert(robot.position.x + ',' + robot.position.y + ',' + robot.position.z);
-}
 
 // This class instantiates and ties all of the components together, starts the loading process and renders the main loop
 export default class Main {
    constructor(container) {
+
       // Set container property to container element
       this.container = container;
 
@@ -58,6 +45,10 @@ export default class Main {
       // Main scene creation
       this.scene = new THREE.Scene();
       this.scene.fog = new THREE.FogExp2(Config.fog.color, Config.fog.near);
+
+      // Defined by Nuwan
+      this.robot = new Robot(this.scene);
+      this.mqtt = new MQTTClient(this.scene, this.robot);
 
       // Get Device Pixel Ratio first for retina
       if (window.devicePixelRatio) {
@@ -119,16 +110,57 @@ export default class Main {
          this.scene.add(grid);
 
          var geometry = new THREE.BoxGeometry(15, 15, 15);
-
          var material = new THREE.MeshPhongMaterial({
             color: 0x00ff00,
             flatShading: true,
             morphTargets: true
          });
+         var animate = function () {
+            requestAnimationFrame(animate);
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+            renderer.render(scene, camera);
+         };
 
-         //--------------test----------------------------
+         //---------------------------------------//
 
-         var material = new THREE.MeshBasicMaterial({ color: 0xD3D3D3 });
+         function create_robot(scene, id, x, y) {
+            var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
+            var material = new THREE.MeshPhongMaterial({
+               color: 0xD3D3D3,flatShading: true,morphTargets: true
+            });
+            var robot = new THREE.Mesh(geometry, material);
+            robot.name = "id_" + id;
+            robot.position.set(x, 4, y);
+            scene.add(robot);
+            return robot;
+         }
+
+         function update_robot(scene, id, x, y) {
+            var robot = scene.getObjectByName("id_" + id);
+            var position = { x : robot.position.x, y: robot.position.z };
+            var tween = new TWEEN.Tween(position).to({x:x, y:y}, 1000)
+            .easing(TWEEN.Easing.Quartic.InOut)
+            .onUpdate(function(){
+               robot.position.x = position.x;
+               robot.position.z = position.y;
+            }).delay(500).start();
+            return robot;
+         }
+
+         function get_coordinates(scene, id) {
+            var robot = scene.getObjectByName("id_" + id);
+            if (robot != undefined) {
+               console.log(`${robot.position.x},${robot.position.y},${robot.position.z}`);
+            }
+            return robot;
+         }
+
+         create_robot(this.scene, 0, 0, 0)
+         update_robot(this.scene, 0, 50, 50);
+         get_coordinates(this.scene, 0);
+
+         //this.mqtt.publish('v1/localization/info', 'hello !');
 
          // -------------------------------------
 
