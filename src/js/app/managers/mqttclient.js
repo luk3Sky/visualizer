@@ -50,15 +50,15 @@ export default class MQTTClient {
    onMessageArrived(packet) {
       const msg =  packet.payloadString.trim();
       const topic =  packet.destinationName;
-      //console.log('MQTT: ' + topic + ' > ' + msg );
+      console.log('MQTT: ' + topic + ' > ' + msg );
 
       if(topic==TOPIC_CREATE){
          var data = JSON.parse(msg);
-         console.log(this);
+         // console.log(this);
          // How to access robot object from here ?
 
       }else if(topic == TOPIC_INFO){
-         //console.log('Info msg invoked');
+         console.log('Info msg invoked');
       }
    }
 

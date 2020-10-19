@@ -24,7 +24,7 @@ import Interaction from './managers/interaction';
 import DatGUI from './managers/datGUI';
 
 // Implemented by Nuwan
-import MQTTClient from './managers/mqttclient';
+import MQTTClient from './managers/mqttClient';
 import Robot from './components/robot';
 
 // data
@@ -67,11 +67,6 @@ export default class Main {
       const lights = ['ambient', 'directional', 'point', 'hemi'];
       lights.forEach((light) => this.light.place(light));
 
-      // Create and place geo in scene
-      //this.geometry = new Geometry(this.scene);
-      //this.geometry.make('plane')(150, 150, 10, 10);
-      //this.geometry.place([0, 0, 0], [Math.PI / 2, 0, 0]);
-
       // Set up rStats if dev environment
       if (Config.isDev && Config.isShowingStats) {
          this.stats = new Stats(this.renderer);
@@ -90,21 +85,19 @@ export default class Main {
       this.texture.load().then(() => {
          this.manager = new THREE.LoadingManager();
 
-         // Textures loaded, load model
          this.model = new Model(this.scene, this.manager, this.texture.textures);
-         //this.model.load(Config.models[Config.model.selected].type);
 
          // -- Added by Nuwan ---------
-         var geometry = new THREE.PlaneBufferGeometry(150, 150);
+         var geometry = new THREE.PlaneBufferGeometry(200,200);
          var material = new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false });
          var ground = new THREE.Mesh(geometry, material);
-         ground.position.set(0, 0, 0);
+         ground.position.set(0,0,0);
          ground.rotation.x = - Math.PI / 2;
          ground.receiveShadow = true;
          this.scene.add(ground);
 
-         var grid = new THREE.GridHelper(150, 15, 0x000000, 0x000000);
-         grid.position.y = 0;
+         var grid = new THREE.GridHelper(200, 20, 0x000000, 0x5b5b5b);
+         grid.position.set(0,0,0);
          grid.material.opacity = 0.2;
          grid.material.transparent = true;
          this.scene.add(grid);
@@ -116,8 +109,10 @@ export default class Main {
 
          //---------------------------------------//
 
-         this.robot.create(2,50,0);
-         this.robot.update_robot(2, -50, -50);
+         this.robot.create(2,50,50);
+         this.robot.update_robot(2, -50, 50, ()=>{
+            this.robot.update_robot(2, 0, 0);
+         });
          this.robot.get_coordinates(2);
 
 
@@ -131,7 +126,7 @@ export default class Main {
          };
 
          // Controls panel
-         this.gui.load(this, this.model.obj);
+         //this.gui.load(this, this.model.obj);
 
          // All loaders done now
          this.manager.onLoad = () => {
