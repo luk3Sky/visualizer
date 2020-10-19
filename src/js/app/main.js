@@ -101,8 +101,8 @@ export default class Main {
          ground.receiveShadow = true;
          this.scene.add(ground);
 
-         var grid = new THREE.GridHelper(200, 20, 0x000000, 0x000000);
-         grid.position.y = - 0;
+         var grid = new THREE.GridHelper(200, 20, 0x000000, 0x5b5b5b);
+         grid.position.set(0,0,0);
          grid.material.opacity = 0.2;
          grid.material.transparent = true;
          this.scene.add(grid);
@@ -116,7 +116,7 @@ export default class Main {
          this.robot.get_coordinates(2);
 
          //this.mqtt.publish('v1/localization/info', 'hello !');
-         
+
          // -------------------------------------
 
          // onProgress callback
