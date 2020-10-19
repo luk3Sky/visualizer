@@ -1,6 +1,7 @@
 // Global imports
 const webpack = require('webpack');
 const path = require('path');
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -129,7 +130,6 @@ module.exports = env => {
 
       // lets you precisely control what bundle information gets displayed
       stats,
-
       // enhance debugging by adding meta info for the browser devtools
       // source-map most detailed at the expense of build speed.
       devtool,
