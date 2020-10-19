@@ -1,8 +1,6 @@
 
-
 import * as THREE from 'three';
 import TWEEN, { update } from '@tweenjs/tween.js';
-
 
 import MQTT from 'paho-mqtt';
 
@@ -11,22 +9,19 @@ const mqtt_port = 9001;
 
 const TOPIC_INFO = 'v1/localization/info';
 const TOPIC_CREATE = 'v1/gui/create';
-const TOPIC_UPDATE = 'v1/gui/update';
 
 var client;
 var scene;
 var robot;
 
 export default class MQTTClient {
-<<<<<<< HEAD
 
    constructor(scene, robot) {
-=======
->>>>>>> 9de5c4734d1cddcf2bcdde8df3473feec4af5849
 
-   constructor(scene, robot) {
       this.scene = scene;
       this.robot = robot;
+
+      console.log(this.robot);
 
       this.client = new MQTT.Client(mqtt_server, mqtt_port, "");
 
@@ -43,12 +38,9 @@ export default class MQTTClient {
 
             this.client.onMessageArrived = this.onMessageArrived;
             this.client.onConnectionLost = this.onConnectionLost;
-
          }
       });
    }
-
-
 
    onConnectionLost(responseObject) {
       if (responseObject.errorCode !== 0) {
@@ -59,12 +51,10 @@ export default class MQTTClient {
    updateRobot(data) {
       console.log(scene);//(data.id, data.x, data.y);
    }
-
    onMessageArrived(packet) {
       const msg = packet.payloadString.trim();
       const topic = packet.destinationName;
       console.log('MQTT: ' + topic + ' > ' + msg);
-
 
       if (topic == TOPIC_CREATE) {
          var data = JSON.parse(msg);
@@ -76,19 +66,11 @@ export default class MQTTClient {
          var robot = new THREE.Mesh(geometry, material);
          robot.name = "id_" + data.id;
          robot.position.set(data.x, 4, data.y);
-         console.log(robot.name);
+
+         //test-------------
+         console.log("robot name " +robot.name);
+         console.log("x: "+ robot.position.x + " y: "+ robot.position.y + " z: "+ robot.position.z);
          scene.add(robot);
-
-      } else if (topic == TOPIC_UPDATE) {
-         var data = JSON.parse(msg);
-<<<<<<< HEAD
-         console.log(this);
-         this.update_robot(this.scene, data.id, data.x, data.y);
-=======
-         // console.log(this);
-         // How to access robot object from here ?
->>>>>>> 9de5c4734d1cddcf2bcdde8df3473feec4af5849
-
       } else if (topic == TOPIC_INFO) {
          console.log('Info msg invoked');
       }
