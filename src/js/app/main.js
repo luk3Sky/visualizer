@@ -4,57 +4,6 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
-// MQTT ------------------
-
-const mqtt_server = "test.mosquitto.org";
-const mqtt_port = 8080;
-
-//var mqtt    = require('mqtt');
-//var client  = mqtt.connect('mqtt://broker.mqttdashboard.com');
-
-
-//const client = Paho.MQTT.Client(mqtt_server, mqtt_port, "client31146");
-
-/*
-// set event handlers
-client.on('connectionLost', (responseObject) => {
-  if (responseObject.errorCode !== 0) {
-    console.log(responseObject.errorMessage);
-  }
-});
-client.on('messageReceived', (message) => {
-  console.log(message.payloadString);
-});
-*/
-
-/*
-client.connect()
-.then(() => {
-   // Once a connection has been made, make a subscription and send a message.
-   console.log('onConnect');
-   return client.subscribe('World');
-})
-.then(() => {
-   const message = new Message('Hello');
-   message.destinationName = 'World';
-   client.send(message);
-})
-.catch((responseObject) => {
-   if (responseObject.errorCode !== 0) {
-      console.log('onConnectionLost:' + responseObject.errorMessage);
-   }
-});
-*/
-
-// -----------------------
-
-
-
-
-
-
-
-
 // Components
 import Renderer from './components/renderer';
 import Camera from './components/camera';
