@@ -24,7 +24,7 @@ import Interaction from './managers/interaction';
 import DatGUI from './managers/datGUI';
 
 // Implemented by Nuwan
-import MQTTClient from './managers/mqttclient';
+import MQTTClient from './managers/mqttClient';
 import Robot from './components/robot';
 
 // data
