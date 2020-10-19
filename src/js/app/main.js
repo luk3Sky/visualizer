@@ -1,8 +1,8 @@
 // Global imports -
-//require('expose-loader?libraryName!./file.js');
+
 
 import * as THREE from 'three';
-import TWEEN, {update} from '@tweenjs/tween.js';
+import TWEEN, { update } from '@tweenjs/tween.js';
 
 // Components
 import Renderer from './components/renderer';
@@ -24,16 +24,18 @@ import Interaction from './managers/interaction';
 import DatGUI from './managers/datGUI';
 
 // Implemented by Nuwan
-import MQTTClient from './managers/mqttClient';
+import MQTTClient from './managers/mqttclient';
 import Robot from './components/robot';
 
 // data
 import Config from './../data/config';
 // -- End of imports
 
+
 // This class instantiates and ties all of the components together, starts the loading process and renders the main loop
 export default class Main {
    constructor(container) {
+
       // Set container property to container element
       this.container = container;
 
@@ -107,74 +109,76 @@ export default class Main {
          grid.material.transparent = true;
          this.scene.add(grid);
 
-         //--------------test----------------------------
+         //this.robot.create(0,80,80);
+         //this.robot.create(2,80,60);
+         /*this.robot.move(2, -50, 50, ()=>{
+         this.robot.move(2, 0, 0);
+      });*/
+      //this.robot.get_coordinates(2);
 
-         this.robot.create(2,50,50);
-         this.robot.update_robot(2, -50, 50, ()=>{
-            this.robot.update_robot(2, 0, 0);
-         });
-         this.robot.get_coordinates(2);
+      //---------------------------------------//
 
-         //this.mqtt.publish('v1/localization/info', 'hello !');
 
-         // -------------------------------------
+      //this.mqtt.publish('v1/localization/info', 'hello !');
 
-         // onProgress callback
-         this.manager.onProgress = (item, loaded, total) => {
-            console.log(`${item}: ${loaded} ${total}`);
-         };
+      // -------------------------------------
 
-         // Controls panel
-         this.gui.load(this, this.model.obj);
+      // onProgress callback
+      this.manager.onProgress = (item, loaded, total) => {
+         console.log(`${item}: ${loaded} ${total}`);
+      };
 
-         // All loaders done now
-         this.manager.onLoad = () => {
-            alert('Loaded');
+      // Controls panel
+      this.gui.load(this, this.model.obj);
 
-            // Set up interaction manager with the app now that the model is finished loading
-            new Interaction(this.renderer.threeRenderer, this.scene, this.camera.threeCamera, this.controls.threeControls);
+      // All loaders done now
+      this.manager.onLoad = () => {
+         alert('Loaded');
 
-            // Add dat.GUI controls if dev
-            if (Config.isDev) {
-               this.meshHelper = new MeshHelper(this.scene, this.model.obj);
-               if (Config.mesh.enableHelper) this.meshHelper.enable();
-               this.gui.load(this, this.model.obj);
-            }
+         // Set up interaction manager with the app now that the model is finished loading
+         new Interaction(this.renderer.threeRenderer, this.scene, this.camera.threeCamera, this.controls.threeControls);
 
-            // Everything is now fully loaded
-            Config.isLoaded = true;
-            this.container.querySelector('#loading').style.display = 'none';
-         };
-      });
+         // Add dat.GUI controls if dev
+         if (Config.isDev) {
+            this.meshHelper = new MeshHelper(this.scene, this.model.obj);
+            if (Config.mesh.enableHelper) this.meshHelper.enable();
+            this.gui.load(this, this.model.obj);
+         }
 
-      // Start render which does not wait for model fully loaded
+         // Everything is now fully loaded
+         Config.isLoaded = true;
+         this.container.querySelector('#loading').style.display = 'none';
+      };
+   });
 
-      this.render();
-      this.container.querySelector('#loading').style.display = 'none';
+   // Start render which does not wait for model fully loaded
+
+   this.render();
+   this.container.querySelector('#loading').style.display = 'none';
+}
+
+render() {
+   // Render rStats if Dev
+   if (Config.isDev && Config.isShowingStats) {
+      Stats.start();
    }
 
-   render() {
-      // Render rStats if Dev
-      if (Config.isDev && Config.isShowingStats) {
-         Stats.start();
-      }
+   // Call render function and pass in created scene and camera
+   this.renderer.render(this.scene, this.camera.threeCamera);
 
-      // Call render function and pass in created scene and camera
-      this.renderer.render(this.scene, this.camera.threeCamera);
-
-      // rStats has finished determining render call now
-      if (Config.isDev && Config.isShowingStats) {
-         Stats.end();
-      }
-
-      // Delta time is sometimes needed for certain updates
-      //const delta = this.clock.getDelta();
-
-      // Call any vendor or module frame updates here
-      TWEEN.update();
-      this.controls.threeControls.update();
-
-      // RAF
-      requestAnimationFrame(this.render.bind(this)); // Bind the main class instead of window object
+   // rStats has finished determining render call now
+   if (Config.isDev && Config.isShowingStats) {
+      Stats.end();
    }
+
+   // Delta time is sometimes needed for certain updates
+   //const delta = this.clock.getDelta();
+
+   // Call any vendor or module frame updates here
+   TWEEN.update();
+   this.controls.threeControls.update();
+
+   // RAF
+   requestAnimationFrame(this.render.bind(this)); // Bind the main class instead of window object
+}
 }
