@@ -58,7 +58,7 @@ export default {
     autoRotateSpeed: -0.5,
     rotateSpeed: 0.5,
     zoomSpeed: 0.8,
-    minDistance: 300,
+    minDistance: 200,
     maxDistance: 800,
     minPolarAngle: 0, /*Math.PI / 5,*/
     maxPolarAngle: Math.PI / 2,

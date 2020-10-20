@@ -40,8 +40,6 @@ export default class MQTTClient {
 
             window.robot = this.robot;
 
-            console.log(this.client);
-
             this.client.onMessageArrived = this.onMessageArrived;
             this.client.onConnectionLost = this.onConnectionLost;
             //this.client.reconnect = this.reconnect;
@@ -49,7 +47,7 @@ export default class MQTTClient {
       });
    }
 
-   onConnectionLost(responseObject) {      
+   onConnectionLost(responseObject) {
       if (responseObject.errorCode !== 0) {
          console.log("MQTT: onConnectionLost:" + responseObject.errorMessage);
          console.log('MQTT: reconnecting');
@@ -62,24 +60,30 @@ export default class MQTTClient {
       console.log('MQTT: ' + topic + ' > ' + msg);
 
       if (topic == TOPIC_CREATE) {
-         var data = JSON.parse(msg);
-         //console.log('Crerate msg invoked');
-         window.robot.create(data.id, data.x, data.y)
+         try{
+            var data = JSON.parse(msg);
+            window.robot.create(data.id, data.x, data.y)
+         }catch(e){
+            console.error(e);
+         }
 
       } else if (topic == TOPIC_INFO) {
          console.log('Info msg invoked');
-         var data = JSON.parse(msg);
+         try{
+            var data = JSON.parse(msg);
 
-         //console.log(Object.keys(data).length)
-
-         Object.entries(data).forEach(entry => {
-            // Update each robot
-            console.log(entry[1]);
-            const r = entry[1];
-            window.robot.move(r.id, r.x, r.y);
-         });
+            Object.entries(data).forEach(entry => {
+               // Update each robot
+               console.log(entry[1]);
+               const r = entry[1];
+               window.robot.move(r.id, r.x, r.y);
+            });
+         }catch(e){
+            console.error(e);
+         }
 
       }
+
    }
 
    publish(topic, message) {
