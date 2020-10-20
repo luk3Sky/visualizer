@@ -22,8 +22,9 @@ export default class MQTTClient {
       this.robot = robot;
 
       console.log(this.robot);
+      const client_id ='client_'+Math.random().toString(36).substring(2,15);
 
-      this.client = new MQTT.Client(mqtt_server, mqtt_port, "");
+      this.client = new MQTT.Client(mqtt_server, mqtt_port, "", client_id);
 
       this.client.connect({
          userName: "swarm_user",
@@ -35,6 +36,8 @@ export default class MQTTClient {
             // Subscribe to topics
             this.client.subscribe(TOPIC_INFO);
             this.client.subscribe(TOPIC_CREATE);
+
+            window.robot = this.robot;
 
             this.client.onMessageArrived = this.onMessageArrived;
             this.client.onConnectionLost = this.onConnectionLost;
@@ -48,9 +51,6 @@ export default class MQTTClient {
       }
    }
 
-   updateRobot(data) {
-      console.log(scene);//(data.id, data.x, data.y);
-   }
    onMessageArrived(packet) {
       const msg = packet.payloadString.trim();
       const topic = packet.destinationName;
@@ -58,21 +58,22 @@ export default class MQTTClient {
 
       if (topic == TOPIC_CREATE) {
          var data = JSON.parse(msg);
-         console.log(this);
-         var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
-         var material = new THREE.MeshPhongMaterial({
-            color: 0xD3D3D3, flatShading: true, morphTargets: true
-         });
-         var robot = new THREE.Mesh(geometry, material);
-         robot.name = "id_" + data.id;
-         robot.position.set(data.x, 4, data.y);
+         //console.log('Crerate msg invoked');
+         window.robot.create(data.id, data.x, data.y)
 
-         //test-------------
-         console.log("robot name " +robot.name);
-         console.log("x: "+ robot.position.x + " y: "+ robot.position.y + " z: "+ robot.position.z);
-         scene.add(robot);
       } else if (topic == TOPIC_INFO) {
          console.log('Info msg invoked');
+         var data = JSON.parse(msg);
+
+         //console.log(Object.keys(data).length)
+
+         Object.entries(data).forEach(entry => {
+            // Update each robot
+           console.log(entry[1]);
+           const r = entry[1];
+           window.robot.move(r.id, r.x, r.y);
+         });
+
       }
    }
 

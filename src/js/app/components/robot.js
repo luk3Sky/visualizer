@@ -13,38 +13,43 @@ export default class Robot {
    }
 
    create(id, x, y) {
-      var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
-      var material = new THREE.MeshPhongMaterial({
-         color: 0x1B3AE3,flatShading: true,morphTargets: true
-      });
-      var r = new THREE.Mesh(geometry, material);
-      r.name = "id_" + id;
-      r.position.set(x,4,y);
+      var r = this.scene.getObjectByName("id_" + id);
+      if(r == undefined){
+         // Create only if not exists
+         var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
+         var material = new THREE.MeshPhongMaterial({
+            color: 0x1B3AE3,flatShading: true,morphTargets: true
+         });
+         var r = new THREE.Mesh(geometry, material);
+         r.name = "id_" + id;
+         r.position.set(x,4,y);
 
-      this.scene.add(r);
+         this.scene.add(r);
+      }
       return r;
    }
 
-   update_robot(id, x, y, callback) {
+   move(id, x, y, callback) {
 
       var r = this.scene.getObjectByName("id_" + id);
-      var position = { x : r.position.x, y: r.position.z };
+      if(r != undefined){
+         var position = { x : r.position.x, y: r.position.z };
 
-      const distance = Math.sqrt(Math.pow(x-position.x, 2) + Math.pow(y-position.y,2));
-      const speed = 10;
+         const distance = Math.sqrt(Math.pow(x-position.x, 2) + Math.pow(y-position.y,2));
+         const speed = 10;
 
-      var tween = new TWEEN.Tween(position).to({x:x, y:y}, 1000*(distance/speed))
-      /*.easing(TWEEN.Easing.Quartic.InOut)*/
-      .onUpdate(function(){
-         r.position.x = position.x;
-         r.position.z = position.y;
-         
-      }).onComplete(()=>{
-          if( callback != null ) callback();
+         var tween = new TWEEN.Tween(position).to({x:x, y:y}, 1000*(distance/speed))
+         /*.easing(TWEEN.Easing.Quartic.InOut)*/
+         .onUpdate(function(){
+            r.position.x = position.x;
+            r.position.z = position.y;
 
-      }).delay(500).start();
-      return r;
+         }).onComplete(()=>{
+            if( callback != null ) callback();
 
+         }).delay(500).start();
+         return r;
+      }
    }
 
    get_coordinates(id) {

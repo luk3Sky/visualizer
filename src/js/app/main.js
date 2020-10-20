@@ -24,7 +24,7 @@ import Interaction from './managers/interaction';
 import DatGUI from './managers/datGUI';
 
 // Implemented by Nuwan
-import MQTTClient from './managers/mqttclient';
+import MQTTClient from './managers/mqttClient';
 import Robot from './components/robot';
 
 // data
@@ -95,7 +95,7 @@ export default class Main {
          //this.model.load(Config.models[Config.model.selected].type);
 
          // -- Added by Nuwan ---------
-         var geometry = new THREE.PlaneBufferGeometry(150, 150);
+         var geometry = new THREE.PlaneBufferGeometry(200,200);
          var material = new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false });
          var ground = new THREE.Mesh(geometry, material);
          ground.position.set(0, 0, 0);
@@ -103,62 +103,22 @@ export default class Main {
          ground.receiveShadow = true;
          this.scene.add(ground);
 
-         var grid = new THREE.GridHelper(150, 15, 0x000000, 0x000000);
-         grid.position.y = - 0;
+         var grid = new THREE.GridHelper(200, 20, 0x000000, 0x5b5b5b);
+         grid.position.set(0,0,0);
          grid.material.opacity = 0.2;
          grid.material.transparent = true;
          this.scene.add(grid);
 
-         var geometry = new THREE.BoxGeometry(15, 15, 15);
-         var material = new THREE.MeshPhongMaterial({
-            color: 0x00ff00,
-            flatShading: true,
-            morphTargets: true
-         });
-         var animate = function () {
-            requestAnimationFrame(animate);
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
-            renderer.render(scene, camera);
-         };
+         //this.robot.create(0,80,80);
+         //this.robot.create(2,80,60);
+         //this.robot.move(2, -50, 50, ()=>{
+         //   this.robot.move(2, 0, 0);
+         //});
+         
+         //this.robot.get_coordinates(2);
 
          //---------------------------------------//
 
-         function create_robot(scene, id, x, y) {
-            var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
-            var material = new THREE.MeshPhongMaterial({
-               color: 0xD3D3D3,flatShading: true,morphTargets: true
-            });
-            var robot = new THREE.Mesh(geometry, material);
-            robot.name = "id_" + id;
-            robot.position.set(x, 4, y);
-            scene.add(robot);
-            return robot;
-         }
-
-         function update_robot(scene, id, x, y) {
-            var robot = scene.getObjectByName("id_" + id);
-            var position = { x : robot.position.x, y: robot.position.z };
-            var tween = new TWEEN.Tween(position).to({x:x, y:y}, 1000)
-            .easing(TWEEN.Easing.Quartic.InOut)
-            .onUpdate(function(){
-               robot.position.x = position.x;
-               robot.position.z = position.y;
-            }).delay(500).start();
-            return robot;
-         }
-
-         function get_coordinates(scene, id) {
-            var robot = scene.getObjectByName("id_" + id);
-            if (robot != undefined) {
-               console.log(`${robot.position.x},${robot.position.y},${robot.position.z}`);
-            }
-            return robot;
-         }
-
-         create_robot(this.scene, 0, 0, 0)
-         update_robot(this.scene, 0, 50, 50);
-         get_coordinates(this.scene, 0);
 
          //this.mqtt.publish('v1/localization/info', 'hello !');
 
