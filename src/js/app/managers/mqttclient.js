@@ -9,6 +9,7 @@ const mqtt_port = 9001;
 
 const TOPIC_INFO = 'v1/localization/info';
 const TOPIC_CREATE = 'v1/gui/create';
+const TOPIC_UPDATE = 'v1/gui/update';
 
 var client;
 var scene;
@@ -68,9 +69,21 @@ export default class MQTTClient {
          robot.position.set(data.x, 4, data.y);
 
          //test-------------
-         console.log("robot name " +robot.name);
-         console.log("x: "+ robot.position.x + " y: "+ robot.position.y + " z: "+ robot.position.z);
+         console.log("robot name " + robot.name);
+         console.log("x: " + robot.position.x + " y: " + robot.position.y + " z: " + robot.position.z);
          scene.add(robot);
+
+      } else if (topic == TOPIC_UPDATE) {
+         var robot = scene.getObjectByName("id_" + id);
+         var position = { x: robot.position.x, y: robot.position.z };
+         var tween = new TWEEN.Tween(position).to({ x: x, y: y }, 1000)
+            .easing(TWEEN.Easing.Quartic.InOut)
+            .onUpdate(function () {
+               robot.position.x = position.x;
+               robot.position.z = position.y;
+            }).delay(500).start();
+
+
       } else if (topic == TOPIC_INFO) {
          console.log('Info msg invoked');
       }
