@@ -112,16 +112,14 @@ export default class Main {
          grid.material.transparent = true;
          this.scene.add(grid);
 
-         // ASCII file
-         var loader = new STLLoader();
+         /*var loader = new STLLoader();
          loader.load('./assets/models/model.stl', function (geometry, scene) {
             var material = new THREE.MeshPhongMaterial({ color: 0x1B3AE3, specular: 0x111111, shininess: 200 });
             var mesh = new THREE.Mesh(geometry, material);
 
             mesh.position.set(0, 0, 0);
             window.scene.add(mesh);
-         });
-
+         });*/
 
          //this.robot.create(0,80,80);
          //this.robot.create(2,80,60);
