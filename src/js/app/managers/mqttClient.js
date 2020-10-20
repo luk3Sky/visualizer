@@ -9,7 +9,6 @@ const mqtt_port = 9001;
 
 const TOPIC_INFO = 'v1/localization/info';
 const TOPIC_CREATE = 'v1/gui/create';
-const TOPIC_UPDATE = 'v1/gui/update';
 
 var client;
 var scene;
@@ -23,12 +22,14 @@ export default class MQTTClient {
       this.robot = robot;
 
       console.log(this.robot);
+      const client_id = 'client_' + Math.random().toString(36).substring(2, 15);
 
-      this.client = new MQTT.Client(mqtt_server, mqtt_port, "");
+      this.client = new MQTT.Client(mqtt_server, mqtt_port, "", client_id);
 
       this.client.connect({
          userName: "swarm_user",
          password: "swarm_usere15",
+         reconnect : true,
          onSuccess: () => {
             console.log('MQTT: connected');
             //this.publish('v1/localization/info', 'hello !');
@@ -37,21 +38,22 @@ export default class MQTTClient {
             this.client.subscribe(TOPIC_INFO);
             this.client.subscribe(TOPIC_CREATE);
 
+            window.robot = this.robot;
+
             this.client.onMessageArrived = this.onMessageArrived;
             this.client.onConnectionLost = this.onConnectionLost;
+            //this.client.reconnect = this.reconnect;
          }
       });
    }
 
-   onConnectionLost(responseObject) {
+   onConnectionLost(responseObject) {      
       if (responseObject.errorCode !== 0) {
          console.log("MQTT: onConnectionLost:" + responseObject.errorMessage);
+         console.log('MQTT: reconnecting');
       }
    }
 
-   updateRobot(data) {
-      console.log(scene);//(data.id, data.x, data.y);
-   }
    onMessageArrived(packet) {
       const msg = packet.payloadString.trim();
       const topic = packet.destinationName;
@@ -59,33 +61,22 @@ export default class MQTTClient {
 
       if (topic == TOPIC_CREATE) {
          var data = JSON.parse(msg);
-         console.log(this);
-         var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
-         var material = new THREE.MeshPhongMaterial({
-            color: 0xD3D3D3, flatShading: true, morphTargets: true
-         });
-         var robot = new THREE.Mesh(geometry, material);
-         robot.name = "id_" + data.id;
-         robot.position.set(data.x, 4, data.y);
-
-         //test-------------
-         console.log("robot name " + robot.name);
-         console.log("x: " + robot.position.x + " y: " + robot.position.y + " z: " + robot.position.z);
-         scene.add(robot);
-
-      } else if (topic == TOPIC_UPDATE) {
-         var robot = scene.getObjectByName("id_" + id);
-         var position = { x: robot.position.x, y: robot.position.z };
-         var tween = new TWEEN.Tween(position).to({ x: x, y: y }, 1000)
-            .easing(TWEEN.Easing.Quartic.InOut)
-            .onUpdate(function () {
-               robot.position.x = position.x;
-               robot.position.z = position.y;
-            }).delay(500).start();
-
+         //console.log('Crerate msg invoked');
+         window.robot.create(data.id, data.x, data.y)
 
       } else if (topic == TOPIC_INFO) {
          console.log('Info msg invoked');
+         var data = JSON.parse(msg);
+
+         //console.log(Object.keys(data).length)
+
+         Object.entries(data).forEach(entry => {
+            // Update each robot
+            console.log(entry[1]);
+            const r = entry[1];
+            window.robot.move(r.id, r.x, r.y);
+         });
+
       }
    }
 
