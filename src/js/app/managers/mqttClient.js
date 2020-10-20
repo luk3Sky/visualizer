@@ -22,13 +22,14 @@ export default class MQTTClient {
       this.robot = robot;
 
       console.log(this.robot);
-      const client_id ='client_'+Math.random().toString(36).substring(2,15);
+      const client_id = 'client_' + Math.random().toString(36).substring(2, 15);
 
       this.client = new MQTT.Client(mqtt_server, mqtt_port, "", client_id);
 
       this.client.connect({
          userName: "swarm_user",
          password: "swarm_usere15",
+         reconnect : true,
          onSuccess: () => {
             console.log('MQTT: connected');
             //this.publish('v1/localization/info', 'hello !');
@@ -43,13 +44,15 @@ export default class MQTTClient {
 
             this.client.onMessageArrived = this.onMessageArrived;
             this.client.onConnectionLost = this.onConnectionLost;
+            //this.client.reconnect = this.reconnect;
          }
       });
    }
 
-   onConnectionLost(responseObject) {
+   onConnectionLost(responseObject) {      
       if (responseObject.errorCode !== 0) {
          console.log("MQTT: onConnectionLost:" + responseObject.errorMessage);
+         console.log('MQTT: reconnecting');
       }
    }
 
@@ -71,9 +74,9 @@ export default class MQTTClient {
 
          Object.entries(data).forEach(entry => {
             // Update each robot
-           console.log(entry[1]);
-           const r = entry[1];
-           window.robot.move(r.id, r.x, r.y);
+            console.log(entry[1]);
+            const r = entry[1];
+            window.robot.move(r.id, r.x, r.y);
          });
 
       }
