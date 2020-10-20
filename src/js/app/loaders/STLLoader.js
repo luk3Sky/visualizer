@@ -7,57 +7,6 @@ import {
 	LoaderUtils,
 	Vector3
 } from 'three';;
-/**
- * Description: A THREE loader for STL ASCII files, as created by Solidworks and other CAD programs.
- *
- * Supports both binary and ASCII encoded files, with automatic detection of type.
- *
- * The loader returns a non-indexed buffer geometry.
- *
- * Limitations:
- *  Binary decoding supports "Magics" color format (http://en.wikipedia.org/wiki/STL_(file_format)#Color_in_binary_STL).
- *  There is perhaps some question as to how valid it is to always assume little-endian-ness.
- *  ASCII decoding assumes file is UTF-8.
- *
- * Usage:
- *  var loader = new STLLoader();
- *  loader.load( './models/stl/slotted_disk.stl', function ( geometry ) {
- *    scene.add( new THREE.Mesh( geometry ) );
- *  });
- *
- * For binary STLs geometry might contain colors for vertices. To use it:
- *  // use the same code to load STL as above
- *  if (geometry.hasColors) {
- *    material = new THREE.MeshPhongMaterial({ opacity: geometry.alpha, vertexColors: true });
- *  } else { .... }
- *  var mesh = new THREE.Mesh( geometry, material );
- *
- * For ASCII STLs containing multiple solids, each solid is assigned to a different group.
- * Groups can be used to assign a different color by defining an array of materials with the same length of
- * geometry.groups and passing it to the Mesh constructor:
- *
- * var mesh = new THREE.Mesh( geometry, material );
- *
- * For example:
- *
- *  var materials = [];
- *  var nGeometryGroups = geometry.groups.length;
- *
- *  var colorMap = ...; // Some logic to index colors.
- *
- *  for (var i = 0; i < nGeometryGroups; i++) {
- *
- *		var material = new THREE.MeshPhongMaterial({
- *			color: colorMap[i],
- *			wireframe: false
- *		});
- *
- *  }
- *
- *  materials.push(material);
- *  var mesh = new THREE.Mesh(geometry, materials);
- */
-
 
 var STLLoader = function ( manager ) {
 
@@ -175,8 +124,8 @@ STLLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 			for ( var index = 0; index < 80 - 10; index ++ ) {
 
 				if ( ( reader.getUint32( index, false ) == 0x434F4C4F /*COLO*/ ) &&
-					( reader.getUint8( index + 4 ) == 0x52 /*'R'*/ ) &&
-					( reader.getUint8( index + 5 ) == 0x3D /*'='*/ ) ) {
+				( reader.getUint8( index + 4 ) == 0x52 /*'R'*/ ) &&
+				( reader.getUint8( index + 5 ) == 0x3D /*'='*/ ) ) {
 
 					hasColors = true;
 					colors = new Float32Array( faces * 3 * 3 );

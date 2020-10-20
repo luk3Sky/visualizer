@@ -30,8 +30,8 @@ import Config from './../data/config';
 // -- End of imports
 
 
-//STLLoader
-import STLLoader from './loaders/STLLoader';
+//STLLoader - Updated by Nuwan
+var STLLoader = require('three-stl-loader')(THREE)
 
 // This class instantiates and ties all of the components together, starts the loading process and renders the main loop
 export default class Main {
@@ -45,6 +45,8 @@ export default class Main {
 
       // Main scene creation
       this.scene = new THREE.Scene();
+      window.scene = this.scene; // config as a global variable
+
       this.scene.fog = new THREE.FogExp2(Config.fog.color, Config.fog.near);
 
       // Defined by Nuwan
@@ -110,19 +112,14 @@ export default class Main {
          grid.material.transparent = true;
          this.scene.add(grid);
 
-
          // ASCII file
          var loader = new STLLoader();
-         loader.load('./loaders/STLLoader/model.stl', function (geometry) {
-            var material = new THREE.MeshPhongMaterial({ color: 0xff5533, specular: 0x111111, shininess: 200 });
+         loader.load('./assets/models/model.stl', function (geometry, scene) {
+            var material = new THREE.MeshPhongMaterial({ color: 0x1B3AE3, specular: 0x111111, shininess: 200 });
             var mesh = new THREE.Mesh(geometry, material);
 
             mesh.position.set(0, 0, 0);
-            //mesh.rotation.set(0, - Math.PI / 2, 0);
-            //mesh.scale.set(0.5, 0.5, 0.5);
-            //mesh.castShadow = true;
-            //mesh.receiveShadow = true;
-            scene.add(mesh);
+            window.scene.add(mesh);
          });
 
 

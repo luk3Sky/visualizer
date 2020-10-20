@@ -40,8 +40,6 @@ export default class MQTTClient {
 
             window.robot = this.robot;
 
-            console.log(this.client);
-
             this.client.onMessageArrived = this.onMessageArrived;
             this.client.onConnectionLost = this.onConnectionLost;
             //this.client.reconnect = this.reconnect;
@@ -49,7 +47,7 @@ export default class MQTTClient {
       });
    }
 
-   onConnectionLost(responseObject) {      
+   onConnectionLost(responseObject) {
       if (responseObject.errorCode !== 0) {
          console.log("MQTT: onConnectionLost:" + responseObject.errorMessage);
          console.log('MQTT: reconnecting');
@@ -80,6 +78,7 @@ export default class MQTTClient {
          });
 
       }
+
    }
 
    publish(topic, message) {
