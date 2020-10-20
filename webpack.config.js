@@ -6,6 +6,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const CnameWebpackPlugin = require('cname-webpack-plugin');
+
 
 // Paths
 const entry = './src/js/app.js';
@@ -64,6 +66,7 @@ module.exports = env => {
       // configuration regarding modules
       module: {
          // rules for modules (configure loaders, parser options, etc.)
+
          rules: [
             {
                test: /\.js$/,
@@ -148,7 +151,10 @@ module.exports = env => {
          new MiniCssExtractPlugin({
             filename: '../css/[name].css',
             chunkFilename: '../css/[id].css'
-         })
+         }),
+	     new CnameWebpackPlugin({
+	        domain: 'swarm-gui.nuwanjaliyagoda.com',
+	     }),
       ),
 
       optimization: {
