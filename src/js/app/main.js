@@ -1,6 +1,4 @@
 // Global imports -
-
-
 import * as THREE from 'three';
 import TWEEN, { update } from '@tweenjs/tween.js';
 
@@ -31,6 +29,9 @@ import Robot from './components/robot';
 import Config from './../data/config';
 // -- End of imports
 
+
+//STLLoader
+import STLLoader from './loaders/STLLoader';
 
 // This class instantiates and ties all of the components together, starts the loading process and renders the main loop
 export default class Main {
@@ -95,7 +96,7 @@ export default class Main {
          //this.model.load(Config.models[Config.model.selected].type);
 
          // -- Added by Nuwan ---------
-         var geometry = new THREE.PlaneBufferGeometry(200,200);
+         var geometry = new THREE.PlaneBufferGeometry(200, 200);
          var material = new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false });
          var ground = new THREE.Mesh(geometry, material);
          ground.position.set(0, 0, 0);
@@ -104,17 +105,33 @@ export default class Main {
          this.scene.add(ground);
 
          var grid = new THREE.GridHelper(200, 20, 0x000000, 0x5b5b5b);
-         grid.position.set(0,0,0);
+         grid.position.set(0, 0, 0);
          grid.material.opacity = 0.2;
          grid.material.transparent = true;
          this.scene.add(grid);
+
+
+         // ASCII file
+         var loader = new STLLoader();
+         loader.load('./loaders/STLLoader/model.stl', function (geometry) {
+            var material = new THREE.MeshPhongMaterial({ color: 0xff5533, specular: 0x111111, shininess: 200 });
+            var mesh = new THREE.Mesh(geometry, material);
+
+            mesh.position.set(0, 0, 0);
+            //mesh.rotation.set(0, - Math.PI / 2, 0);
+            //mesh.scale.set(0.5, 0.5, 0.5);
+            //mesh.castShadow = true;
+            //mesh.receiveShadow = true;
+            scene.add(mesh);
+         });
+
 
          //this.robot.create(0,80,80);
          //this.robot.create(2,80,60);
          //this.robot.move(2, -50, 50, ()=>{
          //   this.robot.move(2, 0, 0);
          //});
-         
+
          //this.robot.get_coordinates(2);
 
          //---------------------------------------//
