@@ -40,6 +40,8 @@ export default class MQTTClient {
 
             window.robot = this.robot;
 
+            console.log(this.client);
+
             this.client.onMessageArrived = this.onMessageArrived;
             this.client.onConnectionLost = this.onConnectionLost;
             //this.client.reconnect = this.reconnect;
