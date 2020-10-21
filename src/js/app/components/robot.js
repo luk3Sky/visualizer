@@ -33,23 +33,25 @@ export default class Robot {
 
    move(id, x, y, heading, callback) {
       var r = this.scene.getObjectByName("id_" + id);
+
       if (r != undefined) {
-         var position = { x: r.position.x, y: r.position.z };
+         const newHeading = heading * THREE.Math.DEG2RAD;
+         var position = { x: r.position.x, y: r.position.z, heading:r.rotation.y};
 
          const distance = Math.sqrt(Math.pow(x - position.x, 2) + Math.pow(y - position.y, 2));
          const speed = 10;
 
-         var tween = new TWEEN.Tween(position).to({ x: x, y: y }, 1000 * (distance / speed))
+         var tween = new TWEEN.Tween(position).to({ x: x, y: y, heading: newHeading}, 1000 * (distance / speed))
             /*.easing(TWEEN.Easing.Quartic.InOut)*/
             .onUpdate(function () {
                r.position.x = position.x;
                r.position.z = position.y;
-               r.rotation.y = heading * THREE.Math.DEG2RAD;
+               r.rotation.y = position.heading;
 
             }).onComplete(() => {
                if (callback != null) callback();
 
-            }).delay(500).start();
+            }).delay(50).start();
          return r;
       }
    }
