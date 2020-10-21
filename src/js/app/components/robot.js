@@ -2,46 +2,66 @@ import * as THREE from 'three';
 import TWEEN, { update } from '@tweenjs/tween.js';
 
 var STLLoader = require('three-stl-loader')(THREE)
-
-var scene;
+//var scene;
 
 const TOPIC_INFO = 'v1/localization/info';
 const TOPIC_CREATE = 'v1/gui/create';
 
-// Sets up and places all lights in scene
 export default class Robot {
    constructor(scene) {
       this.scene = scene;
    }
-   
-   create(id, x, y, heading) {
+
+   changeColor(id, color, callback){
+
+      var r = this.scene.getObjectByName("id_" + id);
+      if (r == undefined) {
+         // Update the color of the robot
+
+         // color in format like 0x1B3AE3
+
+
+         if (callback != null) callback('success');
+      }else{
+         if (callback != null) callback('undefined');
+      }
+   }
+
+   create(id, x, y, heading, callback) {
       var r = this.scene.getObjectByName("id_" + id);
       if (r == undefined) {
          // Create only if not exists
          var loader = new STLLoader();
          loader.load('./assets/models/model.stl', function (geometry, scene) {
-            var material = new THREE.MeshPhongMaterial({ color: 0x1B3AE3, specular: 0x111111, shininess: 200 });
+            var material = new THREE.MeshStandardMaterial({ color: 0x1B3AE3});
             var r = new THREE.Mesh(geometry, material);
             r.name = "id_" + id;
-            r.position.set(x, 4, y);
+            r.position.set(x, 0, y);
             r.rotation.y = heading * THREE.Math.DEG2RAD;
             window.scene.add(r);
+
+            // Callback function
+            if (callback != null) callback('success');
          });
+      }else{
+         if (callback != null) callback('already defined');
       }
       return r;
    }
 
    move(id, x, y, heading, callback) {
       var r = this.scene.getObjectByName("id_" + id);
-
       if (r != undefined) {
          const newHeading = heading * THREE.Math.DEG2RAD;
          var position = { x: r.position.x, y: r.position.z, heading:r.rotation.y};
 
-         const distance = Math.sqrt(Math.pow(x - position.x, 2) + Math.pow(y - position.y, 2));
          const speed = 10;
+         const distance = Math.sqrt(Math.pow(x - position.x, 2) + Math.pow(y - position.y, 2));
 
-         var tween = new TWEEN.Tween(position).to({ x: x, y: y, heading: newHeading}, 1000 * (distance / speed))
+         // TODO: If distance is 0, need to handle only the rotation
+
+         if(distance!=0){
+            var tween = new TWEEN.Tween(position).to({ x: x, y: y, heading: newHeading}, 1000 * (distance / speed))
             /*.easing(TWEEN.Easing.Quartic.InOut)*/
             .onUpdate(function () {
                r.position.x = position.x;
@@ -49,10 +69,17 @@ export default class Robot {
                r.rotation.y = position.heading;
 
             }).onComplete(() => {
-               if (callback != null) callback();
+               if (callback != null) callback('success');
 
             }).delay(50).start();
+         }else{
+            // No move, only the rotation
+         }
+
+
          return r;
+      }else{
+         if (callback != null) callback('undefined');
       }
    }
 
@@ -60,8 +87,10 @@ export default class Robot {
       var r = this.scene.getObjectByName("id_" + id);
       if (r != undefined) {
          console.log(`${r.position.x},${r.position.y},${r.position.z}`);
+         return r;
+      }else{
+         return null;
       }
-      return r;
    }
 
    update() {
