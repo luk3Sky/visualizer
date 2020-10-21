@@ -50,7 +50,7 @@ export default class Robot {
       return r;
    }
 
-   move(id, x, y, heading, callback) {
+   move(id, x, y, callback) {
 
       var r = this.scene.getObjectByName("id_" + id);
       if (r != undefined) {

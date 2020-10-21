@@ -76,7 +76,7 @@ export default class MQTTClient {
                // Update each robot
                console.log(entry[1]);
                const r = entry[1];
-               window.robot.move(r.id, r.x, r.y, r.heading);
+               window.robot.move(r.id, r.x, r.y);
             });
          }catch(e){
             console.error(e);
