@@ -62,7 +62,7 @@ export default class MQTTClient {
       if (topic == TOPIC_CREATE) {
          try{
             var data = JSON.parse(msg);
-            window.robot.create(data.id, data.x, data.y)
+            window.robot.create(data.id, data.x, data.y, data.heading)
          }catch(e){
             console.error(e);
          }
@@ -76,7 +76,7 @@ export default class MQTTClient {
                // Update each robot
                console.log(entry[1]);
                const r = entry[1];
-               window.robot.move(r.id, r.x, r.y);
+               window.robot.move(r.id, r.x, r.y, r.heading);
             });
          }catch(e){
             console.error(e);

@@ -1,5 +1,7 @@
 import * as THREE from 'three';
-import TWEEN, { update }  from '@tweenjs/tween.js';
+import TWEEN, { update } from '@tweenjs/tween.js';
+
+var STLLoader = require('three-stl-loader')(THREE)
 
 var scene;
 
@@ -11,43 +13,45 @@ export default class Robot {
    constructor(scene) {
       this.scene = scene;
    }
-
-   create(id, x, y) {
+   
+   create(id, x, y, heading) {
       var r = this.scene.getObjectByName("id_" + id);
-      if(r == undefined){
+      if (r == undefined) {
          // Create only if not exists
-         var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
-         var material = new THREE.MeshPhongMaterial({
-            color: 0x1B3AE3,flatShading: true,morphTargets: true
+         var loader = new STLLoader();
+         loader.load('./assets/models/model.stl', function (geometry, scene) {
+            var material = new THREE.MeshPhongMaterial({ color: 0x1B3AE3, specular: 0x111111, shininess: 200 });
+            var r = new THREE.Mesh(geometry, material);
+            r.name = "id_" + id;
+            r.position.set(x, 4, y);
+            r.rotation.y = heading * THREE.Math.DEG2RAD;
+            window.scene.add(r);
          });
-         var r = new THREE.Mesh(geometry, material);
-         r.name = "id_" + id;
-         r.position.set(x,4,y);
-
-         this.scene.add(r);
       }
       return r;
    }
 
-   move(id, x, y, callback) {
-
+   move(id, x, y, heading, callback) {
       var r = this.scene.getObjectByName("id_" + id);
-      if(r != undefined){
-         var position = { x : r.position.x, y: r.position.z };
 
-         const distance = Math.sqrt(Math.pow(x-position.x, 2) + Math.pow(y-position.y,2));
+      if (r != undefined) {
+         const newHeading = heading * THREE.Math.DEG2RAD;
+         var position = { x: r.position.x, y: r.position.z, heading:r.rotation.y};
+
+         const distance = Math.sqrt(Math.pow(x - position.x, 2) + Math.pow(y - position.y, 2));
          const speed = 10;
 
-         var tween = new TWEEN.Tween(position).to({x:x, y:y}, 1000*(distance/speed))
-         /*.easing(TWEEN.Easing.Quartic.InOut)*/
-         .onUpdate(function(){
-            r.position.x = position.x;
-            r.position.z = position.y;
+         var tween = new TWEEN.Tween(position).to({ x: x, y: y, heading: newHeading}, 1000 * (distance / speed))
+            /*.easing(TWEEN.Easing.Quartic.InOut)*/
+            .onUpdate(function () {
+               r.position.x = position.x;
+               r.position.z = position.y;
+               r.rotation.y = position.heading;
 
-         }).onComplete(()=>{
-            if( callback != null ) callback();
+            }).onComplete(() => {
+               if (callback != null) callback();
 
-         }).delay(500).start();
+            }).delay(50).start();
          return r;
       }
    }
@@ -60,7 +64,7 @@ export default class Robot {
       return r;
    }
 
-   update(){
+   update() {
       TWEEN.update();
    }
 }
