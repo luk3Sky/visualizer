@@ -14,7 +14,7 @@ export default class Robot {
       this.scene = scene;
    }
 
-   create(id, x, y) {
+   create(id, x, y, heading) {
       var r = this.scene.getObjectByName("id_" + id);
       if (r == undefined) {
          // Create only if not exists
@@ -25,23 +25,32 @@ export default class Robot {
             var r = new THREE.Mesh(geometry, material);
             r.name = "id_" + id;
             r.position.set(x, 4, y);
+            if (heading == 1) {
+               r.rotation.y = -Math.PI / 2;
+            }
+            else if (heading == 2) {
+               r.rotation.y = Math.PI;
+            }
+            else if (heading == 3) {
+               r.rotation.y = Math.PI / 2;
+            }
             window.scene.add(r);
          });
 
-        /* var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
-         var material = new THREE.MeshPhongMaterial({
-            color: 0x1B3AE3, flatShading: true, morphTargets: true
-         });
-         var r = new THREE.Mesh(geometry, material);
-         r.name = "id_" + id;
-         r.position.set(x, 4, y);
-
-         this.scene.add(r);*/
+         /* var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
+          var material = new THREE.MeshPhongMaterial({
+             color: 0x1B3AE3, flatShading: true, morphTargets: true
+          });
+          var r = new THREE.Mesh(geometry, material);
+          r.name = "id_" + id;
+          r.position.set(x, 4, y);
+    
+          this.scene.add(r);*/
       }
       return r;
    }
 
-   move(id, x, y, callback) {
+   move(id, x, y, heading, callback) {
 
       var r = this.scene.getObjectByName("id_" + id);
       if (r != undefined) {
