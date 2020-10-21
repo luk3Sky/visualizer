@@ -13,45 +13,25 @@ export default class Robot {
    constructor(scene) {
       this.scene = scene;
    }
-
+   
    create(id, x, y, heading) {
       var r = this.scene.getObjectByName("id_" + id);
       if (r == undefined) {
          // Create only if not exists
-
          var loader = new STLLoader();
          loader.load('./assets/models/model.stl', function (geometry, scene) {
             var material = new THREE.MeshPhongMaterial({ color: 0x1B3AE3, specular: 0x111111, shininess: 200 });
             var r = new THREE.Mesh(geometry, material);
             r.name = "id_" + id;
             r.position.set(x, 4, y);
-            if (heading == 1) {
-               r.rotation.y = -Math.PI / 2;
-            }
-            else if (heading == 2) {
-               r.rotation.y = Math.PI;
-            }
-            else if (heading == 3) {
-               r.rotation.y = Math.PI / 2;
-            }
+            r.rotation.y = heading * THREE.Math.DEG2RAD;
             window.scene.add(r);
          });
-
-         /* var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
-          var material = new THREE.MeshPhongMaterial({
-             color: 0x1B3AE3, flatShading: true, morphTargets: true
-          });
-          var r = new THREE.Mesh(geometry, material);
-          r.name = "id_" + id;
-          r.position.set(x, 4, y);
-    
-          this.scene.add(r);*/
       }
       return r;
    }
 
-   move(id, x, y, callback) {
-
+   move(id, x, y, heading, callback) {
       var r = this.scene.getObjectByName("id_" + id);
       if (r != undefined) {
          var position = { x: r.position.x, y: r.position.z };
@@ -64,6 +44,7 @@ export default class Robot {
             .onUpdate(function () {
                r.position.x = position.x;
                r.position.z = position.y;
+               r.rotation.y = heading * THREE.Math.DEG2RAD;
 
             }).onComplete(() => {
                if (callback != null) callback();
