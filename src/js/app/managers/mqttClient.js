@@ -9,6 +9,7 @@ const mqtt_port = 9001;
 
 const TOPIC_INFO = 'v1/localization/info';
 const TOPIC_CREATE = 'v1/gui/create';
+const TOPIC_CHANGE_COLOR = 'v1/sensor/color';
 
 export default class MQTTClient {
 
@@ -23,13 +24,14 @@ export default class MQTTClient {
       this.client.connect({
          userName: "swarm_user",
          password: "swarm_usere15",
-         reconnect : true,
+         reconnect: true,
          onSuccess: () => {
             console.log('MQTT: connected');
 
             // Subscribe to topics
             this.client.subscribe(TOPIC_INFO);
             this.client.subscribe(TOPIC_CREATE);
+            this.client.subscribe(TOPIC_CHANGE_COLOR);
 
             window.robot = this.robot;
             this.client.onMessageArrived = this.onMessageArrived;
@@ -51,15 +53,15 @@ export default class MQTTClient {
       console.log('MQTT: ' + topic + ' > ' + msg);
 
       if (topic == TOPIC_CREATE) {
-         try{
+         try {
             var data = JSON.parse(msg);
             window.robot.create(data.id, data.x, data.y, data.heading)
-         }catch(e){
+         } catch (e) {
             console.error(e);
          }
 
       } else if (topic == TOPIC_INFO) {
-         try{
+         try {
             var data = JSON.parse(msg);
 
             Object.entries(data).forEach(entry => {
@@ -68,7 +70,15 @@ export default class MQTTClient {
                const r = entry[1];
                window.robot.move(r.id, r.x, r.y, r.heading);
             });
-         }catch(e){
+         } catch (e) {
+            console.error(e);
+         }
+      } else if (topic == TOPIC_CHANGE_COLOR) {
+         try {
+            var data = JSON.parse(msg);
+            window.robot.changeColor(data.id, data.R, data.G, data.B, data.ambient);
+            //console.log('R: '+data.R+ ' G: '+data.G+ ' B: '+data.B);
+         } catch (e) {
             console.error(e);
          }
       }
