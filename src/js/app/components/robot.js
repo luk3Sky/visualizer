@@ -74,6 +74,7 @@ export default class Robot {
             }).delay(50).start();
          }else{
             // No move, only the rotation
+            r.rotation.y = heading * THREE.Math.DEG2RAD;
          }
 
 
