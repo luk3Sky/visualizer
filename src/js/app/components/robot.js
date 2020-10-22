@@ -15,9 +15,7 @@ export default class Robot {
    changeColor(id, R, G, B, ambient, callback) {
       var r = this.scene.getObjectByName("id_" + id);
       if (r != undefined) {
-         var geometry = new THREE.MeshBasicMaterial();
-         var material = new THREE.MeshNormalMaterial();
-         r.material.color.setRGB(R, G, B);
+         r.material.color.setRGB(R/256, G/256, B/265);
          if (callback != null) callback('success');
       } else {
          if (callback != null) callback('undefined');
@@ -32,8 +30,10 @@ export default class Robot {
          // Create only if not exists
          var loader = new STLLoader();
          loader.load('./assets/models/model.stl', function (geometry, scene) {
-            var material = new THREE.MeshStandardMaterial({ color: 0x1B3AE3 });
+            var material = new THREE.MeshStandardMaterial({ color: 0x9e9e9e });
+
             var r = new THREE.Mesh(geometry, material);
+            r.receiveShadow = true;
             r.name = "id_" + id;
             r.position.set(x, 0, y);
             r.rotation.y = heading * THREE.Math.DEG2RAD;
@@ -61,23 +61,22 @@ export default class Robot {
 
          if (distance != 0) {
             var tween = new TWEEN.Tween(position).to({ x: x, y: y, heading: newHeading }, 1000 * (distance / speed))
-               /*.easing(TWEEN.Easing.Quartic.InOut)*/
-               .onUpdate(function () {
-                  r.position.x = position.x;
-                  r.position.z = position.y;
-                  r.rotation.y = position.heading;
+            /*.easing(TWEEN.Easing.Quartic.InOut)*/
+            .onUpdate(function () {
+               r.position.x = position.x;
+               r.position.z = position.y;
+               r.rotation.y = position.heading;
 
-               }).onComplete(() => {
-                  if (callback != null) callback('success');
+            }).onComplete(() => {
+               if (callback != null) callback('success');
 
-               }).delay(50).start();
+            }).delay(50).start();
          } else {
             // No move, only the rotation
             r.rotation.y = newHeading;
          }
-
-
          return r;
+
       } else {
          if (callback != null) callback('undefined');
       }
