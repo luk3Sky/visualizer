@@ -10,10 +10,6 @@ const mqtt_port = 9001;
 const TOPIC_INFO = 'v1/localization/info';
 const TOPIC_CREATE = 'v1/gui/create';
 
-var client;
-var scene;
-var robot;
-
 export default class MQTTClient {
 
    constructor(scene, robot) {
@@ -21,9 +17,7 @@ export default class MQTTClient {
       this.scene = scene;
       this.robot = robot;
 
-      console.log(this.robot);
       const client_id = 'client_' + Math.random().toString(36).substring(2, 15);
-
       this.client = new MQTT.Client(mqtt_server, mqtt_port, "", client_id);
 
       this.client.connect({
@@ -32,17 +26,14 @@ export default class MQTTClient {
          reconnect : true,
          onSuccess: () => {
             console.log('MQTT: connected');
-            //this.publish('v1/localization/info', 'hello !');
 
             // Subscribe to topics
             this.client.subscribe(TOPIC_INFO);
             this.client.subscribe(TOPIC_CREATE);
 
             window.robot = this.robot;
-
             this.client.onMessageArrived = this.onMessageArrived;
             this.client.onConnectionLost = this.onConnectionLost;
-            //this.client.reconnect = this.reconnect;
          }
       });
    }
@@ -68,7 +59,6 @@ export default class MQTTClient {
          }
 
       } else if (topic == TOPIC_INFO) {
-         console.log('Info msg invoked');
          try{
             var data = JSON.parse(msg);
 
@@ -81,17 +71,16 @@ export default class MQTTClient {
          }catch(e){
             console.error(e);
          }
-
       }
-
    }
 
-   publish(topic, message) {
+   publish(topic, message, callback) {
       var payload = new MQTT.Message(message);
       payload.destinationName = topic;
       this.client.send(payload);
-
       console.log('MQTT: published');
+
+      if (callback != null) callback();
    }
 
 }

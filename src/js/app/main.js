@@ -29,7 +29,6 @@ import Robot from './components/robot';
 import Config from './../data/config';
 // -- End of imports
 
-
 //STLLoader - Updated by Nuwan
 var STLLoader = require('three-stl-loader')(THREE)
 
@@ -70,11 +69,6 @@ export default class Main {
       const lights = ['ambient', 'directional', 'point', 'hemi'];
       lights.forEach((light) => this.light.place(light));
 
-      // Create and place geo in scene
-      //this.geometry = new Geometry(this.scene);
-      //this.geometry.make('plane')(150, 150, 10, 10);
-      //this.geometry.place([0, 0, 0], [Math.PI / 2, 0, 0]);
-
       // Set up rStats if dev environment
       if (Config.isDev && Config.isShowingStats) {
          this.stats = new Stats(this.renderer);
@@ -94,10 +88,10 @@ export default class Main {
          this.manager = new THREE.LoadingManager();
 
          // Textures loaded, load model
-         this.model = new Model(this.scene, this.manager, this.texture.textures);
+         //this.model = new Model(this.scene, this.manager, this.texture.textures);
          //this.model.load(Config.models[Config.model.selected].type);
 
-         // -- Added by Nuwan ---------
+         // Create the environment ---------------------------------------------
          var geometry = new THREE.PlaneBufferGeometry(200, 200);
          var material = new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false });
          var ground = new THREE.Mesh(geometry, material);
@@ -112,15 +106,7 @@ export default class Main {
          grid.material.transparent = true;
          this.scene.add(grid);
 
-         /*var loader = new STLLoader();
-         loader.load('./assets/models/model.stl', function (geometry, scene) {
-            var material = new THREE.MeshPhongMaterial({ color: 0x1B3AE3, specular: 0x111111, shininess: 200 });
-            var mesh = new THREE.Mesh(geometry, material);
-
-            mesh.position.set(0, 0, 0);
-            window.scene.add(mesh);
-         });*/
-
+         //---------------------------------------
          //this.robot.create(0,80,80);
          //this.robot.create(2,80,60);
          //this.robot.move(2, -50, 50, ()=>{
@@ -129,9 +115,7 @@ export default class Main {
 
          //this.robot.get_coordinates(2);
 
-         //---------------------------------------//
-
-
+         //---------------------------------------
          //this.mqtt.publish('v1/localization/info', 'hello !');
 
          // -------------------------------------
