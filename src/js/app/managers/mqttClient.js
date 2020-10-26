@@ -5,7 +5,7 @@ import TWEEN, { update } from '@tweenjs/tween.js';
 import MQTT from 'paho-mqtt';
 
 const mqtt_server = "68.183.188.135";
-const mqtt_port = 9001;
+const mqtt_port = 8883;
 
 const TOPIC_INFO = 'v1/localization/info';
 const TOPIC_CREATE = 'v1/gui/create';
@@ -25,6 +25,8 @@ export default class MQTTClient {
             userName: "swarm_user",
             password: "swarm_usere15",
             reconnect: true,
+            useSSL: true,
+            cleanSession : false,
             onSuccess: () => {
                 console.log('MQTT: connected');
 
