@@ -4,8 +4,11 @@ import TWEEN, { update } from '@tweenjs/tween.js';
 
 import MQTT from 'paho-mqtt';
 
-const mqtt_server = "68.183.188.135";
+//const mqtt_server = "68.183.188.135";
+//const mqtt_port = 9001;
+const mqtt_server = "swarm-gui.tk";
 const mqtt_port = 8883;
+const mqtt_path = "/socket.io";
 
 const TOPIC_INFO = 'v1/localization/info';
 const TOPIC_CREATE = 'v1/gui/create';
@@ -19,7 +22,9 @@ export default class MQTTClient {
         this.robot = robot;
 
         const client_id = 'client_' + Math.random().toString(36).substring(2, 15);
-        this.client = new MQTT.Client(mqtt_server, mqtt_port, "", client_id);
+        this.client = new MQTT.Client(mqtt_server, mqtt_port, mqtt_path, client_id);
+
+        window.mqtt = this.client;
 
         this.client.connect({
             userName: "swarm_user",
