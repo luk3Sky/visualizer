@@ -1,11 +1,9 @@
 import * as THREE from 'three';
 import TWEEN, { update } from '@tweenjs/tween.js';
 
-var STLLoader = require('three-stl-loader')(THREE)
-//var scene;
+import Config from '../../data/config';
 
-const TOPIC_INFO = 'v1/localization/info';
-const TOPIC_CREATE = 'v1/gui/create';
+var STLLoader = require('three-stl-loader')(THREE)
 
 export default class Robot {
     constructor(scene) {
@@ -16,6 +14,8 @@ export default class Robot {
         var r = this.scene.getObjectByName("id_" + id);
         if (r != undefined) {
             r.material.color.setRGB(R/256, G/256, B/265);
+            console.log("Color> id:", id, " | R:", R, "G:", G, "B:", B);
+
             if (callback != null) callback('success');
         } else {
             if (callback != null) callback('undefined');
@@ -28,6 +28,11 @@ export default class Robot {
         var r = this.scene.getObjectByName("id_" + id);
         if (r == undefined) {
             // Create only if not exists
+
+            // Limit the arena that robot can go
+            x = Math.min(Math.max(x, Config.arena.minX), Config.arena.maxX);
+            y = Math.min(Math.max(y, Config.arena.minY), Config.arena.maxY);
+
             var loader = new STLLoader();
             loader.load('./assets/models/model.stl', function (geometry, scene) {
                 var material = new THREE.MeshStandardMaterial({ color: 0x5877d2 });
@@ -39,7 +44,7 @@ export default class Robot {
                 r.rotation.y = heading * THREE.Math.DEG2RAD;
                 window.scene.add(r);
 
-                console.log('Created:', id);
+                console.log("Created> id:", id, " | x:", x, "y:", y, "heading:", heading);
 
                 // Callback function
                 if (callback != null) callback('success');
@@ -61,8 +66,9 @@ export default class Robot {
             const newHeading = heading * THREE.Math.DEG2RAD;
             var position = { x: r.position.x, y: r.position.z, heading: r.rotation.y };
 
-            x = Math.round(x*10)/10;
-            y = Math.round(y*10)/10;
+            // Limit the arena that robot can go
+            x = Math.min(Math.max(Math.round(x*10)/10, Config.arena.minX), Config.arena.maxX);
+            y = Math.min(Math.max(Math.round(y*10)/10, Config.arena.minY), Config.arena.maxY);
             heading = Math.round(heading*10)/10;
 
             const speed = 10;
@@ -79,7 +85,7 @@ export default class Robot {
                     r.rotation.y = position.heading;
 
                 }).onComplete(() => {
-                    console.log('Move:',id,'x:',x,'y:',y,'heading',heading);
+                    //console.log('Move> id:',id,'x:',x,'y:',y,'heading:',heading);
                     if (callback != null) callback('success');
 
                 }).delay(50).start();
