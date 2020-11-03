@@ -2,10 +2,9 @@
 import * as THREE from 'three';
 import TWEEN, { update } from '@tweenjs/tween.js';
 
+import Config from '../../data/config';
 import MQTT from 'paho-mqtt';
 
-//const mqtt_server = "68.183.188.135";
-//const mqtt_port = 9001;
 const mqtt_server = "swarm-gui.tk";
 const mqtt_port = 8883;
 const mqtt_path = "/socket.io";
@@ -21,14 +20,14 @@ export default class MQTTClient {
         this.scene = scene;
         this.robot = robot;
 
-        const client_id = 'client_' + Math.random().toString(36).substring(2, 15);
-        this.client = new MQTT.Client(mqtt_server, mqtt_port, mqtt_path, client_id);
+        const client_id = 'client_' + Math.random().toString(36).substring(2, 15); // create a random client Id
+        this.client = new MQTT.Client(Config.mqtt.server, Config.mqtt.port, Config.mqtt.path, client_id);
 
         window.mqtt = this.client;
 
         this.client.connect({
-            userName: "swarm_user",
-            password: "swarm_usere15",
+            userName: Config.mqtt.user,
+            password: Config.mqtt.password,
             reconnect: true,
             useSSL: true,
             cleanSession : false,
@@ -43,6 +42,9 @@ export default class MQTTClient {
                 window.robot = this.robot;
                 this.client.onMessageArrived = this.onMessageArrived;
                 this.client.onConnectionLost = this.onConnectionLost;
+            },
+            onFailure: ()=>{
+                console.log('MQTT: connection failed');
             }
         });
     }
@@ -75,7 +77,6 @@ export default class MQTTClient {
 
                 Object.entries(data).forEach(entry => {
                     // Update each robot
-                    //console.log(entry[1]);
                     const r = entry[1];
 
                     if(window.robot.exists(r.id)==undefined){
@@ -91,7 +92,6 @@ export default class MQTTClient {
             try {
                 var data = JSON.parse(msg);
                 window.robot.changeColor(data.id, data.R, data.G, data.B, data.ambient);
-                //console.log('R: '+data.R+ ' G: '+data.G+ ' B: '+data.B);
             } catch (e) {
                 console.error(e);
             }
