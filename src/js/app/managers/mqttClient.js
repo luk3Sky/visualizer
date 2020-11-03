@@ -5,10 +5,6 @@ import TWEEN, { update } from '@tweenjs/tween.js';
 import Config from '../../data/config';
 import MQTT from 'paho-mqtt';
 
-const mqtt_server = "swarm-gui.tk";
-const mqtt_port = 8883;
-const mqtt_path = "/socket.io";
-
 const TOPIC_INFO = 'v1/localization/info';
 const TOPIC_CREATE = 'v1/gui/create';
 const TOPIC_CHANGE_COLOR = 'v1/sensor/color';
