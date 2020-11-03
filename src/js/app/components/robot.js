@@ -1,66 +1,116 @@
 import * as THREE from 'three';
-import TWEEN, { update }  from '@tweenjs/tween.js';
+import TWEEN, { update } from '@tweenjs/tween.js';
 
-var scene;
+import Config from '../../data/config';
 
-const TOPIC_INFO = 'v1/localization/info';
-const TOPIC_CREATE = 'v1/gui/create';
+var STLLoader = require('three-stl-loader')(THREE)
 
-// Sets up and places all lights in scene
 export default class Robot {
-   constructor(scene) {
-      this.scene = scene;
-   }
+    constructor(scene) {
+        this.scene = scene;
+    }
 
-   create(id, x, y) {
-      var r = this.scene.getObjectByName("id_" + id);
-      if(r == undefined){
-         // Create only if not exists
-         var geometry = new THREE.CylinderGeometry(5, 5, 8, 32);
-         var material = new THREE.MeshPhongMaterial({
-            color: 0x1B3AE3,flatShading: true,morphTargets: true
-         });
-         var r = new THREE.Mesh(geometry, material);
-         r.name = "id_" + id;
-         r.position.set(x,4,y);
+    changeColor(id, R, G, B, ambient, callback) {
+        var r = this.scene.getObjectByName("id_" + id);
+        if (r != undefined) {
+            r.material.color.setRGB(R/256, G/256, B/265);
+            console.log("Color> id:", id, " | R:", R, "G:", G, "B:", B);
 
-         this.scene.add(r);
-      }
-      return r;
-   }
+            if (callback != null) callback('success');
+        } else {
+            if (callback != null) callback('undefined');
+        }
 
-   move(id, x, y, callback) {
+        return r;
+    }
 
-      var r = this.scene.getObjectByName("id_" + id);
-      if(r != undefined){
-         var position = { x : r.position.x, y: r.position.z };
+    create(id, x, y, heading, callback) {
+        var r = this.scene.getObjectByName("id_" + id);
+        if (r == undefined) {
+            // Create only if not exists
 
-         const distance = Math.sqrt(Math.pow(x-position.x, 2) + Math.pow(y-position.y,2));
-         const speed = 10;
+            // Limit the arena that robot can go
+            x = Math.min(Math.max(x, Config.arena.minX), Config.arena.maxX);
+            y = Math.min(Math.max(y, Config.arena.minY), Config.arena.maxY);
 
-         var tween = new TWEEN.Tween(position).to({x:x, y:y}, 1000*(distance/speed))
-         /*.easing(TWEEN.Easing.Quartic.InOut)*/
-         .onUpdate(function(){
-            r.position.x = position.x;
-            r.position.z = position.y;
+            var loader = new STLLoader();
+            loader.load('./assets/models/model.stl', function (geometry, scene) {
+                var material = new THREE.MeshStandardMaterial({ color: 0x5877d2 });
 
-         }).onComplete(()=>{
-            if( callback != null ) callback();
+                var r = new THREE.Mesh(geometry, material);
+                r.receiveShadow = true;
+                r.name = "id_" + id;
+                r.position.set(x, 0, y);
+                r.rotation.y = heading * THREE.Math.DEG2RAD;
+                window.scene.add(r);
 
-         }).delay(500).start();
-         return r;
-      }
-   }
+                console.log("Created> id:", id, " | x:", x, "y:", y, "heading:", heading);
 
-   get_coordinates(id) {
-      var r = this.scene.getObjectByName("id_" + id);
-      if (r != undefined) {
-         console.log(`${r.position.x},${r.position.y},${r.position.z}`);
-      }
-      return r;
-   }
+                // Callback function
+                if (callback != null) callback('success');
+            });
+        } else {
+            if (callback != null) callback('already defined');
+        }
+        return r;
+    }
 
-   update(){
-      TWEEN.update();
-   }
+    exists(id){
+        var r = this.scene.getObjectByName("id_" + id);
+        return r;
+    }
+
+    move(id, x, y, heading, callback) {
+        var r = this.scene.getObjectByName("id_" + id);
+        if (r != undefined) {
+            const newHeading = heading * THREE.Math.DEG2RAD;
+            var position = { x: r.position.x, y: r.position.z, heading: r.rotation.y };
+
+            // Limit the arena that robot can go
+            x = Math.min(Math.max(Math.round(x*10)/10, Config.arena.minX), Config.arena.maxX);
+            y = Math.min(Math.max(Math.round(y*10)/10, Config.arena.minY), Config.arena.maxY);
+            heading = Math.round(heading*10)/10;
+
+            const speed = 10;
+            const distance = 10;//Math.sqrt(Math.pow(x - position.x, 2) + Math.pow(y - position.y, 2));
+
+            // TODO: If distance is 0, need to handle only the rotation
+
+            if (distance != 0) {
+                var tween = new TWEEN.Tween(position).to({ x: x, y: y, heading: newHeading }, 1000 * (distance / speed))
+                /*.easing(TWEEN.Easing.Quartic.InOut)*/
+                .onUpdate(function () {
+                    r.position.x = position.x;
+                    r.position.z = position.y;
+                    r.rotation.y = position.heading;
+
+                }).onComplete(() => {
+                    //console.log('Move> id:',id,'x:',x,'y:',y,'heading:',heading);
+                    if (callback != null) callback('success');
+
+                }).delay(50).start();
+            } else {
+                // No move, only the rotation
+                r.rotation.y = newHeading;
+            }
+            return r;
+
+        } else {
+            if (callback != null) callback('undefined');
+        }
+    }
+
+    get_coordinates(id) {
+        var r = this.scene.getObjectByName("id_" + id);
+        if (r != undefined) {
+            console.log(`${r.position.x},${r.position.y},${r.position.z}`);
+            return r;
+        } else {
+            return null;
+        }
+    }
+
+    update() {
+        TWEEN.update();
+    }
 }
