@@ -1,13 +1,14 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Node.js CI
+name: Webpack CI
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - main
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -32,11 +33,12 @@ jobs:
       run: npm run build
 
     - name: Deploy to gh-pages
-      if: github.repository == 'NuwanJ/FYP-simulator-gui'
       uses: peaceiris/actions-gh-pages@v3
       with:
-        deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-        publish_dir: ./build
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        # publish_dir: ./docs
+        # destination_dir: docs 
+        # cname: github.com  
 
 # Genetare Public and Private Keys using, ssh-keygen -t rsa -b 4096 -C "$(git config nuwanjaliyagoda@gmail.com)" -f gh-pages-actions -N ""
 # based on https://medium.com/swlh/deploy-create-react-app-to-github-pages-using-github-actions-4e95ae7fd65f
