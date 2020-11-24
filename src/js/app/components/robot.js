@@ -47,12 +47,29 @@ export default class Robot {
                 console.log("Created> id:", id, " | x:", x, "y:", y, "heading:", heading);
 
                 // Callback function
-                if (callback != null) callback('success');
+                if (callback != undefined) callback('success');
             });
         } else {
-            if (callback != null) callback('already defined');
+            if (callback != undefined) callback('already defined');
         }
         return r;
+    }
+
+    delete(id, callback){
+        if(id != undefined){
+            var r = this.scene.getObjectByName("id_" + id);
+
+            if(r != undefined){
+                scene.remove(r);
+                console.log("Deleted> id:", id);
+                if (callback != undefined) callback('success');
+                
+            }else{
+                if (callback != undefined) callback('not found');
+            }
+        }else{
+            if (callback != undefined) callback('id not specified');
+        }
     }
 
     exists(id){
