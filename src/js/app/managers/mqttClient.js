@@ -5,9 +5,23 @@ import TWEEN, { update } from '@tweenjs/tween.js';
 import Config from '../../data/config';
 import MQTT from 'paho-mqtt';
 
+// -----------------------------------------------------------------------------
+// MQTT Topics
+// -----------------------------------------------------------------------------
+// This will provide location data to the GUI
 const TOPIC_INFO = 'v1/localization/info';
-const TOPIC_CREATE = 'v1/gui/create';
+
+// Create and delete robot objects
+const TOPIC_CREATE = 'v1/robot/create';
+const TOPIC_DELETE = 'v1/robot/delete';
+
+// This will request the localization data update from the server
+const TOPIC_LOC_REQUEST = 'v1/localization/?';
+
+// TODO: need to map with the server
 const TOPIC_CHANGE_COLOR = 'v1/sensor/color';
+
+// -----------------------------------------------------------------------------
 
 export default class MQTTClient {
 
@@ -33,6 +47,7 @@ export default class MQTTClient {
                 // Subscribe to topics
                 this.client.subscribe(TOPIC_INFO);
                 this.client.subscribe(TOPIC_CREATE);
+                this.client.subscribe(TOPIC_DELETE);
                 this.client.subscribe(TOPIC_CHANGE_COLOR);
 
                 window.robot = this.robot;
@@ -58,10 +73,17 @@ export default class MQTTClient {
 
         if (topic == TOPIC_CREATE) {
             //console.log('MQTT: ' + topic + ' > ' + msg);
-
             try {
                 var data = JSON.parse(msg);
                 window.robot.create(data.id, data.x, data.y, data.heading)
+            } catch (e) {
+                console.error(e);
+            }
+
+        }else if(topic == TOPIC_DELETE){
+            try {
+                var data = JSON.parse(msg);
+                window.robot.delete(data.id)
             } catch (e) {
                 console.error(e);
             }
