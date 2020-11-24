@@ -25,11 +25,10 @@ import DatGUI from './managers/datGUI';
 import MQTTClient from './managers/mqttClient';
 import Robot from './components/robot';
 
-// data
+// Config data
 import Config from './../data/config';
-// -- End of imports
 
-//STLLoader - Updated by Nuwan
+// STLLoader
 var STLLoader = require('three-stl-loader')(THREE)
 
 // This class instantiates and ties all of the components together, starts the loading process and renders the main loop
@@ -77,7 +76,7 @@ export default class Main {
 
         // Set up gui
         //if (Config.isDev) {
-        //   this.gui = new DatGUI(this)
+            //this.gui = new DatGUI(this)
         //}
 
         // Instantiate texture class
@@ -86,11 +85,6 @@ export default class Main {
         // Start loading the textures and then go on to load the model after the texture Promises have resolved
         this.texture.load().then(() => {
             this.manager = new THREE.LoadingManager();
-
-            // Textures loaded, load model
-            //this.model = new Model(this.scene, this.manager, this.texture.textures);
-            //this.model.load(Config.models[Config.model.selected].type);
-
 
             // Create the environment ---------------------------------------------
             var geometry = new THREE.PlaneBufferGeometry(Config.arena.size, Config.arena.size);
@@ -127,7 +121,7 @@ export default class Main {
             };
 
             // Controls panel
-            this.gui.load(this, this.model.obj);
+            //this.gui.load(this, this.model.obj);
 
             // All loaders done now
             this.manager.onLoad = () => {
@@ -140,7 +134,7 @@ export default class Main {
                 if (Config.isDev) {
                     this.meshHelper = new MeshHelper(this.scene, this.model.obj);
                     if (Config.mesh.enableHelper) this.meshHelper.enable();
-                    this.gui.load(this, this.model.obj);
+                    //this.gui.load(this, this.model.obj);
                 }
 
                 // Everything is now fully loaded
