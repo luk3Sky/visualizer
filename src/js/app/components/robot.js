@@ -14,7 +14,7 @@ export default class Robot {
         var r = this.scene.getObjectByName("id_" + id);
         if (r != undefined) {
             r.material.color.setRGB(R/256, G/256, B/265);
-            console.log("Color> id:", id, " | R:", R, "G:", G, "B:", B);
+            //console.log("Color> id:", id, " | R:", R, "G:", G, "B:", B);
 
             if (callback != null) callback('success');
         } else {
@@ -40,7 +40,7 @@ export default class Robot {
                 var r = new THREE.Mesh(geometry, material);
                 r.receiveShadow = true;
                 r.name = "id_" + id;
-                r.position.set(x, 0, y);
+                r.position.set(y, 0, -1*x);
                 r.rotation.y = heading * THREE.Math.DEG2RAD;
                 window.scene.add(r);
 
@@ -81,7 +81,7 @@ export default class Robot {
         var r = this.scene.getObjectByName("id_" + id);
         if (r != undefined) {
             const newHeading = heading * THREE.Math.DEG2RAD;
-            var position = { x: r.position.x, y: r.position.z, heading: r.rotation.y };
+            var position = { x: -1*r.position.z, y: r.position.x, heading: r.rotation.y };
 
             // Limit the arena that robot can go
             x = Math.min(Math.max(Math.round(x*10)/10, Config.arena.minX), Config.arena.maxX);
@@ -97,8 +97,8 @@ export default class Robot {
                 var tween = new TWEEN.Tween(position).to({ x: x, y: y, heading: newHeading }, 1000 * (distance / speed))
                 /*.easing(TWEEN.Easing.Quartic.InOut)*/
                 .onUpdate(function () {
-                    r.position.x = position.x;
-                    r.position.z = position.y;
+                    r.position.x = position.y;
+                    r.position.z = -1*position.x;
                     r.rotation.y = position.heading;
 
                 }).onComplete(() => {
