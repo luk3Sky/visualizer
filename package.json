@@ -12,6 +12,7 @@
       "build": "run-s prebuild build:dir build:js",
       "prebuild": "run-s clean lint",
       "clean": "rimraf build",
+      "format": "prettier --write \"**/*.+(js|jsx|json|yml|yaml|css|md)\"",
       "lint": "eslint src/js/",
       "webpack-server": "webpack-dev-server --env.NODE_ENV=dev --progress --color --open --hot",
       "webpack-watch": "webpack --env.NODE_ENV=dev --progress --color --watch --hot",
@@ -64,6 +65,7 @@
       "es6-promise": "^4.2.8",
       "mqtt": "^4.2.1",
       "paho-mqtt": "^1.1.0",
+      "prettier": "^2.2.1",
       "three": "^0.118.3",
       "three-stl-loader": "^1.0.6"
    }

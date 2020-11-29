@@ -29,12 +29,11 @@ import Robot from './components/robot';
 import Config from './../data/config';
 
 // STLLoader
-var STLLoader = require('three-stl-loader')(THREE)
+var STLLoader = require('three-stl-loader')(THREE);
 
 // This class instantiates and ties all of the components together, starts the loading process and renders the main loop
 export default class Main {
     constructor(container) {
-
         // Set container property to container element
         this.container = container;
 
@@ -87,8 +86,14 @@ export default class Main {
             this.manager = new THREE.LoadingManager();
 
             // Create the environment ---------------------------------------------
-            var geometry = new THREE.PlaneBufferGeometry(Config.arena.size, Config.arena.size);
-            var material = new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false });
+            var geometry = new THREE.PlaneBufferGeometry(
+                Config.arena.size,
+                Config.arena.size
+            );
+            var material = new THREE.MeshPhongMaterial({
+                color: 0x999999,
+                depthWrite: false
+            });
             var ground = new THREE.Mesh(geometry, material);
             ground.position.set(0, 0, 0);
             //ground.rotation.x = - Math.PI / 2;
@@ -96,7 +101,7 @@ export default class Main {
             this.scene.add(ground);
 
             var grid = new THREE.GridHelper(Config.arena.size, 30, 0x000000, 0x5b5b5b);
-            grid.rotation.x = - Math.PI / 2;
+            grid.rotation.x = -Math.PI / 2;
             grid.position.set(0, 0, 0);
             grid.material.opacity = 0.35;
             grid.material.transparent = true;
@@ -131,7 +136,12 @@ export default class Main {
                 alert('Loaded');
 
                 // Set up interaction manager with the app now that the model is finished loading
-                new Interaction(this.renderer.threeRenderer, this.scene, this.camera.threeCamera, this.controls.threeControls);
+                new Interaction(
+                    this.renderer.threeRenderer,
+                    this.scene,
+                    this.camera.threeCamera,
+                    this.controls.threeControls
+                );
 
                 // Add dat.GUI controls if dev
                 if (Config.isDev) {

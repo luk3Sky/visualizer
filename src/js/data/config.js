@@ -2,19 +2,19 @@ import TWEEN from '@tweenjs/tween.js';
 
 // This object contains the state of the app
 export default {
-    arena:{
+    arena: {
         size: 300,
         minX: -140,
         maxX: 140,
         minY: -140,
         maxY: 140
     },
-    mqtt:{
-        server:"swarm-gui.tk",
-        port:8883,
-        path:"/socket.io",
-        user: "swarm_user",
-        password: "swarm_usere15"
+    mqtt: {
+        server: 'swarm-gui.tk',
+        port: 8883,
+        path: '/socket.io',
+        user: 'swarm_user',
+        password: 'swarm_usere15'
     },
     isDev: true,
     isShowingStats: false,
@@ -34,9 +34,7 @@ export default {
     },
     texture: {
         path: './assets/textures/',
-        imageFiles: [
-            { name: 'UV', image: 'UV_Grid_Sm.jpg' }
-        ]
+        imageFiles: [{ name: 'UV', image: 'UV_Grid_Sm.jpg' }]
     },
     mesh: {
         enableHelper: false,
@@ -67,8 +65,8 @@ export default {
         zoomSpeed: 0.8,
         minDistance: 200,
         maxDistance: 800,
-        minPolarAngle: 0,/*Math.PI / 6,*/
-        maxPolarAngle: (7/16)*Math.PI,
+        minPolarAngle: 0 /*Math.PI / 6,*/,
+        maxPolarAngle: (7 / 16) * Math.PI,
         minAzimuthAngle: -Infinity,
         maxAzimuthAngle: Infinity,
         enableDamping: true,

@@ -1,4 +1,3 @@
-
 import * as THREE from 'three';
 import TWEEN, { update } from '@tweenjs/tween.js';
 
@@ -24,14 +23,17 @@ const TOPIC_CHANGE_COLOR = 'v1/sensor/color';
 // -----------------------------------------------------------------------------
 
 export default class MQTTClient {
-
     constructor(scene, robot) {
-
         this.scene = scene;
         this.robot = robot;
 
         const client_id = 'client_' + Math.random().toString(36).substring(2, 15); // create a random client Id
-        this.client = new MQTT.Client(Config.mqtt.server, Config.mqtt.port, Config.mqtt.path, client_id);
+        this.client = new MQTT.Client(
+            Config.mqtt.server,
+            Config.mqtt.port,
+            Config.mqtt.path,
+            client_id
+        );
 
         window.mqtt = this.client;
 
@@ -40,7 +42,7 @@ export default class MQTTClient {
             password: Config.mqtt.password,
             reconnect: true,
             useSSL: true,
-            cleanSession : false,
+            cleanSession: false,
             onSuccess: () => {
                 console.log('MQTT: connected');
 
@@ -54,7 +56,7 @@ export default class MQTTClient {
                 this.client.onMessageArrived = this.onMessageArrived;
                 this.client.onConnectionLost = this.onConnectionLost;
             },
-            onFailure: ()=>{
+            onFailure: () => {
                 console.log('MQTT: connection failed');
             }
         });
@@ -62,7 +64,7 @@ export default class MQTTClient {
 
     onConnectionLost(responseObject) {
         if (responseObject.errorCode !== 0) {
-            console.log("MQTT: onConnectionLost:" + responseObject.errorMessage);
+            console.log('MQTT: onConnectionLost:' + responseObject.errorMessage);
             console.log('MQTT: reconnecting');
         }
     }
@@ -75,31 +77,29 @@ export default class MQTTClient {
             //console.log('MQTT: ' + topic + ' > ' + msg);
             try {
                 var data = JSON.parse(msg);
-                window.robot.create(data.id, data.x, data.y, data.heading)
+                window.robot.create(data.id, data.x, data.y, data.heading);
             } catch (e) {
                 console.error(e);
             }
-
-        }else if(topic == TOPIC_DELETE){
+        } else if (topic == TOPIC_DELETE) {
             try {
                 var data = JSON.parse(msg);
-                window.robot.delete(data.id)
+                window.robot.delete(data.id);
             } catch (e) {
                 console.error(e);
             }
-
         } else if (topic == TOPIC_INFO) {
             //console.log('MQTT: ' + topic + ' > ' + msg);
             try {
                 var data = JSON.parse(msg);
 
-                Object.entries(data).forEach(entry => {
+                Object.entries(data).forEach((entry) => {
                     // Update each robot
                     const r = entry[1];
 
-                    if(window.robot.exists(r.id)==undefined){
+                    if (window.robot.exists(r.id) == undefined) {
                         window.robot.create(r.id, r.x, r.y, r.heading);
-                    }else{
+                    } else {
                         window.robot.move(r.id, r.x, r.y, r.heading);
                     }
                 });
@@ -124,5 +124,4 @@ export default class MQTTClient {
 
         if (callback != null) callback();
     }
-
 }
