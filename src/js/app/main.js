@@ -76,7 +76,7 @@ export default class Main {
 
         // Set up gui
         //if (Config.isDev) {
-            //this.gui = new DatGUI(this)
+        //this.gui = new DatGUI(this)
         //}
 
         // Instantiate texture class
@@ -91,11 +91,12 @@ export default class Main {
             var material = new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false });
             var ground = new THREE.Mesh(geometry, material);
             ground.position.set(0, 0, 0);
-            ground.rotation.x = - Math.PI / 2;
+            //ground.rotation.x = - Math.PI / 2;
             ground.receiveShadow = true;
             this.scene.add(ground);
 
             var grid = new THREE.GridHelper(Config.arena.size, 30, 0x000000, 0x5b5b5b);
+            grid.rotation.x = - Math.PI / 2;
             grid.position.set(0, 0, 0);
             grid.material.opacity = 0.35;
             grid.material.transparent = true;
@@ -119,6 +120,8 @@ export default class Main {
             this.manager.onProgress = (item, loaded, total) => {
                 console.log(`${item}: ${loaded} ${total}`);
             };
+
+            //scene.add( new THREE.AxesHelper( 20 ) );
 
             // Controls panel
             //this.gui.load(this, this.model.obj);
