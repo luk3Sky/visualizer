@@ -16,37 +16,25 @@ window.glStats = function () {
         };
     }
 
-    WebGLRenderingContext.prototype.drawArrays = _h(
-        WebGLRenderingContext.prototype.drawArrays,
-        function () {
-            _totalDrawArraysCalls++;
-            if (arguments[0] == this.POINTS) _totalPoints += arguments[2];
-            else _totalVertices += arguments[2];
-        }
-    );
+    WebGLRenderingContext.prototype.drawArrays = _h(WebGLRenderingContext.prototype.drawArrays, function () {
+        _totalDrawArraysCalls++;
+        if (arguments[0] == this.POINTS) _totalPoints += arguments[2];
+        else _totalVertices += arguments[2];
+    });
 
-    WebGLRenderingContext.prototype.drawElements = _h(
-        WebGLRenderingContext.prototype.drawElements,
-        function () {
-            _totalDrawElementsCalls++;
-            _totalFaces += arguments[1] / 3;
-            _totalVertices += arguments[1];
-        }
-    );
+    WebGLRenderingContext.prototype.drawElements = _h(WebGLRenderingContext.prototype.drawElements, function () {
+        _totalDrawElementsCalls++;
+        _totalFaces += arguments[1] / 3;
+        _totalVertices += arguments[1];
+    });
 
-    WebGLRenderingContext.prototype.useProgram = _h(
-        WebGLRenderingContext.prototype.useProgram,
-        function () {
-            _totalUseProgramCalls++;
-        }
-    );
+    WebGLRenderingContext.prototype.useProgram = _h(WebGLRenderingContext.prototype.useProgram, function () {
+        _totalUseProgramCalls++;
+    });
 
-    WebGLRenderingContext.prototype.bindTexture = _h(
-        WebGLRenderingContext.prototype.bindTexture,
-        function () {
-            _totalBindTexures++;
-        }
-    );
+    WebGLRenderingContext.prototype.bindTexture = _h(WebGLRenderingContext.prototype.bindTexture, function () {
+        _totalBindTexures++;
+    });
 
     var _values = {
         allcalls: {
@@ -153,19 +141,11 @@ window.threeStats = function (renderer) {
     var _groups = [
         {
             caption: 'Three.js - Memory',
-            values: [
-                'renderer.info.memory.geometries',
-                'renderer.info.programs',
-                'renderer.info.memory.textures'
-            ]
+            values: ['renderer.info.memory.geometries', 'renderer.info.programs', 'renderer.info.memory.textures']
         },
         {
             caption: 'Three.js - Render',
-            values: [
-                'renderer.info.render.calls',
-                'renderer.info.render.triangles',
-                'renderer.info.render.points'
-            ]
+            values: ['renderer.info.render.calls', 'renderer.info.render.triangles', 'renderer.info.render.points']
         }
     ];
 
@@ -217,9 +197,7 @@ window.BrowserStats = function () {
     if (window.performance && performance.memory) memory = performance.memory;
 
     if (memory.totalJSHeapSize === 0) {
-        console.warn(
-            'totalJSHeapSize === 0... performance.memory is only available in Chrome .'
-        );
+        console.warn('totalJSHeapSize === 0... performance.memory is only available in Chrome .');
     }
 
     var _values = {

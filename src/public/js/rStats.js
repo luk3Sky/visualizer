@@ -71,13 +71,7 @@ window.rStats = function rStats(settings) {
     }
 
     var _settings = settings || {};
-    var _colours = _settings.colours || [
-        '#850700',
-        '#c74900',
-        '#fcb300',
-        '#284280',
-        '#4c7c0c'
-    ];
+    var _colours = _settings.colours || ['#850700', '#c74900', '#fcb300', '#284280', '#4c7c0c'];
 
     var _cssFont = 'https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700,300';
     var _cssRStats = (_settings.CSSPath ? _settings.CSSPath : '') + 'rStats.css';
@@ -146,17 +140,7 @@ window.rStats = function rStats(settings) {
             _current += (v - _current) * 0.1;
             _max *= 0.99;
             if (_current > _max) _max = _current;
-            _ctx.drawImage(
-                _canvas,
-                1,
-                0,
-                _canvas.width - 1,
-                _canvas.height,
-                0,
-                0,
-                _canvas.width - 1,
-                _canvas.height
-            );
+            _ctx.drawImage(_canvas, 1, 0, _canvas.width - 1, _canvas.height, 0, 0, _canvas.width - 1, _canvas.height);
             if (alarm) {
                 _ctx.drawImage(
                     _alarmCanvas,
@@ -196,17 +180,7 @@ window.rStats = function rStats(settings) {
         }
 
         function _draw(v) {
-            _ctx.drawImage(
-                _canvas,
-                1,
-                0,
-                _canvas.width - 1,
-                _canvas.height,
-                0,
-                0,
-                _canvas.width - 1,
-                _canvas.height
-            );
+            _ctx.drawImage(_canvas, 1, 0, _canvas.width - 1, _canvas.height, 0, 0, _canvas.width - 1, _canvas.height);
             var th = 0;
             iterateKeys(v, function (j) {
                 var h = v[j] * _canvas.height;
@@ -292,10 +266,7 @@ window.rStats = function rStats(settings) {
         function _draw() {
             var v = _def && _def.average ? _averageValue : _value;
             _spanValueText.nodeValue = Math.round(v * 100) / 100;
-            var a =
-                _def &&
-                ((_def.below && _value < _def.below) ||
-                    (_def.over && _value > _def.over));
+            var a = _def && ((_def.below && _value < _def.below) || (_def.over && _value > _def.over));
             _graph.draw(_value, a);
             _dom.className = a ? 'rs-counter-base alarm' : 'rs-counter-base';
         }
@@ -380,9 +351,7 @@ window.rStats = function rStats(settings) {
                     _settings.values[k] = _settings.plugins[j].values[k];
                 });
                 _settings.groups = _settings.groups.concat(_settings.plugins[j].groups);
-                _settings.fractions = _settings.fractions.concat(
-                    _settings.plugins[j].fractions
-                );
+                _settings.fractions = _settings.fractions.concat(_settings.plugins[j].fractions);
             }
         } else {
             _settings.plugins = {};
@@ -461,9 +430,7 @@ window.rStats = function rStats(settings) {
                 if (base) {
                     base = base.value();
                     iterateKeys(_settings.fractions[j].steps, function (k) {
-                        var s = _settings.fractions[j].steps[
-                            parseInt(k, 10)
-                        ].toLowerCase();
+                        var s = _settings.fractions[j].steps[parseInt(k, 10)].toLowerCase();
                         var val = _perfCounters[s];
                         if (val) {
                             v.push(val.value() / base);
