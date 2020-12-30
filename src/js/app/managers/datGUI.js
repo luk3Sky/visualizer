@@ -23,9 +23,7 @@ export default class DatGUI {
 
         /* Camera */
         const cameraFolder = this.gui.addFolder('Camera');
-        const cameraFOVGui = cameraFolder
-            .add(Config.camera, 'fov', 0, 180)
-            .name('Camera FOV');
+        const cameraFOVGui = cameraFolder.add(Config.camera, 'fov', 0, 180).name('Camera FOV');
         cameraFOVGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -36,9 +34,7 @@ export default class DatGUI {
 
             this.controls.enableRotate = true;
         });
-        const cameraAspectGui = cameraFolder
-            .add(Config.camera, 'aspect', 0, 4)
-            .name('Camera Aspect');
+        const cameraAspectGui = cameraFolder.add(Config.camera, 'aspect', 0, 4).name('Camera Aspect');
         cameraAspectGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -49,15 +45,11 @@ export default class DatGUI {
 
             this.controls.enableRotate = true;
         });
-        const cameraFogColorGui = cameraFolder
-            .addColor(Config.fog, 'color')
-            .name('Fog Color');
+        const cameraFogColorGui = cameraFolder.addColor(Config.fog, 'color').name('Fog Color');
         cameraFogColorGui.onChange((value) => {
             this.scene.fog.color.setHex(value);
         });
-        const cameraFogNearGui = cameraFolder
-            .add(Config.fog, 'near', 0.0, 0.01)
-            .name('Fog Near');
+        const cameraFogNearGui = cameraFolder.add(Config.fog, 'near', 0.0, 0.01).name('Fog Near');
         cameraFogNearGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -221,9 +213,7 @@ export default class DatGUI {
             .onChange((value) => {
                 this.light.directionalLightHelper.visible = value;
             });
-        const shadowNearGui = shadowFolder
-            .add(Config.shadow, 'near', 0, 400)
-            .name('Near');
+        const shadowNearGui = shadowFolder.add(Config.shadow, 'near', 0, 400).name('Near');
         shadowNearGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -247,9 +237,7 @@ export default class DatGUI {
             this.light.directionalLight.shadow.map = null;
             this.light.directionalLightHelper.update();
         });
-        const shadowTopGui = shadowFolder
-            .add(Config.shadow, 'top', -400, 400)
-            .name('Top');
+        const shadowTopGui = shadowFolder.add(Config.shadow, 'top', -400, 400).name('Top');
         shadowTopGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -261,9 +249,7 @@ export default class DatGUI {
             this.light.directionalLight.shadow.map = null;
             this.light.directionalLightHelper.update();
         });
-        const shadowRightGui = shadowFolder
-            .add(Config.shadow, 'right', -400, 400)
-            .name('Right');
+        const shadowRightGui = shadowFolder.add(Config.shadow, 'right', -400, 400).name('Right');
         shadowRightGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -275,9 +261,7 @@ export default class DatGUI {
             this.light.directionalLight.shadow.map = null;
             this.light.directionalLightHelper.update();
         });
-        const shadowBottomGui = shadowFolder
-            .add(Config.shadow, 'bottom', -400, 400)
-            .name('Bottom');
+        const shadowBottomGui = shadowFolder.add(Config.shadow, 'bottom', -400, 400).name('Bottom');
         shadowBottomGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -289,9 +273,7 @@ export default class DatGUI {
             this.light.directionalLight.shadow.map = null;
             this.light.directionalLightHelper.update();
         });
-        const shadowLeftGui = shadowFolder
-            .add(Config.shadow, 'left', -400, 400)
-            .name('Left');
+        const shadowLeftGui = shadowFolder.add(Config.shadow, 'left', -400, 400).name('Left');
         shadowLeftGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -303,9 +285,7 @@ export default class DatGUI {
             this.light.directionalLight.shadow.map = null;
             this.light.directionalLightHelper.update();
         });
-        const shadowBiasGui = shadowFolder
-            .add(Config.shadow, 'bias', -0.00001, 1)
-            .name('Bias');
+        const shadowBiasGui = shadowFolder.add(Config.shadow, 'bias', -0.00001, 1).name('Bias');
         shadowBiasGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -332,9 +312,7 @@ export default class DatGUI {
             .onChange((value) => {
                 this.light.pointLight.color.setHex(value);
             });
-        const pointLightIntensityGui = pointLightFolder
-            .add(Config.pointLight, 'intensity', 0, 2)
-            .name('Intensity');
+        const pointLightIntensityGui = pointLightFolder.add(Config.pointLight, 'intensity', 0, 2).name('Intensity');
         pointLightIntensityGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -343,9 +321,7 @@ export default class DatGUI {
         pointLightIntensityGui.onFinishChange(() => {
             this.controls.enableRotate = true;
         });
-        const pointLightDistanceGui = pointLightFolder
-            .add(Config.pointLight, 'distance', 0, 1000)
-            .name('Distance');
+        const pointLightDistanceGui = pointLightFolder.add(Config.pointLight, 'distance', 0, 1000).name('Distance');
         pointLightDistanceGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -354,9 +330,7 @@ export default class DatGUI {
         pointLightDistanceGui.onFinishChange(() => {
             this.controls.enableRotate = true;
         });
-        const pointLightPositionXGui = pointLightFolder
-            .add(Config.pointLight, 'x', -1000, 1000)
-            .name('Position X');
+        const pointLightPositionXGui = pointLightFolder.add(Config.pointLight, 'x', -1000, 1000).name('Position X');
         pointLightPositionXGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -365,9 +339,7 @@ export default class DatGUI {
         pointLightPositionXGui.onFinishChange(() => {
             this.controls.enableRotate = true;
         });
-        const pointLightPositionYGui = pointLightFolder
-            .add(Config.pointLight, 'y', -1000, 1000)
-            .name('Position Y');
+        const pointLightPositionYGui = pointLightFolder.add(Config.pointLight, 'y', -1000, 1000).name('Position Y');
         pointLightPositionYGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -376,9 +348,7 @@ export default class DatGUI {
         pointLightPositionYGui.onFinishChange(() => {
             this.controls.enableRotate = true;
         });
-        const pointLightPositionZGui = pointLightFolder
-            .add(Config.pointLight, 'z', -1000, 1000)
-            .name('Position Z');
+        const pointLightPositionZGui = pointLightFolder.add(Config.pointLight, 'z', -1000, 1000).name('Position Z');
         pointLightPositionZGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -408,9 +378,7 @@ export default class DatGUI {
             .onChange((value) => {
                 this.light.hemiLight.groundColor.setHex(value);
             });
-        const hemiLightIntensityGui = hemiLightFolder
-            .add(Config.hemiLight, 'intensity', 0, 2)
-            .name('Intensity');
+        const hemiLightIntensityGui = hemiLightFolder.add(Config.hemiLight, 'intensity', 0, 2).name('Intensity');
         hemiLightIntensityGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -419,9 +387,7 @@ export default class DatGUI {
         hemiLightIntensityGui.onFinishChange(() => {
             this.controls.enableRotate = true;
         });
-        const hemiLightPositionXGui = hemiLightFolder
-            .add(Config.hemiLight, 'x', -1000, 1000)
-            .name('Position X');
+        const hemiLightPositionXGui = hemiLightFolder.add(Config.hemiLight, 'x', -1000, 1000).name('Position X');
         hemiLightPositionXGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -430,9 +396,7 @@ export default class DatGUI {
         hemiLightPositionXGui.onFinishChange(() => {
             this.controls.enableRotate = true;
         });
-        const hemiLightPositionYGui = hemiLightFolder
-            .add(Config.hemiLight, 'y', -500, 1000)
-            .name('Position Y');
+        const hemiLightPositionYGui = hemiLightFolder.add(Config.hemiLight, 'y', -500, 1000).name('Position Y');
         hemiLightPositionYGui.onChange((value) => {
             this.controls.enableRotate = false;
 
@@ -441,9 +405,7 @@ export default class DatGUI {
         hemiLightPositionYGui.onFinishChange(() => {
             this.controls.enableRotate = true;
         });
-        const hemiLightPositionZGui = hemiLightFolder
-            .add(Config.hemiLight, 'z', -1000, 1000)
-            .name('Position Z');
+        const hemiLightPositionZGui = hemiLightFolder.add(Config.hemiLight, 'z', -1000, 1000).name('Position Z');
         hemiLightPositionZGui.onChange((value) => {
             this.controls.enableRotate = false;
 

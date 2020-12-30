@@ -4,6 +4,9 @@ import TWEEN, { update } from '@tweenjs/tween.js';
 import Config from '../../data/config';
 import MQTT from 'paho-mqtt';
 
+import Obstacle from '../components/obstacle';
+import Robot from '../components/robot';
+
 // -----------------------------------------------------------------------------
 // MQTT Topics
 // -----------------------------------------------------------------------------
@@ -17,23 +20,25 @@ const TOPIC_DELETE = 'v1/robot/delete';
 // This will request the localization data update from the server
 const TOPIC_LOC_REQUEST = 'v1/localization/?';
 
+// This will request obstacle data from the server
+const TOPIC_OBSTACLE_REQUEST = 'v1/obstacles/?';
+
+// This will send obstacle data as a JSON list
+const TOPIC_OBSTACLES_LIST = 'v1/obstacles/';
+
 // TODO: need to map with the server
 const TOPIC_CHANGE_COLOR = 'v1/sensor/color';
 
 // -----------------------------------------------------------------------------
 
 export default class MQTTClient {
-    constructor(scene, robot) {
+    constructor(scene) {
         this.scene = scene;
-        this.robot = robot;
+        this.robot = new Robot(scene);
+        this.obstacles = new Obstacle(scene);
 
         const client_id = 'client_' + Math.random().toString(36).substring(2, 15); // create a random client Id
-        this.client = new MQTT.Client(
-            Config.mqtt.server,
-            Config.mqtt.port,
-            Config.mqtt.path,
-            client_id
-        );
+        this.client = new MQTT.Client(Config.mqtt.server, Config.mqtt.port, Config.mqtt.path, client_id);
 
         window.mqtt = this.client;
 
@@ -51,8 +56,18 @@ export default class MQTTClient {
                 this.client.subscribe(TOPIC_CREATE);
                 this.client.subscribe(TOPIC_DELETE);
                 this.client.subscribe(TOPIC_CHANGE_COLOR);
+                this.client.subscribe(TOPIC_OBSTACLES_LIST);
 
+                // Request for obstacle data
+                this.publish(TOPIC_OBSTACLE_REQUEST, '?');
+
+                // Request for coordinate data
+                this.publish(TOPIC_LOC_REQUEST, '?');
+
+                // Access globally
                 window.robot = this.robot;
+                window.obstacles = this.obstacles;
+
                 this.client.onMessageArrived = this.onMessageArrived;
                 this.client.onConnectionLost = this.onConnectionLost;
             },
@@ -103,6 +118,14 @@ export default class MQTTClient {
                         window.robot.move(r.id, r.x, r.y, r.heading);
                     }
                 });
+            } catch (e) {
+                console.error(e);
+            }
+        } else if (topic == TOPIC_OBSTACLES_LIST) {
+            // Create obstacles in the arena
+            try {
+                const data = JSON.parse(msg);
+                window.obstacles.createList(data);
             } catch (e) {
                 console.error(e);
             }

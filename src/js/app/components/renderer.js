@@ -35,10 +35,7 @@ export default class Renderer {
     }
 
     updateSize() {
-        this.threeRenderer.setSize(
-            this.container.offsetWidth,
-            this.container.offsetHeight
-        );
+        this.threeRenderer.setSize(this.container.offsetWidth, this.container.offsetHeight);
     }
 
     render(scene, camera) {

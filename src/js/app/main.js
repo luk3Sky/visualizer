@@ -21,9 +21,8 @@ import Model from './model/model';
 import Interaction from './managers/interaction';
 import DatGUI from './managers/datGUI';
 
-// Implemented by Nuwan
+// Newly implemented classes
 import MQTTClient from './managers/mqttClient';
-import Robot from './components/robot';
 
 // Config data
 import Config from './../data/config';
@@ -46,8 +45,6 @@ export default class Main {
 
         this.scene.fog = new THREE.FogExp2(Config.fog.color, Config.fog.near);
 
-        // Defined by Nuwan
-        this.robot = new Robot(this.scene);
         this.mqtt = new MQTTClient(this.scene, this.robot);
 
         // Get Device Pixel Ratio first for retina
@@ -86,10 +83,7 @@ export default class Main {
             this.manager = new THREE.LoadingManager();
 
             // Create the environment ---------------------------------------------
-            var geometry = new THREE.PlaneBufferGeometry(
-                Config.arena.size,
-                Config.arena.size
-            );
+            var geometry = new THREE.PlaneBufferGeometry(Config.arena.size, Config.arena.size);
             var material = new THREE.MeshPhongMaterial({
                 color: 0x999999,
                 depthWrite: false
@@ -108,16 +102,8 @@ export default class Main {
             this.scene.add(grid);
 
             //---------------------------------------
-            //this.robot.create(0,80,80);
-            //this.robot.create(2,80,60);
-            //this.robot.move(2, -50, 50, ()=>{
-            //   this.robot.move(2, 0, 0);
-            //});
-
-            //this.robot.get_coordinates(2);
-
-            //---------------------------------------
-            //this.mqtt.publish('v1/localization/info', 'hello !');
+            console.log('test');
+            const obs = new Obstacle(this.scene);
 
             // -------------------------------------
 
@@ -125,11 +111,6 @@ export default class Main {
             this.manager.onProgress = (item, loaded, total) => {
                 console.log(`${item}: ${loaded} ${total}`);
             };
-
-            //scene.add( new THREE.AxesHelper( 20 ) );
-
-            // Controls panel
-            //this.gui.load(this, this.model.obj);
 
             // All loaders done now
             this.manager.onLoad = () => {

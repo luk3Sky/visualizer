@@ -1,7 +1,7 @@
 {
-   "name": "FYP-simulator-gui",
+   "name": "PeraSwarm-Visualizer",
    "version": "1.0.0",
-   "description": "GUI",
+   "description": "The GUI visualizor for Pera Swarm Project",
    "private": "true",
    "main": "app.js",
    "engines": {
