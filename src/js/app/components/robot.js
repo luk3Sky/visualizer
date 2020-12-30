@@ -45,7 +45,7 @@ export default class Robot {
                 r.rotation.y = (heading - 90) * THREE.Math.DEG2RAD;
                 window.scene.add(r);
 
-                console.log('Created> id:', id, ' | x:', x, 'y:', y, 'heading:', heading);
+                console.log('Created> Robot: id:', id, ' | x:', x, 'y:', y, 'heading:', heading);
 
                 // Callback function
                 if (callback != undefined) callback('success');
@@ -84,20 +84,12 @@ export default class Robot {
             var position = { x: r.position.x, y: r.position.y, heading: r.rotation.y };
 
             // Limit the arena that robot can go
-            x = Math.min(
-                Math.max(Math.round(x * 10) / 10, Config.arena.minX),
-                Config.arena.maxX
-            );
-            y = Math.min(
-                Math.max(Math.round(y * 10) / 10, Config.arena.minY),
-                Config.arena.maxY
-            );
+            x = Math.min(Math.max(Math.round(x * 10) / 10, Config.arena.minX), Config.arena.maxX);
+            y = Math.min(Math.max(Math.round(y * 10) / 10, Config.arena.minY), Config.arena.maxY);
             heading = Math.round(heading * 10) / 10;
 
             // const speed = 10;
-            const distance = Math.sqrt(
-                Math.pow(x - position.x, 2) + Math.pow(y - position.y, 2)
-            );
+            const distance = Math.sqrt(Math.pow(x - position.x, 2) + Math.pow(y - position.y, 2));
 
             const moveTime = 1; //distance / speed;
             // TODO: If distance is 0, need to handle only the rotation
