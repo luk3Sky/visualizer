@@ -7,4 +7,4 @@ node_modules
 gh-pages-actions
 gh-pages-actions.pub
 
-/src/public/*
+src/public/*
