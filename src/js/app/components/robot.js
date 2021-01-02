@@ -80,8 +80,13 @@ export default class Robot {
     move(id, x, y, heading, callback) {
         var r = this.scene.getObjectByName('id_' + id);
         if (r != undefined) {
+            const currentHeading = r.rotation.y;
             const newHeading = (heading - 90) * THREE.Math.DEG2RAD;
             var position = { x: r.position.x, y: r.position.y, heading: r.rotation.y };
+
+            // TODO: need a smoother way than this rough trick
+            // If current and target rotations in different signs
+            const rotationFlag = currentHeading * newHeading >= 0 ? true : false;
 
             // Limit the arena that robot can go
             x = Math.min(Math.max(Math.round(x * 10) / 10, Config.arena.minX), Config.arena.maxX);
@@ -101,10 +106,16 @@ export default class Robot {
                     .onUpdate(function () {
                         r.position.x = position.x;
                         r.position.y = position.y;
-                        r.rotation.y = position.heading;
+
+                        if (rotationFlag) {
+                            r.rotation.y = position.heading;
+                        } else {
+                            //console.log(currentHeading, newHeading);
+                        }
                     })
                     .onComplete(() => {
-                        //console.log('Move> id:',id,'x:',x,'y:',y,'heading:',heading);
+                        //console.log('Moved> id:',id,'x:',x,'y:',y,'heading:',heading);
+                        r.rotation.y = position.heading;
                         if (callback != null) callback('success');
                     })
                     .delay(50)
