@@ -86,7 +86,7 @@ export default class Robot {
 
             // TODO: need a smoother way than this rough trick
             // If current and target rotations in different signs
-            const rotationFlag = (currentHeading*newHeading >= 0 ) ? true:false;
+            const rotationFlag = currentHeading * newHeading >= 0 ? true : false;
 
             // Limit the arena that robot can go
             x = Math.min(Math.max(Math.round(x * 10) / 10, Config.arena.minX), Config.arena.maxX);
@@ -101,26 +101,25 @@ export default class Robot {
 
             if (distance != 0) {
                 var tween = new TWEEN.Tween(position)
-                .to({ x: x, y: y, heading: newHeading }, 1000 * moveTime)
-                /*.easing(TWEEN.Easing.Quartic.InOut)*/
-                .onUpdate(function () {
-                    r.position.x = position.x;
-                    r.position.y = position.y;
+                    .to({ x: x, y: y, heading: newHeading }, 1000 * moveTime)
+                    /*.easing(TWEEN.Easing.Quartic.InOut)*/
+                    .onUpdate(function () {
+                        r.position.x = position.x;
+                        r.position.y = position.y;
 
-                    if (rotationFlag) {
+                        if (rotationFlag) {
+                            r.rotation.y = position.heading;
+                        } else {
+                            //console.log(currentHeading, newHeading);
+                        }
+                    })
+                    .onComplete(() => {
+                        //console.log('Moved> id:',id,'x:',x,'y:',y,'heading:',heading);
                         r.rotation.y = position.heading;
-                    }else{
-                        //console.log(currentHeading, newHeading);
-                    }
-
-                })
-                .onComplete(() => {
-                    //console.log('Moved> id:',id,'x:',x,'y:',y,'heading:',heading);
-                    r.rotation.y = position.heading;
-                    if (callback != null) callback('success');
-                })
-                .delay(50)
-                .start();
+                        if (callback != null) callback('success');
+                    })
+                    .delay(50)
+                    .start();
             } else {
                 // No move, only the rotation
                 r.rotation.y = newHeading;
