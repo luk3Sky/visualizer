@@ -11,23 +11,23 @@ import Robot from '../components/robot';
 // MQTT Topics
 // -----------------------------------------------------------------------------
 // This will provide location data to the GUI
-const TOPIC_INFO = 'v1/localization/info';
+const TOPIC_INFO = 'localization/info';
 
 // Create and delete robot objects
-const TOPIC_CREATE = 'v1/robot/create';
-const TOPIC_DELETE = 'v1/robot/delete';
+const TOPIC_CREATE = 'robot/create';
+const TOPIC_DELETE = 'robot/delete';
 
 // This will request the localization data update from the server
-const TOPIC_LOC_REQUEST = 'v1/localization/?';
+const TOPIC_LOC_REQUEST = 'localization/?';
 
 // This will request obstacle data from the server
-const TOPIC_OBSTACLE_REQUEST = 'v1/obstacles/?';
+const TOPIC_OBSTACLE_REQUEST = 'obstacles/?';
 
 // This will send obstacle data as a JSON list
-const TOPIC_OBSTACLES_LIST = 'v1/obstacles/';
+const TOPIC_OBSTACLES_LIST = 'obstacles/';
 
 // TODO: need to map with the server
-const TOPIC_CHANGE_COLOR = 'v1/sensor/color';
+const TOPIC_CHANGE_COLOR = 'sensor/color';
 
 // -----------------------------------------------------------------------------
 
@@ -37,7 +37,10 @@ export default class MQTTClient {
         this.robot = new Robot(scene);
         this.obstacles = new Obstacle(scene);
 
-        const client_id = 'client_' + Math.random().toString(36).substring(2, 15); // create a random client Id
+        this.updateChannel();
+
+        // create a random client Id
+        const client_id = 'client_' + Math.random().toString(36).substring(2, 15);
         this.client = new MQTT.Client(Config.mqtt.server, Config.mqtt.port, Config.mqtt.path, client_id);
 
         window.mqtt = this.client;
@@ -77,6 +80,17 @@ export default class MQTTClient {
         });
     }
 
+    updateChannel() {
+        const channelHash = window.location.hash;
+        if ((channelHash != '') & (channelHash.length > 1)) {
+            this.channel = channelHash.substring(1);
+        } else {
+            this.channel = Config.mqtt.channel;
+        }
+        console.log('MQTT: channel=', this.channel);
+        return true;
+    }
+
     onConnectionLost(responseObject) {
         if (responseObject.errorCode !== 0) {
             console.log('MQTT: onConnectionLost:' + responseObject.errorMessage);
@@ -86,7 +100,7 @@ export default class MQTTClient {
 
     onMessageArrived(packet) {
         const msg = packet.payloadString.trim();
-        const topic = packet.destinationName;
+        const topic = this.channel + '/' + packet.destinationName;
 
         if (topic == TOPIC_CREATE) {
             //console.log('MQTT: ' + topic + ' > ' + msg);
@@ -141,9 +155,10 @@ export default class MQTTClient {
 
     publish(topic, message, callback) {
         var payload = new MQTT.Message(message);
-        payload.destinationName = topic;
+        const pubTopic = this.channel + '/' + topic;
+        payload.destinationName = pubTopic;
         this.client.send(payload);
-        console.log('MQTT: published');
+        console.log('MQTT: published', pubTopic);
 
         if (callback != null) callback();
     }

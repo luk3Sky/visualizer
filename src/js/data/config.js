@@ -14,7 +14,8 @@ export default {
         port: 8883,
         path: '/socket.io',
         user: 'swarm_user',
-        password: 'swarm_usere15'
+        password: 'swarm_usere15',
+        channel: 'v1'
     },
     isDev: true,
     isShowingStats: false,

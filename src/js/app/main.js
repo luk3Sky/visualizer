@@ -102,8 +102,6 @@ export default class Main {
             this.scene.add(grid);
 
             //---------------------------------------
-            console.log('test');
-            const obs = new Obstacle(this.scene);
 
             // -------------------------------------
 
