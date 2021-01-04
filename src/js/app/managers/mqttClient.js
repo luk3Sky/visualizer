@@ -55,11 +55,11 @@ export default class MQTTClient {
                 console.log('MQTT: connected');
 
                 // Subscribe to topics
-                this.client.subscribe(TOPIC_INFO);
-                this.client.subscribe(TOPIC_CREATE);
-                this.client.subscribe(TOPIC_DELETE);
-                this.client.subscribe(TOPIC_CHANGE_COLOR);
-                this.client.subscribe(TOPIC_OBSTACLES_LIST);
+                this.subscribe(TOPIC_INFO);
+                this.subscribe(TOPIC_CREATE);
+                this.subscribe(TOPIC_DELETE);
+                this.subscribe(TOPIC_CHANGE_COLOR);
+                this.subscribe(TOPIC_OBSTACLES_LIST);
 
                 // Request for obstacle data
                 this.publish(TOPIC_OBSTACLE_REQUEST, '?');
@@ -151,6 +151,13 @@ export default class MQTTClient {
                 console.error(e);
             }
         }
+    }
+
+    subscribe(topic, callback) {
+        const subTopic = this.channel + '/' + topic;
+        this.client.subscribe(subTopic);
+        console.log('MQTT: subscribed', subTopic);
+        if (callback != null) callback();
     }
 
     publish(topic, message, callback) {
