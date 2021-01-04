@@ -83,11 +83,11 @@ export default class MQTTClient {
     updateChannel() {
         const channelHash = window.location.hash;
         if ((channelHash != '') & (channelHash.length > 1)) {
-            this.channel = channelHash.substring(1);
+            window.channel = channelHash.substring(1);
         } else {
-            this.channel = Config.mqtt.channel;
+            window.channel = Config.mqtt.channel;
         }
-        console.log('MQTT: channel=', this.channel);
+        console.log('MQTT: channel=', window.channel);
         return true;
     }
 
@@ -100,10 +100,13 @@ export default class MQTTClient {
 
     onMessageArrived(packet) {
         const msg = packet.payloadString.trim();
-        const topic = this.channel + '/' + packet.destinationName;
+        const t = packet.destinationName;
+        const topic = t.substring(t.indexOf("/") + 1);
+
+        //console.log('MQTT: ' + topic + ' > ' + msg);
 
         if (topic == TOPIC_CREATE) {
-            //console.log('MQTT: ' + topic + ' > ' + msg);
+
             try {
                 var data = JSON.parse(msg);
                 window.robot.create(data.id, data.x, data.y, data.heading);
@@ -154,7 +157,7 @@ export default class MQTTClient {
     }
 
     subscribe(topic, callback) {
-        const subTopic = this.channel + '/' + topic;
+        const subTopic = window.channel + '/' + topic;
         this.client.subscribe(subTopic);
         console.log('MQTT: subscribed', subTopic);
         if (callback != null) callback();
@@ -162,7 +165,7 @@ export default class MQTTClient {
 
     publish(topic, message, callback) {
         var payload = new MQTT.Message(message);
-        const pubTopic = this.channel + '/' + topic;
+        const pubTopic = window.channel + '/' + topic;
         payload.destinationName = pubTopic;
         this.client.send(payload);
         console.log('MQTT: published', pubTopic);
