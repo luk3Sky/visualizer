@@ -51,7 +51,9 @@ export default class Robot {
                 if (callback != undefined) callback('success');
             });
         } else {
-            if (callback != undefined) callback('already defined');
+            this.move(id, x, y, heading, ()=>{
+                if (callback != undefined) callback('already defined, so moved');
+            })
         }
         return r;
     }
