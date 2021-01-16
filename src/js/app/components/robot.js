@@ -5,7 +5,7 @@ import Config from '../../data/config';
 
 var STLLoader = require('three-stl-loader')(THREE);
 
-const ROBOT_PREFIX = "id_";
+const ROBOT_PREFIX = "robot_";
 
 export default class Robot {
     constructor(scene) {
@@ -46,12 +46,11 @@ export default class Robot {
                 r.rotation.x = 90 * THREE.Math.DEG2RAD;
                 r.rotation.y = (heading - 90) * THREE.Math.DEG2RAD;
 
-                // add click event
-                r.on('click', function(event){
-                    console.log(event);
-                });
-
                 window.scene.add(r);
+
+                r.clickEvent = function(m) {
+                    window.robot.alert(m);
+                };
 
                 console.log('Created> Robot: id:', id, ' | x:', x, 'y:', y, 'heading:', heading);
 
@@ -83,18 +82,18 @@ export default class Robot {
     }
 
     deleteAll(){
-            // Delete all robots
-            const objects = this.scene.children;
+        // Delete all robots
+        const objects = this.scene.children;
 
-            Object.entries(objects).forEach((obj) => {
-                const name = obj[1]['name'];
+        Object.entries(objects).forEach((obj) => {
+            const name = obj[1]['name'];
 
-                if(name.startsWith(ROBOT_PREFIX)){
-                    console.log('Deleted>', name);
-                    this.scene.remove(obj[1]);
-                }
-            });
-        }
+            if(name.startsWith(ROBOT_PREFIX)){
+                console.log('Deleted>', name);
+                this.scene.remove(obj[1]);
+            }
+        });
+    }
 
     exists(id) {
         var r = this.scene.getObjectByName(ROBOT_PREFIX + id);
@@ -125,25 +124,25 @@ export default class Robot {
 
             if (distance != 0) {
                 var tween = new TWEEN.Tween(position)
-                    .to({ x: x, y: y, heading: newHeading }, 1000 * moveTime)
-                    /*.easing(TWEEN.Easing.Quartic.InOut)*/
-                    .onUpdate(function () {
-                        r.position.x = position.x;
-                        r.position.y = position.y;
+                .to({ x: x, y: y, heading: newHeading }, 1000 * moveTime)
+                /*.easing(TWEEN.Easing.Quartic.InOut)*/
+                .onUpdate(function () {
+                    r.position.x = position.x;
+                    r.position.y = position.y;
 
-                        if (rotationFlag) {
-                            r.rotation.y = position.heading;
-                        } else {
-                            //console.log(currentHeading, newHeading);
-                        }
-                    })
-                    .onComplete(() => {
-                        //console.log('Moved> id:',id,'x:',x,'y:',y,'heading:',heading);
+                    if (rotationFlag) {
                         r.rotation.y = position.heading;
-                        if (callback != null) callback('success');
-                    })
-                    .delay(50)
-                    .start();
+                    } else {
+                        //console.log(currentHeading, newHeading);
+                    }
+                })
+                .onComplete(() => {
+                    //console.log('Moved> id:',id,'x:',x,'y:',y,'heading:',heading);
+                    r.rotation.y = position.heading;
+                    if (callback != null) callback('success');
+                })
+                .delay(50)
+                .start();
             } else {
                 // No move, only the rotation
                 r.rotation.y = newHeading;
@@ -166,5 +165,19 @@ export default class Robot {
 
     update() {
         TWEEN.update();
+    }
+
+    alert(mesh){
+        // Display an alert on window
+
+        //alert(mesh.name);
+        //console.log(mesh)
+        let disp = document.querySelector('#msg-box');
+        disp.innerHTML = mesh.name;
+        disp.style.display = 'block';
+
+        setTimeout(function () {
+            document.querySelector('#msg-box').style.display = 'none'
+        }, 1000);
     }
 }
