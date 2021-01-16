@@ -1,5 +1,6 @@
 // Global imports -
 import * as THREE from 'three';
+
 import TWEEN, { update } from '@tweenjs/tween.js';
 
 // Components
@@ -30,6 +31,17 @@ import Config from './../data/config';
 // STLLoader
 var STLLoader = require('three-stl-loader')(THREE);
 
+// Camera
+var camera;
+
+// For click event on robots
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+//---------------------------------------
+
+// -------------------------------------
+
 // This class instantiates and ties all of the components together, starts the loading process and renders the main loop
 export default class Main {
     constructor(container) {
@@ -45,7 +57,7 @@ export default class Main {
 
         this.scene.fog = new THREE.FogExp2(Config.fog.color, Config.fog.near);
 
-        this.mqtt = new MQTTClient(this.scene, this.robot);
+        this.mqtt = new MQTTClient(this.scene);
 
         // Get Device Pixel Ratio first for retina
         if (window.devicePixelRatio) {
@@ -56,8 +68,9 @@ export default class Main {
         this.renderer = new Renderer(this.scene, container);
 
         // Components instantiations
-        this.camera = new Camera(this.renderer.threeRenderer);
-        this.controls = new Controls(this.camera.threeCamera, container);
+        camera = new Camera(this.renderer.threeRenderer);
+
+        this.controls = new Controls(camera.threeCamera, container);
         this.light = new Light(this.scene);
 
         // Create and place lights in scene
@@ -101,9 +114,9 @@ export default class Main {
             grid.material.transparent = true;
             this.scene.add(grid);
 
-            //---------------------------------------
+            // -----------------------------------------------------------------
 
-            // -------------------------------------
+            // -----------------------------------------------------------------
 
             // onProgress callback
             this.manager.onProgress = (item, loaded, total) => {
@@ -118,7 +131,7 @@ export default class Main {
                 new Interaction(
                     this.renderer.threeRenderer,
                     this.scene,
-                    this.camera.threeCamera,
+                    camera.threeCamera,
                     this.controls.threeControls
                 );
 
@@ -139,6 +152,27 @@ export default class Main {
 
         this.render();
         this.container.querySelector('#loading').style.display = 'none';
+
+        // Add eventlistner for catch mouse click events
+        window.addEventListener('click', this.onDocumentMouseDown, false);
+    }
+
+    onDocumentMouseDown(event) {
+        event.preventDefault();
+
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera.threeCamera);
+
+        const intersects = raycaster.intersectObjects(scene.children);
+        if (intersects.length > 0) {
+            const obj = intersects[0].object;
+
+            if (obj.clickEvent != undefined) {
+                obj.clickEvent(obj);
+            }
+        }
     }
 
     render() {
@@ -148,7 +182,7 @@ export default class Main {
         }
 
         // Call render function and pass in created scene and camera
-        this.renderer.render(this.scene, this.camera.threeCamera);
+        this.renderer.render(this.scene, camera.threeCamera);
 
         // rStats has finished determining render call now
         if (Config.isDev && Config.isShowingStats) {

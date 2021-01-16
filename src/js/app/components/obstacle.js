@@ -3,6 +3,8 @@ import TWEEN, { update } from '@tweenjs/tween.js';
 
 import Config from '../../data/config';
 
+const OBSTACLE_PREFIX = 'obstacle_';
+
 export default class Obstacle {
     constructor(scene, callback) {
         this.scene = scene;
@@ -30,10 +32,10 @@ export default class Obstacle {
 
         const mesh = new THREE.Mesh(geometry, material);
 
-        mesh.name = 'obstacle_' + id;
+        mesh.name = OBSTACLE_PREFIX + id;
 
         // Remove if object is already defined
-        this.deleteIfExists(mesh.name);
+        this.deleteIfExists(id);
 
         // Add the mesh object to arena
         this.scene.add(mesh);
@@ -59,7 +61,7 @@ export default class Obstacle {
         // Enable shadows for the object
         if (Config.shadow.enabled) mesh.receiveShadow = true;
 
-        console.log('Created> Obstacle:', id);
+        console.log('Created>', mesh.name);
     }
 
     createGeometry(g) {
@@ -133,7 +135,28 @@ export default class Obstacle {
     }
 
     deleteIfExists(id) {
-        var obstacle = this.scene.getObjectByName(id);
-        if (obstacle != undefined) this.scene.remove(obstacle);
+        // Delete obstacle if it already exists
+
+        const name = OBSTACLE_PREFIX + id;
+        const obstacle = this.scene.getObjectByName(name);
+
+        if (obstacle != undefined) {
+            this.scene.remove(obstacle);
+            console.log('Deleted>', name);
+        }
+    }
+
+    deleteAll() {
+        // Delete all obstacles
+        const objects = this.scene.children;
+
+        Object.entries(objects).forEach((obj) => {
+            const name = obj[1]['name'];
+
+            if (name.startsWith(OBSTACLE_PREFIX)) {
+                console.log('Deleted>', name);
+                this.scene.remove(obj[1]);
+            }
+        });
     }
 }
