@@ -2,7 +2,7 @@
    "name": "PeraSwarm-Visualizer",
    "version": "1.0.0",
    "description": "The GUI visualizor for Pera Swarm Project",
-   "private": "true",
+   "private": "false",
    "main": "app.js",
    "engines": {
       "node": ">=8.0.0"
@@ -25,15 +25,15 @@
    },
    "repository": {
       "type": "git",
-      "url": "git+https://github.com/NuwanJ/FYP-simulator-gui.git"
+      "url": "git+https://github.com/Pera-Swarm/visualizer.git"
    },
    "keywords": [],
    "author": "",
    "license": "ISC",
    "bugs": {
-      "url": "https://github.com/NuwanJ/FYP-simulator-gui/issues"
+      "url": "https://github.com/Pera-Swarm/visualizer/issues"
    },
-   "homepage": "https://github.com/NuwanJ/FYP-simulator-gui#readme",
+   "homepage": "https://pera-swarm.github.io/visualizer",
    "devDependencies": {
       "@babel/core": "^7.10.4",
       "@babel/preset-env": "^7.10.4",
