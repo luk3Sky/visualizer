@@ -105,12 +105,11 @@ export default class MQTTClient {
     onMessageArrived(packet) {
         const msg = packet.payloadString.trim();
         const t = packet.destinationName;
-        const topic = t.substring(t.indexOf("/") + 1);
+        const topic = t.substring(t.indexOf('/') + 1);
 
         // console.log('MQTT: ' + topic + ' > ' + msg);
 
         if (topic == TOPIC_CREATE) {
-
             try {
                 var data = JSON.parse(msg);
                 window.robot.create(data.id, data.x, data.y, data.heading);
@@ -124,7 +123,6 @@ export default class MQTTClient {
             } catch (e) {
                 console.error(e);
             }
-
         } else if (topic == TOPIC_LOC_INFO) {
             //console.log('MQTT: ' + topic + ' > ' + msg);
             try {
@@ -143,7 +141,6 @@ export default class MQTTClient {
             } catch (e) {
                 console.error(e);
             }
-
         } else if (topic == TOPIC_OBSTACLES_LIST) {
             // Create obstacles in the arena
             try {
@@ -152,18 +149,15 @@ export default class MQTTClient {
             } catch (e) {
                 console.error(e);
             }
-
-        } else if (topic == TOPIC_OBSTACLES_DELETE){
+        } else if (topic == TOPIC_OBSTACLES_DELETE) {
             // Delete obstacle given in the id
             const data = JSON.parse(msg);
             console.log(data);
 
-            window.obstacles.deleteIfExists(data.id)
-
-        } else if (topic == TOPIC_OBSTACLES_DELETE_ALL){
+            window.obstacles.deleteIfExists(data.id);
+        } else if (topic == TOPIC_OBSTACLES_DELETE_ALL) {
             // Delete all obstacles
             window.obstacles.deleteAll();
-
         } else if (topic == TOPIC_CHANGE_COLOR) {
             try {
                 const data = JSON.parse(msg);

@@ -5,7 +5,7 @@ import Config from '../../data/config';
 
 var STLLoader = require('three-stl-loader')(THREE);
 
-const ROBOT_PREFIX = "robot_";
+const ROBOT_PREFIX = 'robot_';
 
 export default class Robot {
     constructor(scene) {
@@ -48,7 +48,7 @@ export default class Robot {
 
                 window.scene.add(r);
 
-                r.clickEvent = function(m) {
+                r.clickEvent = function (m) {
                     window.robot.alert(m);
                 };
 
@@ -58,16 +58,16 @@ export default class Robot {
                 if (callback != undefined) callback('success');
             });
         } else {
-            this.move(id, x, y, heading, ()=>{
+            this.move(id, x, y, heading, () => {
                 if (callback != undefined) callback('already defined, so moved');
-            })
+            });
         }
         return r;
     }
 
     delete(id, callback) {
         if (id != undefined) {
-            var r = this.scene.getObjectByName( + id);
+            var r = this.scene.getObjectByName(+id);
 
             if (r != undefined) {
                 scene.remove(r);
@@ -81,14 +81,14 @@ export default class Robot {
         }
     }
 
-    deleteAll(){
+    deleteAll() {
         // Delete all robots
         const objects = this.scene.children;
 
         Object.entries(objects).forEach((obj) => {
             const name = obj[1]['name'];
 
-            if(name.startsWith(ROBOT_PREFIX)){
+            if (name.startsWith(ROBOT_PREFIX)) {
                 console.log('Deleted>', name);
                 this.scene.remove(obj[1]);
             }
@@ -124,25 +124,25 @@ export default class Robot {
 
             if (distance != 0) {
                 var tween = new TWEEN.Tween(position)
-                .to({ x: x, y: y, heading: newHeading }, 1000 * moveTime)
-                /*.easing(TWEEN.Easing.Quartic.InOut)*/
-                .onUpdate(function () {
-                    r.position.x = position.x;
-                    r.position.y = position.y;
+                    .to({ x: x, y: y, heading: newHeading }, 1000 * moveTime)
+                    /*.easing(TWEEN.Easing.Quartic.InOut)*/
+                    .onUpdate(function () {
+                        r.position.x = position.x;
+                        r.position.y = position.y;
 
-                    if (rotationFlag) {
+                        if (rotationFlag) {
+                            r.rotation.y = position.heading;
+                        } else {
+                            //console.log(currentHeading, newHeading);
+                        }
+                    })
+                    .onComplete(() => {
+                        //console.log('Moved> id:',id,'x:',x,'y:',y,'heading:',heading);
                         r.rotation.y = position.heading;
-                    } else {
-                        //console.log(currentHeading, newHeading);
-                    }
-                })
-                .onComplete(() => {
-                    //console.log('Moved> id:',id,'x:',x,'y:',y,'heading:',heading);
-                    r.rotation.y = position.heading;
-                    if (callback != null) callback('success');
-                })
-                .delay(50)
-                .start();
+                        if (callback != null) callback('success');
+                    })
+                    .delay(50)
+                    .start();
             } else {
                 // No move, only the rotation
                 r.rotation.y = newHeading;
@@ -167,7 +167,7 @@ export default class Robot {
         TWEEN.update();
     }
 
-    alert(mesh){
+    alert(mesh) {
         // Display an alert on window
 
         //alert(mesh.name);
@@ -177,7 +177,7 @@ export default class Robot {
         disp.style.display = 'block';
 
         setTimeout(function () {
-            document.querySelector('#msg-box').style.display = 'none'
+            document.querySelector('#msg-box').style.display = 'none';
         }, 1000);
     }
 }

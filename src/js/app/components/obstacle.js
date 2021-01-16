@@ -3,8 +3,7 @@ import TWEEN, { update } from '@tweenjs/tween.js';
 
 import Config from '../../data/config';
 
-const OBSTACLE_PREFIX = "obstacle_";
-
+const OBSTACLE_PREFIX = 'obstacle_';
 
 export default class Obstacle {
     constructor(scene, callback) {
@@ -141,20 +140,20 @@ export default class Obstacle {
         const name = OBSTACLE_PREFIX + id;
         const obstacle = this.scene.getObjectByName(name);
 
-        if (obstacle != undefined){
+        if (obstacle != undefined) {
             this.scene.remove(obstacle);
             console.log('Deleted>', name);
         }
     }
 
-    deleteAll(){
+    deleteAll() {
         // Delete all obstacles
         const objects = this.scene.children;
 
         Object.entries(objects).forEach((obj) => {
             const name = obj[1]['name'];
 
-            if(name.startsWith(OBSTACLE_PREFIX)){
+            if (name.startsWith(OBSTACLE_PREFIX)) {
                 console.log('Deleted>', name);
                 this.scene.remove(obj[1]);
             }

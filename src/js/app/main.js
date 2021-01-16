@@ -32,7 +32,7 @@ import Config from './../data/config';
 var STLLoader = require('three-stl-loader')(THREE);
 
 // Camera
-var  camera;
+var camera;
 
 // For click event on robots
 const raycaster = new THREE.Raycaster();
@@ -116,10 +116,7 @@ export default class Main {
 
             // -----------------------------------------------------------------
 
-
-
             // -----------------------------------------------------------------
-
 
             // onProgress callback
             this.manager.onProgress = (item, loaded, total) => {
@@ -157,22 +154,22 @@ export default class Main {
         this.container.querySelector('#loading').style.display = 'none';
 
         // Add eventlistner for catch mouse click events
-        window.addEventListener('click', this.onDocumentMouseDown, false );
+        window.addEventListener('click', this.onDocumentMouseDown, false);
     }
 
-    onDocumentMouseDown( event ) {
+    onDocumentMouseDown(event) {
         event.preventDefault();
 
-        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-        raycaster.setFromCamera( mouse, camera.threeCamera );
+        raycaster.setFromCamera(mouse, camera.threeCamera);
 
-        const intersects = raycaster.intersectObjects( scene.children );
-        if ( intersects.length > 0 ) {
+        const intersects = raycaster.intersectObjects(scene.children);
+        if (intersects.length > 0) {
             const obj = intersects[0].object;
 
-            if(obj.clickEvent != undefined){
+            if (obj.clickEvent != undefined) {
                 obj.clickEvent(obj);
             }
         }
@@ -202,6 +199,4 @@ export default class Main {
         // RAF
         requestAnimationFrame(this.render.bind(this)); // Bind the main class instead of window object
     }
-
-
 }
