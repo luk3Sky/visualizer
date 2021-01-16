@@ -11,7 +11,7 @@ import Robot from '../components/robot';
 // MQTT Topics
 // -----------------------------------------------------------------------------
 // This will provide location data to the GUI
-const TOPIC_INFO = 'localization/info';
+const TOPIC_LOC_INFO = 'localization/info';
 
 // Create and delete robot objects
 const TOPIC_CREATE = 'robot/create';
@@ -25,6 +25,8 @@ const TOPIC_OBSTACLE_REQUEST = 'obstacles/?';
 
 // This will send obstacle data as a JSON list
 const TOPIC_OBSTACLES_LIST = 'obstacles/';
+const TOPIC_OBSTACLES_DELETE = 'obstacles/delete';
+const TOPIC_OBSTACLES_DELETE_ALL = 'obstacles/delete/all';
 
 // TODO: need to map with the server
 const TOPIC_CHANGE_COLOR = 'sensor/color';
@@ -55,11 +57,13 @@ export default class MQTTClient {
                 console.log('MQTT: connected');
 
                 // Subscribe to topics
-                this.subscribe(TOPIC_INFO);
+                this.subscribe(TOPIC_LOC_INFO);
                 this.subscribe(TOPIC_CREATE);
                 this.subscribe(TOPIC_DELETE);
                 this.subscribe(TOPIC_CHANGE_COLOR);
                 this.subscribe(TOPIC_OBSTACLES_LIST);
+                this.subscribe(TOPIC_OBSTACLES_DELETE);
+                this.subscribe(TOPIC_OBSTACLES_DELETE_ALL);
 
                 // Request for obstacle data
                 this.publish(TOPIC_OBSTACLE_REQUEST, '?');
@@ -103,7 +107,7 @@ export default class MQTTClient {
         const t = packet.destinationName;
         const topic = t.substring(t.indexOf("/") + 1);
 
-        //console.log('MQTT: ' + topic + ' > ' + msg);
+        // console.log('MQTT: ' + topic + ' > ' + msg);
 
         if (topic == TOPIC_CREATE) {
 
@@ -120,10 +124,11 @@ export default class MQTTClient {
             } catch (e) {
                 console.error(e);
             }
-        } else if (topic == TOPIC_INFO) {
+
+        } else if (topic == TOPIC_LOC_INFO) {
             //console.log('MQTT: ' + topic + ' > ' + msg);
             try {
-                var data = JSON.parse(msg);
+                const data = JSON.parse(msg);
 
                 Object.entries(data).forEach((entry) => {
                     // Update each robot
@@ -138,6 +143,7 @@ export default class MQTTClient {
             } catch (e) {
                 console.error(e);
             }
+
         } else if (topic == TOPIC_OBSTACLES_LIST) {
             // Create obstacles in the arena
             try {
@@ -146,9 +152,21 @@ export default class MQTTClient {
             } catch (e) {
                 console.error(e);
             }
+
+        } else if (topic == TOPIC_OBSTACLES_DELETE){
+            // Delete obstacle given in the id
+            const data = JSON.parse(msg);
+            console.log(data);
+
+            window.obstacles.deleteIfExists(data.id)
+
+        } else if (topic == TOPIC_OBSTACLES_DELETE_ALL){
+            // Delete all obstacles
+            window.obstacles.deleteAll();
+
         } else if (topic == TOPIC_CHANGE_COLOR) {
             try {
-                var data = JSON.parse(msg);
+                const data = JSON.parse(msg);
                 window.robot.changeColor(data.id, data.R, data.G, data.B, data.ambient);
             } catch (e) {
                 console.error(e);
