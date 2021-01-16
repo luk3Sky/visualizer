@@ -5,13 +5,15 @@ import Config from '../../data/config';
 
 var STLLoader = require('three-stl-loader')(THREE);
 
+const ROBOT_PREFIX = "id_";
+
 export default class Robot {
     constructor(scene) {
         this.scene = scene;
     }
 
     changeColor(id, R, G, B, ambient, callback) {
-        var r = this.scene.getObjectByName('id_' + id);
+        var r = this.scene.getObjectByName(ROBOT_PREFIX + id);
         if (r != undefined) {
             r.material.color.setRGB(R / 256, G / 256, B / 265);
             //console.log("Color> id:", id, " | R:", R, "G:", G, "B:", B);
@@ -25,7 +27,7 @@ export default class Robot {
     }
 
     create(id, x, y, heading, callback) {
-        var r = this.scene.getObjectByName('id_' + id);
+        var r = this.scene.getObjectByName(ROBOT_PREFIX + id);
         if (r == undefined) {
             // Create only if not exists
 
@@ -39,10 +41,16 @@ export default class Robot {
 
                 var r = new THREE.Mesh(geometry, material);
                 r.receiveShadow = true;
-                r.name = 'id_' + id;
+                r.name = ROBOT_PREFIX + id;
                 r.position.set(x, y, 0);
                 r.rotation.x = 90 * THREE.Math.DEG2RAD;
                 r.rotation.y = (heading - 90) * THREE.Math.DEG2RAD;
+
+                // add click event
+                r.on('click', function(event){
+                    console.log(event);
+                });
+
                 window.scene.add(r);
 
                 console.log('Created> Robot: id:', id, ' | x:', x, 'y:', y, 'heading:', heading);
@@ -60,7 +68,7 @@ export default class Robot {
 
     delete(id, callback) {
         if (id != undefined) {
-            var r = this.scene.getObjectByName('id_' + id);
+            var r = this.scene.getObjectByName( + id);
 
             if (r != undefined) {
                 scene.remove(r);
@@ -74,13 +82,27 @@ export default class Robot {
         }
     }
 
+    deleteAll(){
+            // Delete all robots
+            const objects = this.scene.children;
+
+            Object.entries(objects).forEach((obj) => {
+                const name = obj[1]['name'];
+
+                if(name.startsWith(ROBOT_PREFIX)){
+                    console.log('Deleted>', name);
+                    this.scene.remove(obj[1]);
+                }
+            });
+        }
+
     exists(id) {
-        var r = this.scene.getObjectByName('id_' + id);
+        var r = this.scene.getObjectByName(ROBOT_PREFIX + id);
         return r;
     }
 
     move(id, x, y, heading, callback) {
-        var r = this.scene.getObjectByName('id_' + id);
+        var r = this.scene.getObjectByName(ROBOT_PREFIX + id);
         if (r != undefined) {
             const currentHeading = r.rotation.y;
             const newHeading = (heading - 90) * THREE.Math.DEG2RAD;
@@ -133,7 +155,7 @@ export default class Robot {
     }
 
     get_coordinates(id) {
-        var r = this.scene.getObjectByName('id_' + id);
+        var r = this.scene.getObjectByName(ROBOT_PREFIX + id);
         if (r != undefined) {
             console.log(`${r.position.x},${r.position.y},${r.position.z}`);
             return r;
