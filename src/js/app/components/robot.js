@@ -67,7 +67,7 @@ export default class Robot {
 
     delete(id, callback) {
         if (id != undefined) {
-            var r = this.scene.getObjectByName(+id);
+            var r = this.scene.getObjectByName(ROBOT_PREFIX + id);
 
             if (r != undefined) {
                 scene.remove(r);
