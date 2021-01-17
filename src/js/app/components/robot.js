@@ -37,7 +37,7 @@ export default class Robot {
 
             var loader = new STLLoader();
             loader.load('./assets/models/model.stl', function (geometry, scene) {
-                var material = new THREE.MeshStandardMaterial({ color: 0x5877d2 });
+                var material = new THREE.MeshStandardMaterial({ color: 0x666666 });
 
                 var r = new THREE.Mesh(geometry, material);
                 r.receiveShadow = true;

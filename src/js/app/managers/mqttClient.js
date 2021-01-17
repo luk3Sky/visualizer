@@ -24,12 +24,12 @@ const TOPIC_LOC_REQUEST = 'localization/?';
 const TOPIC_OBSTACLE_REQUEST = 'obstacles/?';
 
 // This will send obstacle data as a JSON list
-const TOPIC_OBSTACLES_LIST = 'obstacles/';
+const TOPIC_OBSTACLES_LIST = 'obstacles';
 const TOPIC_OBSTACLES_DELETE = 'obstacles/delete';
 const TOPIC_OBSTACLES_DELETE_ALL = 'obstacles/delete/all';
 
 // TODO: need to map with the server
-const TOPIC_CHANGE_COLOR = 'sensor/color';
+const TOPIC_CHANGE_COLOR = 'output/neopixel';
 
 // -----------------------------------------------------------------------------
 
