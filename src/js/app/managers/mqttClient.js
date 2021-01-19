@@ -28,8 +28,10 @@ const TOPIC_OBSTACLES_LIST = 'obstacles';
 const TOPIC_OBSTACLES_DELETE = 'obstacles/delete';
 const TOPIC_OBSTACLES_DELETE_ALL = 'obstacles/delete/all';
 
-// TODO: need to map with the server
 const TOPIC_CHANGE_COLOR = 'output/neopixel';
+
+// TODO: finalize this 
+const TOPIC_MANAGEMENT_VISUALIZER = 'management/visualizer/refresh';
 
 // -----------------------------------------------------------------------------
 
@@ -64,6 +66,7 @@ export default class MQTTClient {
                 this.subscribe(TOPIC_OBSTACLES_LIST);
                 this.subscribe(TOPIC_OBSTACLES_DELETE);
                 this.subscribe(TOPIC_OBSTACLES_DELETE_ALL);
+                this.subscribe(TOPIC_MANAGEMENT_VISUALIZER);
 
                 // Request for obstacle data
                 this.publish(TOPIC_OBSTACLE_REQUEST, '?');
@@ -158,6 +161,7 @@ export default class MQTTClient {
         } else if (topic == TOPIC_OBSTACLES_DELETE_ALL) {
             // Delete all obstacles
             window.obstacles.deleteAll();
+
         } else if (topic == TOPIC_CHANGE_COLOR) {
             try {
                 const data = JSON.parse(msg);
@@ -165,6 +169,10 @@ export default class MQTTClient {
             } catch (e) {
                 console.error(e);
             }
+
+        } else if(topic == TOPIC_MANAGEMENT_VISUALIZER){
+            console.log('page refresh request');
+            location.reload();
         }
     }
 
