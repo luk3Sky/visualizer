@@ -30,8 +30,8 @@ const TOPIC_OBSTACLES_DELETE_ALL = 'obstacles/delete/all';
 
 const TOPIC_CHANGE_COLOR = 'output/neopixel';
 
-// TODO: finalize this 
-const TOPIC_MANAGEMENT_VISUALIZER = 'management/visualizer/refresh';
+// This will help to remote update the parameters in here
+const TOPIC_MANAGEMENT_VISUALIZER = 'management/visualizer';
 
 // -----------------------------------------------------------------------------
 
@@ -161,7 +161,6 @@ export default class MQTTClient {
         } else if (topic == TOPIC_OBSTACLES_DELETE_ALL) {
             // Delete all obstacles
             window.obstacles.deleteAll();
-
         } else if (topic == TOPIC_CHANGE_COLOR) {
             try {
                 const data = JSON.parse(msg);
@@ -169,10 +168,15 @@ export default class MQTTClient {
             } catch (e) {
                 console.error(e);
             }
+        } else if (topic == TOPIC_MANAGEMENT_VISUALIZER) {
 
-        } else if(topic == TOPIC_MANAGEMENT_VISUALIZER){
-            console.log('page refresh request');
-            location.reload();
+            if(msg === 'Refresh' ){
+                console.log('page refresh request');
+                location.reload();
+            }else{
+                console.log('>Management:', msg);
+            }
+
         }
     }
 

@@ -68,32 +68,47 @@ export default class Obstacle {
         if (g.type == undefined) throw new TypeError('type unspecified');
 
         if (g.type == 'BoxGeometry') {
-            if (g.width == undefined) throw new TypeError('width unspecified');
-            if (g.height == undefined) throw new TypeError('height unspecified');
-            if (g.depth == undefined) throw new TypeError('depth unspecified');
+            return this.createBoxGeometry(g.width, g.height, g.depth);
 
-            // https://threejs.org/docs/#api/en/geometries/BoxGeometry
-            return new THREE.BoxGeometry(g.width, g.height, g.depth);
         } else if (g.type == 'CylinderGeometry') {
-            if (g.radiusTop == undefined) throw new TypeError('radiusTop unspecified');
-            if (g.radiusBottom == undefined) throw new TypeError('radiusBottom unspecified');
-            if (g.height == undefined) throw new TypeError('height unspecified');
+            return this.createCylinderGeometry(g.radiusTop,g.radiusBottom,g.height);
 
-            // https://threejs.org/docs/#api/en/geometries/CylinderGeometry
-            const heightSegments = g.heightSegments || 2;
-            const radialSegments = g.radialSegments || 16;
-
-            return new THREE.CylinderGeometry(g.radiusTop, g.radiusBottom, g.height, radialSegments, heightSegments);
         } else if (g.type == 'SphereGeometry') {
-            if (g.radius == undefined) throw new TypeError('radius unspecified');
+            return this.createSphereGeometry(g.radius);
 
-            // https://threejs.org/docs/#api/en/geometries/SphereGeometry
-            const widthSegments = g.widthSegments || 16;
-            const heightSegments = g.heightSegments || 16;
-            return new THREE.SphereGeometry(g.radius, widthSegments, heightSegments);
         } else {
             throw new TypeError('unsupported geometry type');
         }
+    }
+
+    createBoxGeometry(width, height, depth) {
+        if (width == undefined) throw new TypeError('width unspecified');
+        if (height == undefined) throw new TypeError('height unspecified');
+        if (depth == undefined) throw new TypeError('depth unspecified');
+
+        // https://threejs.org/docs/#api/en/geometries/BoxGeometry
+        return new THREE.BoxGeometry(width, height, depth);
+    }
+
+    createCylinderGeometry(radiusTop,radiusBottom,height){
+        if (radiusTop == undefined) throw new TypeError('radiusTop unspecified');
+        if (radiusBottom == undefined) throw new TypeError('radiusBottom unspecified');
+        if (height == undefined) throw new TypeError('height unspecified');
+
+        // https://threejs.org/docs/#api/en/geometries/CylinderGeometry
+        const heightSegments = heightSegments || 2;
+        const radialSegments = radialSegments || 16;
+
+        return new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radialSegments, heightSegments);
+    }
+
+    createSphereGeometry(radius){
+        if (radius == undefined) throw new TypeError('radius unspecified');
+
+        // https://threejs.org/docs/#api/en/geometries/SphereGeometry
+        const widthSegments = widthSegments || 16;
+        const heightSegments = heightSegments || 16;
+        return new THREE.SphereGeometry(radius, widthSegments, heightSegments);
     }
 
     createMaterial(m) {
