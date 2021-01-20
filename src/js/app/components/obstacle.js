@@ -45,7 +45,8 @@ export default class Obstacle {
             const { x, y } = obstacle.position;
             const z = this.calculateZ(obstacle);
 
-            mesh.position.set(x, y, z);
+            mesh.scale.set(scene_scale,scene_scale,scene_scale);
+            mesh.position.set(scene_scale * x, scene_scale * y, scene_scale * z);
         }
 
         // Rotate the object, after translate degrees into radians

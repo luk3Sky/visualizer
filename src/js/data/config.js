@@ -2,6 +2,7 @@ import TWEEN from '@tweenjs/tween.js';
 
 // This object contains the state of the app
 export default {
+    scale: 1,
     arena: {
         size: 300,
         minX: -140,
@@ -28,11 +29,6 @@ export default {
     dpr: 1,
     easing: TWEEN.Easing.Quadratic.InOut,
     duration: 500,
-    model: {
-        selected: 0,
-        initialTypes: ['gltf'],
-        type: 'gltf'
-    },
     texture: {
         path: './assets/textures/',
         imageFiles: [{ name: 'UV', image: 'UV_Grid_Sm.jpg' }]
