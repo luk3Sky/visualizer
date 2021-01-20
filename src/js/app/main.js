@@ -9,6 +9,7 @@ import Camera from './components/camera';
 import Light from './components/light';
 import Controls from './components/controls';
 import Geometry from './components/geometry';
+import Environment from './components/environment';
 
 // Helpers
 import Stats from './helpers/stats';
@@ -54,6 +55,7 @@ export default class Main {
         // Main scene creation
         this.scene = new THREE.Scene();
         window.scene = this.scene; // config as a global variable
+        window.scene_scale = Config.scale;
 
         this.scene.fog = new THREE.FogExp2(Config.fog.color, Config.fog.near);
 
@@ -96,23 +98,8 @@ export default class Main {
             this.manager = new THREE.LoadingManager();
 
             // Create the environment ---------------------------------------------
-            var geometry = new THREE.PlaneBufferGeometry(Config.arena.size, Config.arena.size);
-            var material = new THREE.MeshPhongMaterial({
-                color: 0x999999,
-                depthWrite: false
-            });
-            var ground = new THREE.Mesh(geometry, material);
-            ground.position.set(0, 0, 0);
-            //ground.rotation.x = - Math.PI / 2;
-            ground.receiveShadow = true;
-            this.scene.add(ground);
+            this.environment = new Environment();
 
-            var grid = new THREE.GridHelper(Config.arena.size, 30, 0x000000, 0x5b5b5b);
-            grid.rotation.x = -Math.PI / 2;
-            grid.position.set(0, 0, 0);
-            grid.material.opacity = 0.35;
-            grid.material.transparent = true;
-            this.scene.add(grid);
 
             // -----------------------------------------------------------------
 
@@ -138,7 +125,9 @@ export default class Main {
                 // Add dat.GUI controls if dev
                 if (Config.isDev) {
                     this.meshHelper = new MeshHelper(this.scene, this.model.obj);
+
                     if (Config.mesh.enableHelper) this.meshHelper.enable();
+
                     //this.gui.load(this, this.model.obj);
                 }
 
