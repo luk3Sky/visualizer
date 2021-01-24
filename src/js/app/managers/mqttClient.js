@@ -169,14 +169,12 @@ export default class MQTTClient {
                 console.error(e);
             }
         } else if (topic == TOPIC_MANAGEMENT_VISUALIZER) {
-
-            if(msg === 'Refresh' ){
+            if (msg === 'Refresh') {
                 console.log('page refresh request');
                 location.reload();
-            }else{
+            } else {
                 console.log('>Management:', msg);
             }
-
         }
     }
 
