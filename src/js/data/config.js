@@ -19,7 +19,7 @@ export default {
         channel: 'v1'
     },
     isDev: true,
-    isShowingStats: false,
+    isShowingStats: true,
     isLoaded: false,
     isTweening: false,
     isRotating: false,
