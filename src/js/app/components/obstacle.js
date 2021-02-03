@@ -66,7 +66,7 @@ export default class Obstacle {
 
         // Add labels if enabled
         if (Config.isShowingLables) {
-            addLabel(obstacle, mesh);
+            addLabel('Obstacle', obstacle, mesh);
         }
 
         console.log('Created>', mesh.name);

@@ -9,12 +9,15 @@ export default function () {
     return renderer;
 }
 
-export const addLabel = (object, mesh) => {
-    const element = document.createElement('div');
-    element.className = 'label';
-    element.textContent = `Obstacle_${object.id}`;
-    element.style.marginTop = '-1em';
-    const earthLabel = new CSS2DObject(element);
-    earthLabel.position.set(0, 1, 0);
-    if (mesh !== undefined) mesh.add(earthLabel);
+export const addLabel = (prefix, object, mesh) => {
+    if (mesh !== undefined) {
+        const element = document.createElement('div');
+        element.className = 'label';
+        console.log(object);
+        element.textContent = `${prefix}_${object.id}`;
+        element.style.marginTop = '-2em';
+        const elementLabel = new CSS2DObject(element);
+        elementLabel.position.set(0, 1, 0);
+        mesh.add(elementLabel);
+    }
 };
