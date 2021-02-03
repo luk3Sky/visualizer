@@ -11,13 +11,22 @@ export default function () {
 
 export const addLabel = (prefix, object, mesh) => {
     if (mesh !== undefined) {
-        const element = document.createElement('div');
+        let element = document.createElement('div');
         element.className = 'label';
-        console.log(object);
-        element.textContent = `${prefix}_${object.id}`;
+        element.textContent = `${prefix}[${object.id}]`;
         element.style.marginTop = '-1.2em';
         const elementLabel = new CSS2DObject(element);
+        elementLabel.name = `Label[${object.id}]`;
         elementLabel.position.set(0, 1, 0);
         mesh.add(elementLabel);
+        mesh.removeLabel = () => {
+            mesh.remove(elementLabel);
+        }
     }
 };
+
+export const removeLabel = (mesh) => {
+    if(mesh !== undefined && mesh.removeLabel !== undefined) {
+        mesh.removeLabel();
+    }
+}
