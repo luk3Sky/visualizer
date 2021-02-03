@@ -12,7 +12,6 @@ import Geometry from './components/geometry';
 import Environment from './components/environment';
 
 // Helpers
-// import Stats from './helpers/stats';
 import MeshHelper from './helpers/meshHelper';
 
 // Model
@@ -95,6 +94,19 @@ export default class Main {
             // Create the environment ---------------------------------------------
             this.environment = new Environment();
 
+            // -----------------------------------------------------------------
+
+            if (Config.isDev) {
+                // this.meshHelper = new MeshHelper(this.scene, this.model.obj);
+                //
+                // if (Config.mesh.enableHelper) this.meshHelper.enable();
+
+                this.gui.load(this);
+                console.log('gui:', this.gui);
+                this.gui.show();
+            }
+            // -----------------------------------------------------------------
+
             // onProgress callback
             this.manager.onProgress = (item, loaded, total) => {
                 console.log(`${item}: ${loaded} ${total}`);
@@ -102,7 +114,8 @@ export default class Main {
 
             // All loaders done now
             this.manager.onLoad = () => {
-                alert('Loaded');
+                // alert('Loaded');
+                console.log('Loading complete!');
 
                 // Set up interaction manager with the app now that the model is finished loading
                 new Interaction(
@@ -118,7 +131,9 @@ export default class Main {
 
                     if (Config.mesh.enableHelper) this.meshHelper.enable();
 
-                    //this.gui.load(this, this.model.obj);
+                    // this.gui.load(this, this.model.obj);
+                    console.log('gui:', this.gui);
+                    // this.gui.show();
                 }
 
                 // Everything is now fully loaded
@@ -146,6 +161,7 @@ export default class Main {
 
         const intersects = raycaster.intersectObjects(scene.children);
         if (intersects.length > 0) {
+            // console.log(intersects);
             const obj = intersects[0].object;
 
             if (obj.clickEvent != undefined) {
