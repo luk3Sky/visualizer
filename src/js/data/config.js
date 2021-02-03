@@ -24,6 +24,7 @@ export default {
     },
     isDev: true,
     isShowingStats: true,
+    isShowingLables: true,
     isLoaded: false,
     isTweening: false,
     isRotating: false,
