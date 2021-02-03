@@ -6,12 +6,10 @@ export default function () {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.domElement.style.position = 'absolute';
     renderer.domElement.style.top = '0px';
-    // document.body.appendChild( renderer.domElement );
     return renderer;
 }
 
 export const addLabel = (object, mesh) => {
-    console.log(object);
     const element = document.createElement('div');
     element.className = 'label';
     element.textContent = `Obstacle_${object.id}`;

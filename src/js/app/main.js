@@ -5,6 +5,7 @@ import TWEEN, { update } from '@tweenjs/tween.js';
 
 // Components
 import Renderer from './components/renderer';
+import label from './components/label';
 import Camera from './components/camera';
 import Light from './components/light';
 import Controls from './components/controls';
@@ -32,7 +33,7 @@ import Config from './../data/config';
 let STLLoader = require('three-stl-loader')(THREE);
 
 // Camera
-let camera;
+let camera, labelRenderer;
 
 // For click event on robots
 const raycaster = new THREE.Raycaster();
@@ -77,6 +78,12 @@ export default class Main {
         if (Config.isDev && Config.isShowingStats) {
             this.stats = new Stats();
             this.container.appendChild(this.stats.dom);
+        }
+
+        if (Config.isShowingLables) {
+            console.log('labels:', label);
+            this.labelRenderer = label();
+            this.container.appendChild(this.labelRenderer.domElement);
         }
 
         // Set up gui
@@ -174,7 +181,12 @@ export default class Main {
         // Call render function and pass in created scene and camera
         this.renderer.render(this.scene, camera.threeCamera);
 
-        // update stats on dev environment
+        // render labels if enabled
+        if (Config.isShowingLables) {
+            this.labelRenderer.render(this.scene, camera.threeCamera);
+        }
+
+        // update stats if dev environment
         if (Config.isDev && Config.isShowingStats) {
             this.stats.update();
         }

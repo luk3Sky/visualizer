@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import TWEEN, { update } from '@tweenjs/tween.js';
 
 import Config from '../../data/config';
+import { addLabel } from './label';
 
 const OBSTACLE_PREFIX = 'obstacle_';
 
@@ -60,8 +61,13 @@ export default class Obstacle {
             mesh.rotation.set(radX, radY, radZ);
         }
 
-        // Enable shadows for the object
+        // Show shadows of the object if enabled
         if (Config.shadow.enabled) mesh.receiveShadow = true;
+
+        // Add labels if enabled
+        if (Config.isShowingLables) {
+            addLabel(obstacle, mesh);
+        }
 
         console.log('Created>', mesh.name);
     }
