@@ -18,6 +18,10 @@ export default {
         password: 'swarm_usere15',
         channel: 'v1'
     },
+    mixedReality: {
+        obstacles: 'M',
+        robots: 'M'
+    },
     isDev: true,
     isShowingStats: false,
     isLoaded: false,

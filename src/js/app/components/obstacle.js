@@ -8,6 +8,7 @@ const OBSTACLE_PREFIX = 'obstacle_';
 export default class Obstacle {
     constructor(scene, callback) {
         this.scene = scene;
+        console.log('Obstacle Reality:', Config.mixedReality.obstacles);
 
         if (callback != undefined) {
             callback();
@@ -45,7 +46,7 @@ export default class Obstacle {
             const { x, y } = obstacle.position;
             const z = this.calculateZ(obstacle);
 
-            mesh.scale.set(scene_scale,scene_scale,scene_scale);
+            mesh.scale.set(scene_scale, scene_scale, scene_scale);
             mesh.position.set(scene_scale * x, scene_scale * y, scene_scale * z);
         }
 
@@ -70,13 +71,10 @@ export default class Obstacle {
 
         if (g.type == 'BoxGeometry') {
             return this.createBoxGeometry(g.width, g.height, g.depth);
-
         } else if (g.type == 'CylinderGeometry') {
-            return this.createCylinderGeometry(g.radiusTop,g.radiusBottom,g.height);
-
+            return this.createCylinderGeometry(g.radiusTop, g.radiusBottom, g.height);
         } else if (g.type == 'SphereGeometry') {
             return this.createSphereGeometry(g.radius);
-
         } else {
             throw new TypeError('unsupported geometry type');
         }
@@ -91,7 +89,7 @@ export default class Obstacle {
         return new THREE.BoxGeometry(width, height, depth);
     }
 
-    createCylinderGeometry(radiusTop,radiusBottom,height){
+    createCylinderGeometry(radiusTop, radiusBottom, height) {
         if (radiusTop == undefined) throw new TypeError('radiusTop unspecified');
         if (radiusBottom == undefined) throw new TypeError('radiusBottom unspecified');
         if (height == undefined) throw new TypeError('height unspecified');
@@ -103,7 +101,7 @@ export default class Obstacle {
         return new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radialSegments, heightSegments);
     }
 
-    createSphereGeometry(radius){
+    createSphereGeometry(radius) {
         if (radius == undefined) throw new TypeError('radius unspecified');
 
         // https://threejs.org/docs/#api/en/geometries/SphereGeometry

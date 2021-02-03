@@ -100,11 +100,6 @@ export default class Main {
             // Create the environment ---------------------------------------------
             this.environment = new Environment();
 
-
-            // -----------------------------------------------------------------
-
-            // -----------------------------------------------------------------
-
             // onProgress callback
             this.manager.onProgress = (item, loaded, total) => {
                 console.log(`${item}: ${loaded} ${total}`);
