@@ -12,7 +12,7 @@ import Geometry from './components/geometry';
 import Environment from './components/environment';
 
 // Helpers
-import Stats from './helpers/stats';
+// import Stats from './helpers/stats';
 import MeshHelper from './helpers/meshHelper';
 
 // Model
@@ -30,18 +30,14 @@ import MQTTClient from './managers/mqttClient';
 import Config from './../data/config';
 
 // STLLoader
-var STLLoader = require('three-stl-loader')(THREE);
+let STLLoader = require('three-stl-loader')(THREE);
 
 // Camera
-var camera;
+let camera;
 
 // For click event on robots
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
-
-//---------------------------------------
-
-// -------------------------------------
 
 // This class instantiates and ties all of the components together, starts the loading process and renders the main loop
 export default class Main {
@@ -71,24 +67,23 @@ export default class Main {
 
         // Components instantiations
         camera = new Camera(this.renderer.threeRenderer);
-
         this.controls = new Controls(camera.threeCamera, container);
         this.light = new Light(this.scene);
-
+        this.camera = camera;
         // Create and place lights in scene
         const lights = ['ambient', 'directional', 'point', 'hemi'];
         lights.forEach((light) => this.light.place(light));
 
-        // Set up rStats if dev environment
+        // Set up Stats if dev environment
         if (Config.isDev && Config.isShowingStats) {
-            this.stats = new Stats(this.renderer);
-            this.stats.setUp();
+            this.stats = new Stats();
+            this.container.appendChild(this.stats.dom);
         }
 
         // Set up gui
-        //if (Config.isDev) {
-        //this.gui = new DatGUI(this)
-        //}
+        if (Config.isDev) {
+            this.gui = new DatGUI(this);
+        }
 
         // Instantiate texture class
         this.texture = new Texture();
@@ -160,17 +155,12 @@ export default class Main {
     }
 
     render() {
-        // Render rStats if Dev
-        if (Config.isDev && Config.isShowingStats) {
-            Stats.start();
-        }
-
         // Call render function and pass in created scene and camera
         this.renderer.render(this.scene, camera.threeCamera);
 
-        // rStats has finished determining render call now
+        // update stats on dev environment
         if (Config.isDev && Config.isShowingStats) {
-            Stats.end();
+            this.stats.update();
         }
 
         // Delta time is sometimes needed for certain updates
