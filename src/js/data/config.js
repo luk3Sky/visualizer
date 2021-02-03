@@ -23,7 +23,7 @@ export default {
         robots: 'M'
     },
     isDev: true,
-    isShowingStats: false,
+    isShowingStats: true,
     isLoaded: false,
     isTweening: false,
     isRotating: false,
