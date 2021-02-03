@@ -15,7 +15,7 @@ export const addLabel = (prefix, object, mesh) => {
         element.className = 'label';
         console.log(object);
         element.textContent = `${prefix}_${object.id}`;
-        element.style.marginTop = '-2em';
+        element.style.marginTop = '-1.2em';
         const elementLabel = new CSS2DObject(element);
         elementLabel.position.set(0, 1, 0);
         mesh.add(elementLabel);
