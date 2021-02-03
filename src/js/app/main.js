@@ -38,10 +38,6 @@ let camera;
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-//---------------------------------------
-
-// -------------------------------------
-
 // This class instantiates and ties all of the components together, starts the loading process and renders the main loop
 export default class Main {
     constructor(container) {
@@ -80,7 +76,7 @@ export default class Main {
         // Set up Stats if dev environment
         if (Config.isDev && Config.isShowingStats) {
             this.stats = new Stats();
-            this.container.appendChild( this.stats.dom );
+            this.container.appendChild(this.stats.dom);
         }
 
         // Set up gui

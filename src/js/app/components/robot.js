@@ -10,6 +10,7 @@ const ROBOT_PREFIX = 'robot_';
 export default class Robot {
     constructor(scene) {
         this.scene = scene;
+        console.log('Robot Reality:', Config.mixedReality.robots);
     }
 
     changeColor(id, R, G, B, ambient, callback) {
@@ -26,11 +27,56 @@ export default class Robot {
         return r;
     }
 
-    create(id, x, y, heading, callback) {
+    create(id, x, y, heading, reality = 'V', callback) {
         var r = this.scene.getObjectByName(ROBOT_PREFIX + id);
+        const REALITY = Config.mixedReality.robots;
+
         if (r == undefined) {
             // Create only if not exists
 
+<<<<<<< HEAD
+            if (reality === REALITY || REALITY === 'M') {
+                // Can create
+                // Limit the arena that robot can go
+                x = scene_scale * Math.min(Math.max(x, Config.arena.minX), Config.arena.maxX);
+                y = scene_scale * Math.min(Math.max(y, Config.arena.minY), Config.arena.maxY);
+
+                var loader = new STLLoader();
+                loader.load('./assets/models/model.stl', function (geometry, scene) {
+                    // Set less opacity for virtual robots
+                    const opacity = 1; // reality == 'V' ? 0.5 : 1;
+
+                    const material = new THREE.MeshStandardMaterial({
+                        color: 0x666666,
+                        opacity: opacity,
+                        transparent: true
+                    });
+
+                    var r = new THREE.Mesh(geometry, material);
+                    r.receiveShadow = true;
+                    r.name = ROBOT_PREFIX + id;
+                    r.scale.set(scene_scale, scene_scale, scene_scale);
+                    r.position.set(x, y, 0);
+                    r.rotation.x = 90 * THREE.Math.DEG2RAD;
+                    r.rotation.y = (heading - 90) * THREE.Math.DEG2RAD;
+                    r.reality = reality; // set reality flag
+
+                    // Add robot to the scene
+                    window.scene.add(r);
+
+                    r.clickEvent = function (m) {
+                        window.robot.alert(m);
+                    };
+
+                    console.log(`Created> Robot: id:${id} | x:${x} y: ${y} heading: ${heading} | reality: ${reality}`);
+
+                    // Callback function
+                    if (callback != undefined) callback('success');
+                });
+            } else {
+                console.error(`Creation Failed> Robot: id:${id}  reality: ${reality}!=${REALITY}`);
+            }
+=======
             // Limit the arena that robot can go
             x = scene_scale * Math.min(Math.max(x, Config.arena.minX), Config.arena.maxX);
             y = scene_scale * Math.min(Math.max(y, Config.arena.minY), Config.arena.maxY);
@@ -58,10 +104,17 @@ export default class Robot {
                 // Callback function
                 if (callback != undefined) callback('success');
             });
+>>>>>>> efcc6e83451faa90a1b2ccf7e5e8ede39645d556
         } else {
-            this.move(id, x, y, heading, () => {
-                if (callback != undefined) callback('already defined, so moved');
-            });
+            if (reality === REALITY || REALITY === 'M') {
+                // Reality matches
+                this.move(id, x, y, heading, () => {
+                    if (callback != undefined) callback('already defined, so moved');
+                });
+            } else {
+                // Robot reality not matching with environment reality
+                this.delete(id);
+            }
         }
         return r;
     }
@@ -170,11 +223,8 @@ export default class Robot {
 
     alert(mesh) {
         // Display an alert on window
-
-        //alert(mesh.name);
-        //console.log(mesh)
         let disp = document.querySelector('#msg-box');
-        disp.innerHTML = mesh.name;
+        disp.innerHTML = `${mesh.name} [${mesh.reality}]`;
         disp.style.display = 'block';
 
         setTimeout(function () {

@@ -7,7 +7,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const CnameWebpackPlugin = require('cname-webpack-plugin');
-const CopyPlugin = require("copy-webpack-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
 
 // Paths
 const entry = './src/js/app.js';
@@ -150,8 +150,8 @@ module.exports = (env) => {
             }),
             new CopyPlugin({
                 patterns: [
-                    { from: "node_modules/three/examples/js/libs/stats.min.js"},
-                    { from: "node_modules/three/examples/js/libs/dat.gui.min.js"}
+                    { from: 'node_modules/three/examples/js/libs/stats.min.js' },
+                    { from: 'node_modules/three/examples/js/libs/dat.gui.min.js' }
                 ]
             })
         ),

@@ -8,6 +8,7 @@ const OBSTACLE_PREFIX = 'obstacle_';
 export default class Obstacle {
     constructor(scene, callback) {
         this.scene = scene;
+        console.log('Obstacle Reality:', Config.mixedReality.obstacles);
 
         if (callback != undefined) {
             callback();
