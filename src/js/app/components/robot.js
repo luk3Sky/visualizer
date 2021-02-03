@@ -33,8 +33,6 @@ export default class Robot {
 
         if (r == undefined) {
             // Create only if not exists
-
-<<<<<<< HEAD
             if (reality === REALITY || REALITY === 'M') {
                 // Can create
                 // Limit the arena that robot can go
@@ -76,35 +74,33 @@ export default class Robot {
             } else {
                 console.error(`Creation Failed> Robot: id:${id}  reality: ${reality}!=${REALITY}`);
             }
-=======
-            // Limit the arena that robot can go
-            x = scene_scale * Math.min(Math.max(x, Config.arena.minX), Config.arena.maxX);
-            y = scene_scale * Math.min(Math.max(y, Config.arena.minY), Config.arena.maxY);
-
-            var loader = new STLLoader();
-            loader.load('./assets/models/model.stl', function (geometry, scene) {
-                var material = new THREE.MeshStandardMaterial({ color: 0x666666 });
-
-                var r = new THREE.Mesh(geometry, material);
-                r.receiveShadow = true;
-                r.name = ROBOT_PREFIX + id;
-                r.scale.set(scene_scale, scene_scale, scene_scale);
-                r.position.set(x, y, 0);
-                r.rotation.x = 90 * THREE.Math.DEG2RAD;
-                r.rotation.y = (heading - 90) * THREE.Math.DEG2RAD;
-
-                window.scene.add(r);
-
-                r.clickEvent = function (m) {
-                    window.robot.alert(m);
-                };
-
-                console.log('Created> Robot: id:', id, ' | x:', x, 'y:', y, 'heading:', heading);
-
-                // Callback function
-                if (callback != undefined) callback('success');
-            });
->>>>>>> efcc6e83451faa90a1b2ccf7e5e8ede39645d556
+            // // Limit the arena that robot can go
+            // x = scene_scale * Math.min(Math.max(x, Config.arena.minX), Config.arena.maxX);
+            // y = scene_scale * Math.min(Math.max(y, Config.arena.minY), Config.arena.maxY);
+            //
+            // var loader = new STLLoader();
+            // loader.load('./assets/models/model.stl', function (geometry, scene) {
+            //     var material = new THREE.MeshStandardMaterial({ color: 0x666666 });
+            //
+            //     var r = new THREE.Mesh(geometry, material);
+            //     r.receiveShadow = true;
+            //     r.name = ROBOT_PREFIX + id;
+            //     r.scale.set(scene_scale, scene_scale, scene_scale);
+            //     r.position.set(x, y, 0);
+            //     r.rotation.x = 90 * THREE.Math.DEG2RAD;
+            //     r.rotation.y = (heading - 90) * THREE.Math.DEG2RAD;
+            //
+            //     window.scene.add(r);
+            //
+            //     r.clickEvent = function (m) {
+            //         window.robot.alert(m);
+            //     };
+            //
+            //     console.log('Created> Robot: id:', id, ' | x:', x, 'y:', y, 'heading:', heading);
+            //
+            //     // Callback function
+            //     if (callback != undefined) callback('success');
+            // });
         } else {
             if (reality === REALITY || REALITY === 'M') {
                 // Reality matches
