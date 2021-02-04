@@ -1,15 +1,16 @@
 import * as THREE from 'three';
-import TWEEN, { update } from '@tweenjs/tween.js';
 
 import Config from '../../data/config';
+import { addLabel, removeLabel } from './label';
 
-const OBSTACLE_PREFIX = 'obstacle_';
+const OBSTACLE_PREFIX = 'Obstacle_';
 
 export default class Obstacle {
     constructor(scene, callback) {
         this.scene = scene;
+        console.log('Obstacle Reality:', Config.mixedReality.obstacles);
 
-        if (callback != undefined) {
+        if (callback !== undefined) {
             callback();
         }
     }
@@ -17,7 +18,7 @@ export default class Obstacle {
     // Create a given list of obstacles
     createList(obstacles) {
         Object.entries(obstacles).forEach((obs) => {
-            if (obs != undefined) {
+            if (obs !== undefined) {
                 //console.log(obs[1]);
                 this.create(obs[1]);
             }
@@ -41,16 +42,16 @@ export default class Obstacle {
         this.scene.add(mesh);
 
         // update the position of the object
-        if (obstacle.position != undefined) {
+        if (obstacle.position !== undefined) {
             const { x, y } = obstacle.position;
             const z = this.calculateZ(obstacle);
 
-            mesh.scale.set(scene_scale,scene_scale,scene_scale);
+            mesh.scale.set(scene_scale, scene_scale, scene_scale);
             mesh.position.set(scene_scale * x, scene_scale * y, scene_scale * z);
         }
 
         // Rotate the object, after translate degrees into radians
-        if (obstacle.rotation != undefined) {
+        if (obstacle.rotation !== undefined) {
             const { x, y, z } = obstacle.rotation;
             const radX = ((90 + x) / 360) * 2 * Math.PI; // transformation due to coordinate system
             const radY = (y / 360) * 2 * Math.PI;
@@ -59,8 +60,13 @@ export default class Obstacle {
             mesh.rotation.set(radX, radY, radZ);
         }
 
-        // Enable shadows for the object
+        // Show shadows of the object if enabled
         if (Config.shadow.enabled) mesh.receiveShadow = true;
+
+        // Add labels if enabled
+        if (Config.isShowingLables) {
+            addLabel(OBSTACLE_PREFIX, obstacle, mesh);
+        }
 
         console.log('Created>', mesh.name);
     }
@@ -70,13 +76,10 @@ export default class Obstacle {
 
         if (g.type == 'BoxGeometry') {
             return this.createBoxGeometry(g.width, g.height, g.depth);
-
         } else if (g.type == 'CylinderGeometry') {
-            return this.createCylinderGeometry(g.radiusTop,g.radiusBottom,g.height);
-
+            return this.createCylinderGeometry(g.radiusTop, g.radiusBottom, g.height);
         } else if (g.type == 'SphereGeometry') {
             return this.createSphereGeometry(g.radius);
-
         } else {
             throw new TypeError('unsupported geometry type');
         }
@@ -91,7 +94,7 @@ export default class Obstacle {
         return new THREE.BoxGeometry(width, height, depth);
     }
 
-    createCylinderGeometry(radiusTop,radiusBottom,height){
+    createCylinderGeometry(radiusTop, radiusBottom, height) {
         if (radiusTop == undefined) throw new TypeError('radiusTop unspecified');
         if (radiusBottom == undefined) throw new TypeError('radiusBottom unspecified');
         if (height == undefined) throw new TypeError('height unspecified');
@@ -103,7 +106,7 @@ export default class Obstacle {
         return new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radialSegments, heightSegments);
     }
 
-    createSphereGeometry(radius){
+    createSphereGeometry(radius) {
         if (radius == undefined) throw new TypeError('radius unspecified');
 
         // https://threejs.org/docs/#api/en/geometries/SphereGeometry
@@ -137,10 +140,10 @@ export default class Obstacle {
     calculateZ(obstacle) {
         // If z is undefined, place the object in top of the arena
         if (obstacle.position.z == undefined) {
-            if (obstacle.geometry.height != undefined) {
+            if (obstacle.geometry.height !== undefined) {
                 // Box and Cylinder objects
                 return obstacle.geometry.height / 2;
-            } else if (obstacle.geometry.radius != undefined) {
+            } else if (obstacle.geometry.radius !== undefined) {
                 // Sphere objects
                 return obstacle.geometry.radius;
             } else {
@@ -152,11 +155,10 @@ export default class Obstacle {
 
     deleteIfExists(id) {
         // Delete obstacle if it already exists
-
         const name = OBSTACLE_PREFIX + id;
         const obstacle = this.scene.getObjectByName(name);
-
-        if (obstacle != undefined) {
+        console.log(obstacle);
+        if (obstacle !== undefined) {
             this.scene.remove(obstacle);
             console.log('Deleted>', name);
         }
@@ -165,12 +167,11 @@ export default class Obstacle {
     deleteAll() {
         // Delete all obstacles
         const objects = this.scene.children;
-
         Object.entries(objects).forEach((obj) => {
             const name = obj[1]['name'];
-
             if (name.startsWith(OBSTACLE_PREFIX)) {
                 console.log('Deleted>', name);
+                removeLabel(obj[1]);
                 this.scene.remove(obj[1]);
             }
         });

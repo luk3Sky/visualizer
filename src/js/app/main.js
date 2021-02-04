@@ -5,6 +5,7 @@ import TWEEN, { update } from '@tweenjs/tween.js';
 
 // Components
 import Renderer from './components/renderer';
+import label from './components/label';
 import Camera from './components/camera';
 import Light from './components/light';
 import Controls from './components/controls';
@@ -12,7 +13,6 @@ import Geometry from './components/geometry';
 import Environment from './components/environment';
 
 // Helpers
-import Stats from './helpers/stats';
 import MeshHelper from './helpers/meshHelper';
 
 // Model
@@ -30,18 +30,14 @@ import MQTTClient from './managers/mqttClient';
 import Config from './../data/config';
 
 // STLLoader
-var STLLoader = require('three-stl-loader')(THREE);
+let STLLoader = require('three-stl-loader')(THREE);
 
 // Camera
-var camera;
+let camera, labelRenderer;
 
 // For click event on robots
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
-
-//---------------------------------------
-
-// -------------------------------------
 
 // This class instantiates and ties all of the components together, starts the loading process and renders the main loop
 export default class Main {
@@ -71,24 +67,29 @@ export default class Main {
 
         // Components instantiations
         camera = new Camera(this.renderer.threeRenderer);
-
         this.controls = new Controls(camera.threeCamera, container);
         this.light = new Light(this.scene);
-
+        this.camera = camera;
         // Create and place lights in scene
         const lights = ['ambient', 'directional', 'point', 'hemi'];
         lights.forEach((light) => this.light.place(light));
 
-        // Set up rStats if dev environment
+        // Set up Stats if dev environment
         if (Config.isDev && Config.isShowingStats) {
-            this.stats = new Stats(this.renderer);
-            this.stats.setUp();
+            this.stats = new Stats();
+            this.container.appendChild(this.stats.dom);
+        }
+
+        if (Config.isShowingLables) {
+            console.log('labels:', label);
+            this.labelRenderer = label();
+            this.container.appendChild(this.labelRenderer.domElement);
         }
 
         // Set up gui
-        //if (Config.isDev) {
-        //this.gui = new DatGUI(this)
-        //}
+        if (Config.isDev) {
+            this.gui = new DatGUI(this);
+        }
 
         // Instantiate texture class
         this.texture = new Texture();
@@ -100,9 +101,17 @@ export default class Main {
             // Create the environment ---------------------------------------------
             this.environment = new Environment();
 
-
             // -----------------------------------------------------------------
 
+            if (Config.isDev) {
+                // this.meshHelper = new MeshHelper(this.scene, this.model.obj);
+                //
+                // if (Config.mesh.enableHelper) this.meshHelper.enable();
+
+                this.gui.load(this);
+                console.log('gui:', this.gui);
+                this.gui.show();
+            }
             // -----------------------------------------------------------------
 
             // onProgress callback
@@ -112,7 +121,8 @@ export default class Main {
 
             // All loaders done now
             this.manager.onLoad = () => {
-                alert('Loaded');
+                // alert('Loaded');
+                console.log('Loading complete!');
 
                 // Set up interaction manager with the app now that the model is finished loading
                 new Interaction(
@@ -128,7 +138,9 @@ export default class Main {
 
                     if (Config.mesh.enableHelper) this.meshHelper.enable();
 
-                    //this.gui.load(this, this.model.obj);
+                    // this.gui.load(this, this.model.obj);
+                    console.log('gui:', this.gui);
+                    // this.gui.show();
                 }
 
                 // Everything is now fully loaded
@@ -156,6 +168,7 @@ export default class Main {
 
         const intersects = raycaster.intersectObjects(scene.children);
         if (intersects.length > 0) {
+            // console.log(intersects);
             const obj = intersects[0].object;
 
             if (obj.clickEvent != undefined) {
@@ -165,17 +178,17 @@ export default class Main {
     }
 
     render() {
-        // Render rStats if Dev
-        if (Config.isDev && Config.isShowingStats) {
-            Stats.start();
-        }
-
         // Call render function and pass in created scene and camera
         this.renderer.render(this.scene, camera.threeCamera);
 
-        // rStats has finished determining render call now
+        // render labels if enabled
+        if (Config.isShowingLables) {
+            this.labelRenderer.render(this.scene, camera.threeCamera);
+        }
+
+        // update stats if dev environment
         if (Config.isDev && Config.isShowingStats) {
-            Stats.end();
+            this.stats.update();
         }
 
         // Delta time is sometimes needed for certain updates
