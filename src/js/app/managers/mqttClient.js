@@ -135,22 +135,30 @@ export default class MQTTClient {
         } else if (topic == TOPIC_LOC_INFO_FROM_LOC_SYSTEMS || topic == TOPIC_LOC_INFO_FROM_SERVER) {
             //Data from the localization server or virtual robots
             try {
-                const { data, reality } = JSON.parse(msg);
+                const data = JSON.parse(msg);
                 const REALITY = Config.mixedReality.robots;
 
                 // Render only the received data is same as configured reality
                 // or configuration allowed mixed reality
-                if (data != undefined && (reality == REALITY || REALITY == 'M')) {
+                if (data != undefined) {
                     // Have data on this reality
-                    Object.entries(data).forEach((entry) => {
-                        const r = entry[1];
+                    for (const i in data) {
+                        const { id, x, y, heading } = data[i];
+                        const reality = data[i].reality == undefined ? 'V' : data[i].reality;
 
-                        if (window.robot.exists(r.id) == undefined) {
-                            window.robot.create(r.id, r.x, r.y, r.heading, reality);
+                        if (reality === REALITY || REALITY === 'M') {
+                            // Create only if robots match with platform's allowed reality
+                            if (window.robot.exists(id) == undefined) {
+                                window.robot.create(id, x, y, heading, reality);
+                            } else {
+                                window.robot.move(id, x, y, heading);
+                                window.robot.setReality(id, reality);
+                            }
                         } else {
-                            window.robot.move(r.id, r.x, r.y, r.heading);
+                            // reality not matching; remove
+                            robot.delete(id);
                         }
-                    });
+                    }
                 }
             } catch (e) {
                 console.error(e);
