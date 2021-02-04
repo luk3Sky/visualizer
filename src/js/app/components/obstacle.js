@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import TWEEN, { update } from '@tweenjs/tween.js';
 
 import Config from '../../data/config';
 import { addLabel, removeLabel } from './label';

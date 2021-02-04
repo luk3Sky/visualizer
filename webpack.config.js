@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 // Paths
 const entry = './src/js/app.js';
@@ -142,6 +143,13 @@ module.exports = (env) => {
             new MiniCssExtractPlugin({
                 filename: '../css/[name].css',
                 chunkFilename: '../css/[id].css'
+            }),
+            new CopyPlugin({
+                patterns: [
+                    { from: 'node_modules/three/examples/js/libs/stats.min.js' },
+                    { from: 'node_modules/three/examples/js/libs/dat.gui.min.js' },
+                    { from: 'src/public/assets/favicon.ico', to: '../favicon.ico' }
+                ]
             })
         ),
 

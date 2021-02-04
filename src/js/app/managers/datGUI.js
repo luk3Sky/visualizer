@@ -3,11 +3,11 @@ import Config from '../../data/config';
 const params = {
     snapshot: false,
     addRobot: false
-}
+};
 
 const addRobot = () => {
     console.log('Add Robot');
-}
+};
 
 // Manages all dat.GUI interactions
 export default class DatGUI {
@@ -28,7 +28,10 @@ export default class DatGUI {
         this.gui.add(params, 'snapshot');
         this.gui.add(params, 'addRobot');
         console.log(this.gui);
-        this.gui.open();
+
+        this.gui.close();
+
+        //this.gui.open();
 
         /* Global */
         //this.gui.close();
