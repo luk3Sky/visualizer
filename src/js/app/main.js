@@ -182,8 +182,11 @@ export default class Main {
         this.renderer.render(this.scene, camera.threeCamera);
 
         // render labels if enabled
-        if (Config.isShowingLables) {
+        if (Config.isShowingLables && this.labelRenderer.isShowingLables) {
+            this.labelRenderer.domElement.hidden = false;
             this.labelRenderer.render(this.scene, camera.threeCamera);
+        }else{
+            this.labelRenderer.domElement.hidden = true;
         }
 
         // update stats if dev environment

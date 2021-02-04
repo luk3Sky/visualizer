@@ -63,10 +63,8 @@ export default class Obstacle {
         // Show shadows of the object if enabled
         if (Config.shadow.enabled) mesh.receiveShadow = true;
 
-        // Add labels if enabled
-        if (Config.isShowingLables) {
-            addLabel(OBSTACLE_PREFIX, obstacle, mesh);
-        }
+        // Add labels to every obstacle, immediately displayed if enabled
+        addLabel(OBSTACLE_PREFIX, obstacle, mesh);
 
         console.log('Created>', mesh.name);
     }

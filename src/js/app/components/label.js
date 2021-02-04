@@ -1,11 +1,15 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
+import Config from '../../data/config';
 
 export default function () {
     let renderer = new CSS2DRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.domElement.style.position = 'absolute';
     renderer.domElement.style.top = '0px';
+    renderer.isShowingLables = Config.isShowingLables;
+    renderer.isShowingObstacleLables = Config.isShowingObstacleLables;
+    renderer.isShowingRobotLables = Config.isShowingRobotLables;
     return renderer;
 }
 
