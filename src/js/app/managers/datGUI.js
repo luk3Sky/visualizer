@@ -27,7 +27,7 @@ export default class DatGUI {
         // Add folders
         this.gui.add(params, 'snapshot');
         this.gui.add(params, 'addRobot');
-        console.log(this.gui);
+        //console.log(this.gui);
 
         this.gui.close();
 
