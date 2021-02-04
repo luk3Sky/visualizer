@@ -147,7 +147,8 @@ module.exports = (env) => {
             new CopyPlugin({
                 patterns: [
                     { from: 'node_modules/three/examples/js/libs/stats.min.js' },
-                    { from: 'node_modules/three/examples/js/libs/dat.gui.min.js' }
+                    { from: 'node_modules/three/examples/js/libs/dat.gui.min.js' },
+                    { from: 'src/public/assets/favicon.ico', to: '../favicon.ico' }
                 ]
             })
         ),
