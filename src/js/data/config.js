@@ -22,6 +22,7 @@ export default {
         obstacles: 'M',
         robots: 'M'
     },
+    selectedReality: 'M',
     isDev: true,
     isShowingStats: true,
     isShowingLables: true,
