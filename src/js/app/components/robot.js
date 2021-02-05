@@ -51,6 +51,7 @@ export default class Robot {
                         opacity: opacity,
                         transparent: true
                     });
+                    material.userData.originalColor = new THREE.Color(0x666666);
 
                     var r = new THREE.Mesh(geometry, material);
                     r.receiveShadow = true;
@@ -69,7 +70,7 @@ export default class Robot {
                     };
 
                     // Add labels to every robot, immediately displayed if enabled
-                    addLabel(ROBOT_PREFIX, {id}, r);
+                    addLabel(ROBOT_PREFIX, { id }, r);
 
                     console.log(`Created> Robot: id:${id} | x:${x} y: ${y} heading: ${heading} | reality: ${reality}`);
 
