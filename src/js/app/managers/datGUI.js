@@ -1,8 +1,14 @@
 import Config from '../../data/config';
 
-const params = {
-    snapshot: false
-};
+const toggleLabels = (objects, type, value) => {
+    if(Array.isArray(objects) && type !== undefined && type !== ''){
+        for (var variable of objects) {
+            if(variable.name.startsWith(type)){
+                variable.children[0].visible = value;
+            }
+        }
+    }
+}
 
 // Manages all dat.GUI interactions
 export default class DatGUI {
@@ -30,13 +36,13 @@ export default class DatGUI {
             .add(Config, 'isShowingObstacleLables')
             .name('Obstacle Labels')
             .onChange((value) => {
-                console.log('show obs labels', value);
+                toggleLabels(this.scene.children, 'Obstacle', value);
         });
         labelsFolder
             .add(Config, 'isShowingRobotLables')
             .name('Robot Labels')
             .onChange((value) => {
-                console.log('show robot labels', value);
+                toggleLabels(this.scene.children, 'Robot', value);
         });
 
         this.gui.open();
