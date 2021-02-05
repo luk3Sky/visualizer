@@ -2,10 +2,11 @@ import * as THREE from 'three';
 import TWEEN, { update } from '@tweenjs/tween.js';
 
 import Config from '../../data/config';
+import { addLabel, removeLabel } from './label';
 
 var STLLoader = require('three-stl-loader')(THREE);
 
-const ROBOT_PREFIX = 'robot_';
+const ROBOT_PREFIX = 'Robot_';
 
 export default class Robot {
     constructor(scene) {
@@ -67,6 +68,9 @@ export default class Robot {
                         window.robot.alert(m);
                     };
 
+                    // Add labels to every robot, immediately displayed if enabled
+                    addLabel(ROBOT_PREFIX, {id}, r);
+
                     console.log(`Created> Robot: id:${id} | x:${x} y: ${y} heading: ${heading} | reality: ${reality}`);
 
                     // Callback function
@@ -114,6 +118,7 @@ export default class Robot {
 
             if (name.startsWith(ROBOT_PREFIX)) {
                 console.log('Deleted>', name);
+                removeLabel(obj[1]);
                 this.scene.remove(obj[1]);
             }
         });
