@@ -11,6 +11,7 @@ export default class Environment {
             color: 0x999999,
             depthWrite: false
         });
+        material.userData.originalColor = new THREE.Color(0x999999);
 
         // Ground
         var ground = new THREE.Mesh(geometry, material);

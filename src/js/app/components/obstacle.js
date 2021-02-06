@@ -63,10 +63,8 @@ export default class Obstacle {
         // Show shadows of the object if enabled
         if (Config.shadow.enabled) mesh.receiveShadow = true;
 
-        // Add labels if enabled
-        if (Config.isShowingLables) {
-            addLabel(OBSTACLE_PREFIX, obstacle, mesh);
-        }
+        // Add labels to every obstacle, immediately displayed if enabled
+        addLabel(OBSTACLE_PREFIX, obstacle, mesh);
 
         console.log('Created>', mesh.name);
     }
@@ -116,24 +114,37 @@ export default class Obstacle {
     }
 
     createMaterial(m) {
+        let material;
         if (m.type == 'MeshBasicMaterial') {
             // https://threejs.org/docs/#api/en/materials/MeshBasicMaterial
-            return new THREE.MeshBasicMaterial(m.properties);
+            material = new THREE.MeshBasicMaterial(m.properties);
+            material.userData.originalColor = new THREE.Color(0x666666);
+            return material;
         } else if (m.type == 'MeshNormalMaterial') {
             // https://threejs.org/docs/api/en/materials/MeshNormalMaterial.html
-            return new THREE.MeshNormalMaterial(m.properties);
+            material = new THREE.MeshNormalMaterial(m.properties);
+            material.userData.originalColor = new THREE.Color(0x666666);
+            return material;
         } else if (m.type == 'MeshPhongMaterial') {
             // https://threejs.org/docs/#api/en/materials/MeshPhongMaterial
-            return new THREE.MeshPhongMaterial(m.properties);
+            material = new THREE.MeshPhongMaterial(m.properties);
+            material.userData.originalColor = new THREE.Color(0x666666);
+            return material;
         } else if (m.type == 'MeshPhysicalMaterial') {
             // https://threejs.org/docs/#api/en/materials/MeshPhysicalMaterial
-            return new THREE.MeshPhysicalMaterial(m.properties);
+            material = new THREE.MeshPhysicalMaterial(m.properties);
+            material.userData.originalColor = new THREE.Color(0x666666);
+            return material;
         } else if (m.type == 'MeshStandardMaterial') {
             // https://threejs.org/docs/#api/en/materials/MeshStandardMaterial
-            return new THREE.MeshStandardMaterial(m.properties);
+            material = new THREE.MeshStandardMaterial(m.properties);
+            material.userData.originalColor = new THREE.Color(0x666666);
+            return material;
         } else {
             // Default material type
-            return new THREE.MeshStandardMaterial(m.properties);
+            material = new THREE.MeshStandardMaterial(m.properties);
+            material.userData.originalColor = new THREE.Color(0x666666);
+            return material;
         }
     }
 

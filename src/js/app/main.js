@@ -32,11 +32,11 @@ import Config from './../data/config';
 // STLLoader
 let STLLoader = require('three-stl-loader')(THREE);
 
-// Camera
-let camera, labelRenderer;
+// Global Variables
+let camera, labelRenderer, INTERSECTED;
 
 // For click event on robots
-const raycaster = new THREE.Raycaster();
+let raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 // This class instantiates and ties all of the components together, starts the loading process and renders the main loop
@@ -52,6 +52,8 @@ export default class Main {
         this.scene = new THREE.Scene();
         window.scene = this.scene; // config as a global variable
         window.scene_scale = Config.scale;
+        // High level reality flag
+        window.selectedReality = Config.selectedReality;
 
         this.scene.fog = new THREE.FogExp2(Config.fog.color, Config.fog.near);
 
@@ -81,7 +83,6 @@ export default class Main {
         }
 
         if (Config.isShowingLables) {
-            console.log('labels:', label);
             this.labelRenderer = label();
             this.container.appendChild(this.labelRenderer.domElement);
         }
@@ -154,8 +155,11 @@ export default class Main {
         this.render();
         this.container.querySelector('#loading').style.display = 'none';
 
-        // Add eventlistner for catch mouse click events
-        window.addEventListener('click', this.onDocumentMouseDown, false);
+        // Eventlistner for catching mouse click events
+        // window.addEventListener('click', this.onDocumentMouseDown, false);
+        // Eventlistner for catching mouse move events
+        document.addEventListener('mousemove', this.onDocumentMouseMove);
+        // document.addEventListener('mouseout', this.onDocumentMouseOut);
     }
 
     onDocumentMouseDown(event) {
@@ -171,9 +175,73 @@ export default class Main {
             // console.log(intersects);
             const obj = intersects[0].object;
 
-            if (obj.clickEvent != undefined) {
+            if (obj.clickEvent !== undefined) {
                 obj.clickEvent(obj);
             }
+        }
+    }
+
+    onDocumentMouseMove(event) {
+        event.preventDefault();
+
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera.threeCamera);
+
+        const intersects = raycaster.intersectObjects(scene.children, true);
+        // TODO: Do Color change if necessary :-|
+        // if(intersects.length > 0){
+        //     let object = intersects[0].object;
+        //     object.material.color.set(0x67a169);
+        // }
+        // if(intersects.length > 0){
+        //     let object = intersects[0].object;
+        //     if(INTERSECTED !== object){
+        //         console.log('not exists', INTERSECTED, object.material);
+        //         if(INTERSECTED && INTERSECTED.material.userData !== {}){
+        //             console.log(INTERSECTED.material.userData, INTERSECTED.material.type);
+        //             INTERSECTED.material.color.set(INTERSECTED.material.userData.originalColor.getHex());
+        //         }
+        //         INTERSECTED = object;
+        //         INTERSECTED.material.color.set(0x67a169);
+        //     }
+        //     // object.material.color.set(0x67a169);
+        // }else{
+        //     if(INTERSECTED && INTERSECTED.material.userData !== {}) {
+        //         console.log('exists', INTERSECTED.material.userData);
+        //         INTERSECTED.material.color.set(INTERSECTED.material.userData.originalColor.getHex());
+        //     }
+        //     INTERSECTED = null;
+        // }
+        if (intersects.length > 0) {
+            let object = intersects[0].object;
+            if (INTERSECTED != object) {
+                if (INTERSECTED) INTERSECTED.material.setValues({ opacity: INTERSECTED.currentOpacity });
+                INTERSECTED = object;
+                INTERSECTED.currentOpacity = INTERSECTED.material.opacity;
+                INTERSECTED.material.setValues({ opacity: 0.6 });
+            }
+        } else {
+            if (INTERSECTED) INTERSECTED.material.setValues({ opacity: INTERSECTED.currentOpacity });
+
+            INTERSECTED = null;
+        }
+    }
+
+    onDocumentMouseOut(event) {
+        event.preventDefault();
+
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera.threeCamera);
+
+        const intersects = raycaster.intersectObjects(scene.children, true);
+        if (intersects.length > 0) {
+            let object = intersects[0].object;
+            console.log(object.material.userData.originalColor);
+            object.material.color.set(object.material.userData.originalColor);
         }
     }
 
@@ -182,13 +250,11 @@ export default class Main {
         this.renderer.render(this.scene, camera.threeCamera);
 
         // render labels if enabled
-        if (Config.isShowingLables) {
+        if (Config.isShowingLables && this.labelRenderer.isShowingLables) {
+            this.labelRenderer.domElement.hidden = false;
             this.labelRenderer.render(this.scene, camera.threeCamera);
-        }
-
-        // update stats if dev environment
-        if (Config.isDev && Config.isShowingStats) {
-            this.stats.update();
+        } else {
+            this.labelRenderer.domElement.hidden = true;
         }
 
         // Delta time is sometimes needed for certain updates
@@ -197,6 +263,13 @@ export default class Main {
         // Call any vendor or module frame updates here
         TWEEN.update();
         this.controls.threeControls.update();
+
+        camera.threeCamera.updateMatrixWorld();
+
+        // update stats if dev environment
+        if (Config.isDev && Config.isShowingStats) {
+            this.stats.update();
+        }
 
         // RAF
         requestAnimationFrame(this.render.bind(this)); // Bind the main class instead of window object
