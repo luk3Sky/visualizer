@@ -66,7 +66,8 @@ export default class Obstacle {
         if (Config.shadow.enabled) mesh.receiveShadow = true;
 
         // Add labels to every obstacle, immediately displayed if enabled
-        addLabel(OBSTACLE_PREFIX, obstacle, mesh);
+
+        addLabel(OBSTACLE_PREFIX, obstacle, mesh, Config.labelsVisibility.obstacles);
 
         console.log('Created>', mesh.name);
     }

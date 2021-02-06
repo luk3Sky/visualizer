@@ -8,12 +8,12 @@ export default function () {
     renderer.domElement.style.position = 'absolute';
     renderer.domElement.style.top = '0px';
     renderer.isShowingLables = Config.isShowingLables;
-    renderer.isShowingObstacleLables = Config.isShowingObstacleLables;
-    renderer.isShowingRobotLables = Config.isShowingRobotLables;
+    renderer.isShowingObstacleLables = Config.labelsVisibility.obstacles;
+    renderer.isShowingRobotLables = Config.labelsVisibility.robots;
     return renderer;
 }
 
-export const addLabel = (prefix, object, mesh) => {
+export const addLabel = (prefix, object, mesh, visibility) => {
     if (mesh !== undefined) {
         let element = document.createElement('div');
         element.className = 'label';
@@ -22,15 +22,16 @@ export const addLabel = (prefix, object, mesh) => {
         const elementLabel = new CSS2DObject(element);
         elementLabel.name = `Label[${object.id}]`;
         elementLabel.position.set(0, 1, 0);
+        elementLabel.visible = visibility;
         mesh.add(elementLabel);
         mesh.removeLabel = () => {
             mesh.remove(elementLabel);
-        }
+        };
     }
 };
 
 export const removeLabel = (mesh) => {
-    if(mesh !== undefined && mesh.removeLabel !== undefined) {
+    if (mesh !== undefined && mesh.removeLabel !== undefined) {
         mesh.removeLabel();
     }
-}
+};

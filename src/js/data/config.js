@@ -26,8 +26,10 @@ export default {
     isDev: true,
     isShowingStats: true,
     isShowingLables: true,
-    isShowingObstacleLables: true,
-    isShowingRobotLables: true,
+    labelsVisibility: {
+        obstacles: false,
+        robots: true
+    },
     isShowingRobotSnapshots: true,
     isLoaded: false,
     isTweening: false,
