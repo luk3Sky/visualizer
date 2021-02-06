@@ -83,6 +83,8 @@ export default class Robot {
         } else {
             if (reality === REALITY || REALITY === 'M') {
                 // Reality matches
+
+                this.setReality(id, reality);
                 this.move(id, x, y, heading, () => {
                     if (callback != undefined) callback('already defined, so moved');
                 });
@@ -125,6 +127,12 @@ export default class Robot {
         });
     }
 
+    setReality(id, reality) {
+        var r = this.scene.getObjectByName(ROBOT_PREFIX + id);
+        if (r != undefined) {
+            r.reality = reality;
+        }
+    }
     exists(id) {
         var r = this.scene.getObjectByName(ROBOT_PREFIX + id);
         return r;
