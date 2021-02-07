@@ -70,7 +70,7 @@ export default class Robot {
                     };
 
                     // Add labels to every robot, immediately displayed if enabled
-                    addLabel(ROBOT_PREFIX, { id }, r);
+                    addLabel(ROBOT_PREFIX, { id }, r, Config.labelsVisibility.robots);
 
                     console.log(`Created> Robot: id:${id} | x:${x} y: ${y} heading: ${heading} | reality: ${reality}`);
 

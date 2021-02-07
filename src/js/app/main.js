@@ -217,6 +217,9 @@ export default class Main {
         if (intersects.length > 0) {
             let object = intersects[0].object;
             if (INTERSECTED != object) {
+                // COMMENT(NuwanJ)
+                //     I feel that the opacity change is not much useful
+                //     Insted, can we show the label only once hover the mouse on an mesh ?
                 if (INTERSECTED) INTERSECTED.material.setValues({ opacity: INTERSECTED.currentOpacity });
                 INTERSECTED = object;
                 INTERSECTED.currentOpacity = INTERSECTED.material.opacity;

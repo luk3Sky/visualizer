@@ -31,9 +31,11 @@ export default class Obstacle {
         const material = this.createMaterial(obstacle.material);
         const id = obstacle.id || 1000 + Math.floor(900 * Math.random());
 
+        const reality = obstacle.reality == undefined ? 'V' : obstacle.reality;
         const mesh = new THREE.Mesh(geometry, material);
 
         mesh.name = OBSTACLE_PREFIX + id;
+        mesh.reality = reality; // set reality flag
 
         // Remove if object is already defined
         this.deleteIfExists(id);
@@ -64,7 +66,8 @@ export default class Obstacle {
         if (Config.shadow.enabled) mesh.receiveShadow = true;
 
         // Add labels to every obstacle, immediately displayed if enabled
-        addLabel(OBSTACLE_PREFIX, obstacle, mesh);
+
+        addLabel(OBSTACLE_PREFIX, obstacle, mesh, Config.labelsVisibility.obstacles);
 
         console.log('Created>', mesh.name);
     }
@@ -168,7 +171,6 @@ export default class Obstacle {
         // Delete obstacle if it already exists
         const name = OBSTACLE_PREFIX + id;
         const obstacle = this.scene.getObjectByName(name);
-        console.log(obstacle);
         if (obstacle !== undefined) {
             this.scene.remove(obstacle);
             console.log('Deleted>', name);
