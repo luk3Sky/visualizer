@@ -52,9 +52,11 @@ export default class Robot {
                         transparent: true
                     });
                     material.userData.originalColor = new THREE.Color(0x666666);
-
+                    material.userData.labelVisibility = Config.isShowingLables && Config.labelsVisibility.robots;
+                    material.selected = false;
                     var r = new THREE.Mesh(geometry, material);
                     r.receiveShadow = true;
+                    r.robotId = id;
                     r.name = ROBOT_PREFIX + id;
                     r.scale.set(scene_scale, scene_scale, scene_scale);
                     r.position.set(x, y, 0);
@@ -205,14 +207,21 @@ export default class Robot {
         TWEEN.update();
     }
 
+    requestSnapshot(mesh) {
+        return new Promise((resolve, reject) => {
+            let req = window.mqtt.publish(
+                window.channel + '/mgt/robots/snapshot',
+                JSON.stringify({ id: mesh.robotId })
+            );
+            resolve(!req);
+        });
+    }
+
     alert(mesh) {
         // Display an alert on window
         let disp = document.querySelector('#msg-box');
         disp.innerHTML = `${mesh.name} [${mesh.reality}]`;
         disp.style.display = 'block';
-
-        setTimeout(function () {
-            document.querySelector('#msg-box').style.display = 'none';
-        }, 1000);
+        this.requestSnapshot(mesh);
     }
 }
