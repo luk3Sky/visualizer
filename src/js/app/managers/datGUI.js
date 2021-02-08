@@ -1,4 +1,6 @@
 import Config from '../../data/config';
+const storedConfig = window.localStorage;
+console.log('storedConfig', storedConfig, JSON.parse(storedConfig.getItem(`${window.location.href}.gui`)));
 
 // COMMENT(NuwanJ)
 // Store the last state of the toggles in the window.localStorage
@@ -6,9 +8,8 @@ import Config from '../../data/config';
 // Refer: https://github.com/dataarts/dat.gui/blob/master/API.md#GUI+useLocalStorage
 
 let realities = {
-    physical: false,
-    virtual: false,
-    mixed: true
+    physical: true,
+    virtual: true
 };
 
 // Manages all dat.GUI interactions
@@ -66,13 +67,6 @@ export default class DatGUI {
             .onChange((value) => {
                 this.toggleReality('virtual', 'V');
             });
-        realityFolder
-            .add(realities, 'mixed')
-            .listen()
-            .name('Mixed Reality')
-            .onChange((value) => {
-                this.toggleReality('mixed', 'M');
-            });
 
         this.gui.open();
 
@@ -103,12 +97,8 @@ export default class DatGUI {
 
     toggleReality(reality, selected) {
         // TODO: refer Config.mixedReality for actual changes
-
-        // COMMENT(NuwanJ): My opinion is not to allow toggle for realities,
-        //    since it makes the system very complex (need to refresh all things)
-        //    and not much useful in practice.
-        //    But a label is useful for users to know what is the current reality.
-
+        // by default visualizer will intercept all the communication coming to the channel regardless of the reality.
+        // this control panel will only toggle the visibility of objects in the selected realities.
         const objects = scene.children;
         Object.entries(objects).forEach((obj) => {
             const name = obj[1]['name'];
