@@ -33,7 +33,7 @@ import Config from './../data/config';
 let STLLoader = require('three-stl-loader')(THREE);
 
 // Global Variables
-let camera, labelRenderer, INTERSECTED;
+let camera, labelRenderer, INTERSECTED, selectedLabel;
 
 // For click event on robots
 let raycaster = new THREE.Raycaster();
@@ -156,10 +156,9 @@ export default class Main {
         this.container.querySelector('#loading').style.display = 'none';
 
         // Eventlistner for catching mouse click events
-        // window.addEventListener('click', this.onDocumentMouseDown, false);
+        window.addEventListener('click', this.onDocumentMouseDown, false);
         // Eventlistner for catching mouse move events
-        document.addEventListener('mousemove', this.onDocumentMouseMove);
-        // document.addEventListener('mouseout', this.onDocumentMouseOut);
+        // document.addEventListener('mousemove', this.onDocumentMouseMove);
     }
 
     onDocumentMouseDown(event) {
@@ -172,12 +171,37 @@ export default class Main {
 
         const intersects = raycaster.intersectObjects(scene.children);
         if (intersects.length > 0) {
-            // console.log(intersects);
-            const obj = intersects[0].object;
-
-            if (obj.clickEvent !== undefined) {
-                obj.clickEvent(obj);
+            let object = intersects[0].object;
+            if (INTERSECTED) INTERSECTED.material.setValues({ opacity: INTERSECTED.currentOpacity });
+            INTERSECTED = object;
+            selectedLabel = INTERSECTED.children[0];
+            INTERSECTED.currentOpacity = INTERSECTED.material.opacity;
+            INTERSECTED.labelsVisibility = INTERSECTED.material.labelVisibility;
+            if (selectedLabel !== undefined && selectedLabel.visible !== undefined && Config.isShowingLables) {
+                selectedLabel.visible = !selectedLabel.visible;
             }
+            INTERSECTED.material.selected = !INTERSECTED.material.selected;
+            if (INTERSECTED.name.startsWith('Obstacle')) {
+                if (INTERSECTED.material.selected) {
+                    INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+                    INTERSECTED.material.emissive.setHex(0xf95f4a);
+                } else {
+                    INTERSECTED.currentHex = INTERSECTED.material.userData.originalEmmisive;
+                    INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+                }
+            } else if (INTERSECTED.name.startsWith('Robot')) {
+                if (INTERSECTED.material.selected) {
+                    INTERSECTED.material.setValues({ opacity: 0.5 });
+                } else {
+                    INTERSECTED.material.setValues({ opacity: 1 });
+                }
+                if (INTERSECTED.clickEvent !== undefined) {
+                    INTERSECTED.clickEvent(INTERSECTED);
+                }
+            }
+        } else {
+            if (INTERSECTED) INTERSECTED.material.setValues({ opacity: INTERSECTED.currentOpacity });
+            INTERSECTED = null;
         }
     }
 
@@ -190,61 +214,20 @@ export default class Main {
         raycaster.setFromCamera(mouse, camera.threeCamera);
 
         const intersects = raycaster.intersectObjects(scene.children, true);
-        // TODO: Do Color change if necessary :-|
-        // if(intersects.length > 0){
-        //     let object = intersects[0].object;
-        //     object.material.color.set(0x67a169);
-        // }
-        // if(intersects.length > 0){
-        //     let object = intersects[0].object;
-        //     if(INTERSECTED !== object){
-        //         console.log('not exists', INTERSECTED, object.material);
-        //         if(INTERSECTED && INTERSECTED.material.userData !== {}){
-        //             console.log(INTERSECTED.material.userData, INTERSECTED.material.type);
-        //             INTERSECTED.material.color.set(INTERSECTED.material.userData.originalColor.getHex());
-        //         }
-        //         INTERSECTED = object;
-        //         INTERSECTED.material.color.set(0x67a169);
-        //     }
-        //     // object.material.color.set(0x67a169);
-        // }else{
-        //     if(INTERSECTED && INTERSECTED.material.userData !== {}) {
-        //         console.log('exists', INTERSECTED.material.userData);
-        //         INTERSECTED.material.color.set(INTERSECTED.material.userData.originalColor.getHex());
-        //     }
-        //     INTERSECTED = null;
-        // }
         if (intersects.length > 0) {
             let object = intersects[0].object;
-            if (INTERSECTED != object) {
-                // COMMENT(NuwanJ)
-                //     I feel that the opacity change is not much useful
-                //     Insted, can we show the label only once hover the mouse on an mesh ?
+            if (INTERSECTED !== object) {
                 if (INTERSECTED) INTERSECTED.material.setValues({ opacity: INTERSECTED.currentOpacity });
                 INTERSECTED = object;
+                selectedLabel = INTERSECTED.children[0];
                 INTERSECTED.currentOpacity = INTERSECTED.material.opacity;
-                INTERSECTED.material.setValues({ opacity: 0.6 });
+                INTERSECTED.currentColor = INTERSECTED.material.opacity;
+                INTERSECTED.material.setValues({ color: 0x03dffc, opacity: 0.75 });
             }
         } else {
-            if (INTERSECTED) INTERSECTED.material.setValues({ opacity: INTERSECTED.currentOpacity });
-
+            if (INTERSECTED)
+                INTERSECTED.material.setValues({ opacity: 1.0, color: INTERSECTED.material.userData.originalColor });
             INTERSECTED = null;
-        }
-    }
-
-    onDocumentMouseOut(event) {
-        event.preventDefault();
-
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-        raycaster.setFromCamera(mouse, camera.threeCamera);
-
-        const intersects = raycaster.intersectObjects(scene.children, true);
-        if (intersects.length > 0) {
-            let object = intersects[0].object;
-            console.log(object.material.userData.originalColor);
-            object.material.color.set(object.material.userData.originalColor);
         }
     }
 
