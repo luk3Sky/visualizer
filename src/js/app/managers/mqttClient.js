@@ -75,7 +75,8 @@ export default class MQTTClient {
                 this.subscribe(TOPIC_MANAGEMENT_VISUALIZER);
 
                 // Request for obstacle data
-                this.publish(TOPIC_OBSTACLE_REQUEST, Config.mixedReality.obstacles);
+                // this.publish(TOPIC_OBSTACLE_REQUEST, Config.mixedReality.obstacles);
+                this.publish(TOPIC_OBSTACLE_REQUEST, 'M');
 
                 // Request for coordinate data
                 this.publish(TOPIC_LOC_REQUEST, Config.mixedReality.robots);
