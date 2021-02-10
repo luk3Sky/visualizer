@@ -35,6 +35,9 @@ const TOPIC_CHANGE_COLOR = 'output/neopixel';
 // This will help to remote update the parameters in here
 const TOPIC_MANAGEMENT_VISUALIZER = 'mgt/visualizer';
 
+// Robot management snapshot topic
+const TOPIC_MANAGEMENT_SNAPSHOT = 'mgt/robots/?';
+
 // -----------------------------------------------------------------------------
 
 export default class MQTTClient {
@@ -73,6 +76,7 @@ export default class MQTTClient {
                 this.subscribe(TOPIC_OBSTACLES_DELETE);
                 this.subscribe(TOPIC_OBSTACLES_DELETE_ALL);
                 this.subscribe(TOPIC_MANAGEMENT_VISUALIZER);
+                this.subscribe(TOPIC_MANAGEMENT_SNAPSHOT);
 
                 // Request for obstacle data
                 this.publish(TOPIC_OBSTACLE_REQUEST, Config.mixedReality.obstacles);
@@ -116,7 +120,7 @@ export default class MQTTClient {
         const t = packet.destinationName;
         const topic = t.substring(t.indexOf('/') + 1);
 
-        // console.log('MQTT: ' + topic + ' > ' + msg);
+        console.log('MQTT: ' + topic + ' > ' + msg);
 
         if (topic == TOPIC_ROBOT_CREATE) {
             try {
@@ -222,6 +226,33 @@ export default class MQTTClient {
                 }, t);
             } else {
                 console.log('>Management:', msg);
+            }
+        } else if (topic == TOPIC_MANAGEMENT_SNAPSHOT) {
+            const data = JSON.parse(msg);
+            if (data !== -1) {
+                let i = 0,
+                    subElement;
+                let disp = document.querySelector('#msg-box');
+                for (let variable in data) {
+                    if (data.hasOwnProperty(variable)) {
+                        if (i === 0) {
+                            subElement = document.createElement('h4');
+                        } else {
+                            subElement = document.createElement('p');
+                        }
+                        subElement.textContent = `${variable}: ${JSON.stringify(data[variable])}`;
+                        // console.log(`${variable}: ${JSON.stringify(data[variable])}`);
+                        disp.appendChild(subElement);
+                        i += 1;
+                    }
+                }
+                disp.style.display = 'block';
+                disp.style.opacity = '0.5';
+                setTimeout(function () {
+                    document.querySelector('#msg-box').style.display = '1.0';
+                    document.querySelector('#msg-box').style.display = 'none';
+                    disp.style.opacity = '1.0';
+                }, 6000);
             }
         }
     }
