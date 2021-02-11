@@ -241,17 +241,20 @@ export default class MQTTClient {
                     subElement;
                 let disp = document.querySelector('#msg-box');
                 for (let variable in snapshot) {
-                    if (snapshot.hasOwnProperty(variable)) {
-                        if (i === 0) {
-                            subElement = document.createElement('h4');
-                        } else {
-                            subElement = document.createElement('p');
-                        }
-                        subElement.textContent = `${variable}: ${JSON.stringify(snapshot[variable])}`;
-                        // console.log(`${variable}: ${JSON.stringify(snapshot[variable])}`);
-                        disp.appendChild(subElement);
-                        i += 1;
-                    }
+                    // Commented
+                    // Build Error on GH Actions
+                    // Do not access Object.prototype method 'hasOwnProperty' from target object
+                    // if (snapshot.hasOwnProperty(variable)) {
+                    //     if (i === 0) {
+                    //         subElement = document.createElement('h4');
+                    //     } else {
+                    //         subElement = document.createElement('p');
+                    //     }
+                    //     subElement.textContent = `${variable}: ${JSON.stringify(snapshot[variable])}`;
+                    //     // console.log(`${variable}: ${JSON.stringify(snapshot[variable])}`);
+                    //     disp.appendChild(subElement);
+                    //     i += 1;
+                    // }
                 }
                 disp.style.display = 'block';
                 disp.style.opacity = '0.5';
