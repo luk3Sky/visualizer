@@ -229,20 +229,26 @@ export default class MQTTClient {
                 console.log('>Management:', msg);
             }
         } else if (topic == TOPIC_MANAGEMENT_SNAPSHOT) {
-            const data = JSON.parse(msg);
-            if (data !== -1) {
+            const snapshot = JSON.parse(msg);
+
+            // TODO: @luk3Sky, can you refer the updates on simulator ?
+            console.log('Robot:Snapshot', snapshot);
+
+            const { reality, coordinates, data } = snapshot;
+
+            if (snapshot !== -1) {
                 let i = 0,
                     subElement;
                 let disp = document.querySelector('#msg-box');
-                for (let variable in data) {
-                    if (data.hasOwnProperty(variable)) {
+                for (let variable in snapshot) {
+                    if (snapshot.hasOwnProperty(variable)) {
                         if (i === 0) {
                             subElement = document.createElement('h4');
                         } else {
                             subElement = document.createElement('p');
                         }
-                        subElement.textContent = `${variable}: ${JSON.stringify(data[variable])}`;
-                        // console.log(`${variable}: ${JSON.stringify(data[variable])}`);
+                        subElement.textContent = `${variable}: ${JSON.stringify(snapshot[variable])}`;
+                        // console.log(`${variable}: ${JSON.stringify(snapshot[variable])}`);
                         disp.appendChild(subElement);
                         i += 1;
                     }
