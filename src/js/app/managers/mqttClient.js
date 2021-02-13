@@ -200,7 +200,7 @@ export default class MQTTClient {
                 const m = 'Broadcast Message: ' + msg.split(' ')[0];
                 const t = 1000 + msg.length * 95;
 
-                let disp = document.querySelector('#msg-box');
+                const disp = document.querySelector('#msg-box');
                 disp.innerHTML = m;
                 disp.style.display = 'block';
 
@@ -218,7 +218,7 @@ export default class MQTTClient {
 
                 // Display a popup message
                 // TODO: Do this by a generalized function call
-                let disp = document.querySelector('#msg-box');
+                const disp = document.querySelector('#msg-box');
                 disp.innerHTML = m;
                 disp.style.display = 'block';
 
@@ -239,8 +239,8 @@ export default class MQTTClient {
             if (snapshot !== -1) {
                 let i = 0,
                     subElement;
-                let disp = document.querySelector('#msg-box');
-                for (let variable in snapshot) {
+                const disp = document.querySelector('#msg-box');
+                for (const variable in snapshot) {
                     // Commented
                     // Build Error on GH Actions
                     // Do not access Object.prototype method 'hasOwnProperty' from target object

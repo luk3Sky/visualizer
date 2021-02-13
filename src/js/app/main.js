@@ -30,13 +30,13 @@ import MQTTClient from './managers/mqttClient';
 import Config from './../data/config';
 
 // STLLoader
-let STLLoader = require('three-stl-loader')(THREE);
+const STLLoader = require('three-stl-loader')(THREE);
 
 // Global Variables
 let camera, labelRenderer, INTERSECTED, selectedLabel;
 
 // For click event on robots
-let raycaster = new THREE.Raycaster();
+const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 // This class instantiates and ties all of the components together, starts the loading process and renders the main loop
@@ -171,7 +171,7 @@ export default class Main {
 
         const intersects = raycaster.intersectObjects(scene.children);
         if (intersects.length > 0) {
-            let object = intersects[0].object;
+            const object = intersects[0].object;
             if (INTERSECTED) INTERSECTED.material.setValues({ opacity: INTERSECTED.currentOpacity });
             INTERSECTED = object;
             selectedLabel = INTERSECTED.children[0];
@@ -215,7 +215,7 @@ export default class Main {
 
         const intersects = raycaster.intersectObjects(scene.children, true);
         if (intersects.length > 0) {
-            let object = intersects[0].object;
+            const object = intersects[0].object;
             if (INTERSECTED !== object) {
                 if (INTERSECTED) INTERSECTED.material.setValues({ opacity: INTERSECTED.currentOpacity });
                 INTERSECTED = object;

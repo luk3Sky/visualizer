@@ -87,9 +87,8 @@ export default class Obstacle {
             return this.createCylinderGeometry(g.radiusTop, g.radiusBottom, g.height);
         } else if (g.type == 'SphereGeometry') {
             return this.createSphereGeometry(g.radius);
-        } else {
-            throw new TypeError('unsupported geometry type');
         }
+        throw new TypeError('unsupported geometry type');
     }
 
     createBoxGeometry(width, height, depth) {
@@ -139,10 +138,9 @@ export default class Obstacle {
         } else if (m.type == 'MeshStandardMaterial') {
             // https://threejs.org/docs/#api/en/materials/MeshStandardMaterial
             return new THREE.MeshStandardMaterial(m.properties);
-        } else {
-            // Default material type
-            return new THREE.MeshStandardMaterial(m.properties);
         }
+        // Default material type
+        return new THREE.MeshStandardMaterial(m.properties);
     }
 
     calculateZ(obstacle) {
@@ -154,9 +152,8 @@ export default class Obstacle {
             } else if (obstacle.geometry.radius !== undefined) {
                 // Sphere objects
                 return obstacle.geometry.radius;
-            } else {
-                return 0;
             }
+            return 0;
         }
         return obstacle.position.z;
     }

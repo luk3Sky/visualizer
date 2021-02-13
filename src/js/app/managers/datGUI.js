@@ -7,7 +7,7 @@ console.log('storedConfig', storedConfig, JSON.parse(storedConfig.getItem(`${win
 // Refer: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 // Refer: https://github.com/dataarts/dat.gui/blob/master/API.md#GUI+useLocalStorage
 
-let realities = {
+const realities = {
     physical: true,
     virtual: true
 };

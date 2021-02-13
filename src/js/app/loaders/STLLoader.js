@@ -275,9 +275,8 @@ STLLoader.prototype = Object.assign(Object.create(Loader.prototype), {
                 }
 
                 return array_buffer.buffer || array_buffer;
-            } else {
-                return buffer;
             }
+            return buffer;
         }
 
         // start
