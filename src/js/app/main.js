@@ -110,7 +110,6 @@ export default class Main {
                 // if (Config.mesh.enableHelper) this.meshHelper.enable();
 
                 this.gui.load(this);
-                console.log('gui:', this.gui);
                 this.gui.show();
             }
             // -----------------------------------------------------------------
@@ -140,7 +139,6 @@ export default class Main {
                     if (Config.mesh.enableHelper) this.meshHelper.enable();
 
                     // this.gui.load(this, this.model.obj);
-                    console.log('gui:', this.gui);
                     // this.gui.show();
                 }
 
@@ -236,12 +234,12 @@ export default class Main {
         this.renderer.render(this.scene, camera.threeCamera);
 
         // render labels if enabled
-        if (Config.isShowingLables && this.labelRenderer.isShowingLables) {
+        if (Config.isShowingLables) {
             this.labelRenderer.domElement.hidden = false;
-            this.labelRenderer.render(this.scene, camera.threeCamera);
         } else {
             this.labelRenderer.domElement.hidden = true;
         }
+        this.labelRenderer.render(this.scene, camera.threeCamera);
 
         // Delta time is sometimes needed for certain updates
         //const delta = this.clock.getDelta();
