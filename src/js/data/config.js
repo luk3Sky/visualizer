@@ -1,7 +1,9 @@
 import TWEEN from '@tweenjs/tween.js';
 
+let resolvedConfig;
+
 // This object contains the state of the app
-export default {
+const config = {
     scale: 1,
     arena: {
         size: 300,
@@ -23,12 +25,16 @@ export default {
         robots: 'M'
     },
     selectedReality: 'M',
+    selectedRealities: {
+        physical: true,
+        virtual: true
+    },
     isDev: true,
     isShowingStats: true,
     isShowingLables: true,
     labelsVisibility: {
         obstacles: false,
-        robots: true
+        robots: false
     },
     isShowingRobotSnapshots: true,
     isLoaded: false,
@@ -130,3 +136,14 @@ export default {
         z: 0
     }
 };
+
+// Check localstorage for updated config, if not use above config
+const storedConfig = localStorage.getItem(document.location.href + '.config');
+resolvedConfig = storedConfig !== null && storedConfig !== undefined ? JSON.parse(storedConfig) : config;
+
+// method to presist config data with localStorage
+export const saveConfig = (data) => {
+    localStorage.setItem(document.location.href + '.config', JSON.stringify({ ...config, ...data }));
+};
+
+export default resolvedConfig;

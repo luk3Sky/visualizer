@@ -1,6 +1,4 @@
-import Config from '../../data/config';
-const storedConfig = window.localStorage;
-console.log('storedConfig', storedConfig, JSON.parse(storedConfig.getItem(`${window.location.href}.gui`)));
+import Config, { saveConfig } from '../../data/config';
 
 // COMMENT(NuwanJ)
 // Store the last state of the toggles in the window.localStorage
@@ -33,7 +31,17 @@ export default class DatGUI {
         this.gui.add(Config, 'isShowingRobotSnapshots').name('Robot Snapshots');
         /* Labels Folder */
         const labelsFolder = this.gui.addFolder('Labels');
-        labelsFolder.add(Config, 'isShowingLables').name('All Labels');
+        labelsFolder
+            .add(Config, 'isShowingLables')
+            .name('All Labels')
+            .onChange((value) => {
+                Config.isShowingLables = value;
+                Config.labelsVisibility = {
+                    obstacles: value,
+                    robots: value
+                };
+                saveConfig(Config);
+            });
 
         labelsFolder
             .add(Config.labelsVisibility, 'obstacles')
@@ -52,14 +60,14 @@ export default class DatGUI {
         const realityFolder = this.gui.addFolder('Reality');
 
         realityFolder
-            .add(realities, 'physical')
+            .add(Config.selectedRealities, 'physical')
             .name('Physical Reality')
             .listen()
             .onChange((value) => {
                 this.toggleReality('physical', 'P');
             });
         realityFolder
-            .add(realities, 'virtual')
+            .add(Config.selectedRealities, 'virtual')
             .name('Virtual Reality')
             .listen()
             .onChange((value) => {
@@ -76,6 +84,7 @@ export default class DatGUI {
     }
 
     toggleLabels(objects, type, value) {
+        saveConfig(Config);
         if (Array.isArray(objects) && type !== undefined && type !== '') {
             for (var variable of objects) {
                 if (variable.name.startsWith(type)) {
@@ -88,15 +97,15 @@ export default class DatGUI {
     toggleReality(reality, selected) {
         // by default visualizer will intercept all the communication coming to the channel regardless of the reality.
         // this control panel will only toggle the 'visibility' of objects in the selected realities.
-        window.selectedRealities = realities;
         const objects = scene.children;
+        saveConfig(Config);
         Object.entries(objects).forEach((obj) => {
             const name = obj[1]['name'];
             const reality = obj[1]['reality'];
             if (reality !== undefined && reality === 'P') {
-                obj[1].visible = realities.physical;
+                obj[1].visible = Config.selectedRealities.physical;
             } else if (reality !== undefined && reality === 'V') {
-                obj[1].visible = realities.virtual;
+                obj[1].visible = Config.selectedRealities.virtual;
             }
         });
     }
