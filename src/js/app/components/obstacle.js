@@ -41,6 +41,8 @@ export default class Obstacle {
         mesh.name = OBSTACLE_PREFIX + id;
         mesh.reality = reality; // set reality flag
 
+        // TODO: set visibility according to the Config.mixedReality.obstacles
+
         // Remove if object is already defined
         this.deleteIfExists(id);
 

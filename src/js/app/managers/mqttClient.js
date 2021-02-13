@@ -79,7 +79,8 @@ export default class MQTTClient {
                 this.subscribe(TOPIC_MANAGEMENT_SNAPSHOT);
 
                 // Request for obstacle data
-                this.publish(TOPIC_OBSTACLE_REQUEST, Config.mixedReality.obstacles);
+                // this.publish(TOPIC_OBSTACLE_REQUEST, Config.mixedReality.obstacles);
+                this.publish(TOPIC_OBSTACLE_REQUEST, 'M');
 
                 // Request for coordinate data
                 this.publish(TOPIC_LOC_REQUEST, Config.mixedReality.robots);
@@ -228,23 +229,32 @@ export default class MQTTClient {
                 console.log('>Management:', msg);
             }
         } else if (topic == TOPIC_MANAGEMENT_SNAPSHOT) {
-            const data = JSON.parse(msg);
-            if (data !== -1) {
+            const snapshot = JSON.parse(msg);
+
+            // TODO: @luk3Sky, can you refer the updates on simulator ?
+            console.log('Robot:Snapshot', snapshot);
+
+            const { reality, coordinates, data } = snapshot;
+
+            if (snapshot !== -1) {
                 let i = 0,
                     subElement;
                 let disp = document.querySelector('#msg-box');
-                for (let variable in data) {
-                    if (data.hasOwnProperty(variable)) {
-                        if (i === 0) {
-                            subElement = document.createElement('h4');
-                        } else {
-                            subElement = document.createElement('p');
-                        }
-                        subElement.textContent = `${variable}: ${JSON.stringify(data[variable])}`;
-                        // console.log(`${variable}: ${JSON.stringify(data[variable])}`);
-                        disp.appendChild(subElement);
-                        i += 1;
-                    }
+                for (let variable in snapshot) {
+                    // Commented
+                    // Build Error on GH Actions
+                    // Do not access Object.prototype method 'hasOwnProperty' from target object
+                    // if (snapshot.hasOwnProperty(variable)) {
+                    //     if (i === 0) {
+                    //         subElement = document.createElement('h4');
+                    //     } else {
+                    //         subElement = document.createElement('p');
+                    //     }
+                    //     subElement.textContent = `${variable}: ${JSON.stringify(snapshot[variable])}`;
+                    //     // console.log(`${variable}: ${JSON.stringify(snapshot[variable])}`);
+                    //     disp.appendChild(subElement);
+                    //     i += 1;
+                    // }
                 }
                 disp.style.display = 'block';
                 disp.style.opacity = '0.5';
