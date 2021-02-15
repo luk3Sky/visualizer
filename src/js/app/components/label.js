@@ -10,6 +10,11 @@ export default function () {
     renderer.isShowingLables = Config.isShowingLables;
     renderer.isShowingObstacleLables = Config.labelsVisibility.obstacles;
     renderer.isShowingRobotLables = Config.labelsVisibility.robots;
+    renderer.updateSize = function () {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    document.addEventListener('DOMContentLoaded', () => renderer.updateSize(), false);
+    window.addEventListener('resize', () => renderer.updateSize(), false);
     return renderer;
 }
 
