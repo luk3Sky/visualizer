@@ -230,38 +230,41 @@ export default class MQTTClient {
             }
         } else if (topic == TOPIC_MANAGEMENT_SNAPSHOT) {
             const snapshot = JSON.parse(msg);
-
-            // TODO: @luk3Sky, can you refer the updates on simulator ?
             console.log('Robot:Snapshot', snapshot);
-
-            const { reality, coordinates, data } = snapshot;
-
             if (snapshot !== -1) {
                 let i = 0,
                     subElement;
                 const disp = document.querySelector('#msg-box');
+                const prevContent = document.getElementById('msg-content');
+                let content = document.createElement('div');
+                content.setAttribute('id', 'msg-content');
+                const titleElement = document.createElement('h3');
+                titleElement.textContent = `Robot [${snapshot.id}] Snapshot`;
+                content.appendChild(titleElement);
                 for (const variable in snapshot) {
-                    // Commented
-                    // Build Error on GH Actions
-                    // Do not access Object.prototype method 'hasOwnProperty' from target object
-                    // if (snapshot.hasOwnProperty(variable)) {
-                    //     if (i === 0) {
-                    //         subElement = document.createElement('h4');
-                    //     } else {
-                    //         subElement = document.createElement('p');
-                    //     }
-                    //     subElement.textContent = `${variable}: ${JSON.stringify(snapshot[variable])}`;
-                    //     // console.log(`${variable}: ${JSON.stringify(snapshot[variable])}`);
-                    //     disp.appendChild(subElement);
-                    //     i += 1;
-                    // }
+                    if (Object.prototype.hasOwnProperty.call(snapshot, variable)) {
+                        if (i === 0) {
+                            subElement = document.createElement('h4');
+                        } else {
+                            subElement = document.createElement('p');
+                        }
+                        if (variable === 'data') {
+                            for (const [key, value] of Object.entries(snapshot.data)) {
+                                subElement.textContent = `${key}: ${value}`;
+                            }
+                        } else {
+                            subElement.textContent = `${variable}: ${JSON.stringify(snapshot[variable])}`;
+                        }
+                        content.appendChild(subElement);
+                        i += 1;
+                    }
                 }
+                disp.replaceChild(content, prevContent);
                 disp.style.display = 'block';
                 disp.style.opacity = '0.5';
                 setTimeout(function () {
-                    document.querySelector('#msg-box').style.display = '1.0';
-                    document.querySelector('#msg-box').style.display = 'none';
                     disp.style.opacity = '1.0';
+                    disp.style.display = 'none';
                 }, 6000);
             }
         }

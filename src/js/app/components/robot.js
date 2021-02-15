@@ -221,8 +221,22 @@ export default class Robot {
     alert(mesh) {
         // Display an alert on window
         const disp = document.querySelector('#msg-box');
-        disp.innerHTML = `${mesh.name} [${mesh.reality}]`;
+        const prevContent = document.getElementById('msg-content');
+        let content = document.createElement('div');
+        content.setAttribute('id', 'msg-content');
+        let nodeContent;
+        if (Config.isShowingRobotSnapshots) {
+            nodeContent = document.createTextNode(`${mesh.name} Snapshot Loading...`);
+            this.requestSnapshot(mesh);
+        } else {
+            nodeContent = document.createTextNode(`${mesh.name}`);
+        }
+        content.appendChild(nodeContent);
+        disp.replaceChild(content, prevContent);
         disp.style.display = 'block';
-        this.requestSnapshot(mesh);
+        setTimeout(function () {
+            disp.style.opacity = '1.0';
+            disp.style.display = 'none';
+        }, 10000);
     }
 }
