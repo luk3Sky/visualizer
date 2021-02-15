@@ -61,6 +61,17 @@ export default class Robot {
                     r.rotation.x = 90 * THREE.Math.DEG2RAD;
                     r.rotation.y = (heading - 90) * THREE.Math.DEG2RAD;
                     r.reality = reality; // set reality flag
+                    // TODO: @NuwanJ Please review this reality integration.
+                    // Reality toggler is now updated so that every obstacle/robot material should be transparent and depending on the reality selected, we can now change opacity properly.
+                    // If the transparent property not set to true, opacity change will not reflect correctly.
+                    // Refer: https://threejs.org/docs/index.html#api/en/materials/Material.opacity
+                    if (reality === 'V') {
+                        // material.visible = Config.selectedRealities.virtual;
+                        material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.125;
+                    } else if (reality === 'P') {
+                        // material.visible = Config.selectedRealities.physical;
+                        material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.125;
+                    }
 
                     // Add robot to the scene
                     window.scene.add(r);

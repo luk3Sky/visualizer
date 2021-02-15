@@ -33,6 +33,7 @@ export default class Obstacle {
         material.userData.labelVisibility = Config.isShowingLables && Config.labelsVisibility.obstacles;
         material.userData.originalEmmisive = material.emissive.getHex();
         material.selected = false;
+        material.transparent = true;
         const id = obstacle.id || 1000 + Math.floor(900 * Math.random());
 
         const reality = obstacle.reality == undefined ? 'V' : obstacle.reality;
@@ -41,9 +42,11 @@ export default class Obstacle {
         mesh.name = OBSTACLE_PREFIX + id;
         mesh.reality = reality; // set reality flag
         if (mesh.reality === 'V') {
-            material.visible = Config.selectedRealities.virtual;
+            // material.visible = Config.selectedRealities.virtual;
+            material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.05;
         } else if (mesh.reality === 'P') {
-            material.visible = Config.selectedRealities.physical;
+            // material.visible = Config.selectedRealities.physical;
+            material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.05;
         }
 
         // Remove if object is already defined

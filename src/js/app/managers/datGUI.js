@@ -103,9 +103,11 @@ export default class DatGUI {
             const name = obj[1]['name'];
             const reality = obj[1]['reality'];
             if (reality !== undefined && reality === 'P') {
-                obj[1].visible = Config.selectedRealities.physical;
+                // obj[1].transparent = Config.selectedRealities.physical;
+                obj[1].material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.05;
             } else if (reality !== undefined && reality === 'V') {
-                obj[1].visible = Config.selectedRealities.virtual;
+                // obj[1].transparent = Config.selectedRealities.virtual;
+                obj[1].material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.05;
             }
         });
     }

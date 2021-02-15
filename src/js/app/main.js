@@ -179,6 +179,7 @@ export default class Main {
                 selectedLabel.visible = !selectedLabel.visible;
             }
             INTERSECTED.material.selected = !INTERSECTED.material.selected;
+            // Obstacle selection event handling
             if (INTERSECTED.name.startsWith('Obstacle')) {
                 if (INTERSECTED.material.selected) {
                     INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
@@ -187,6 +188,7 @@ export default class Main {
                     INTERSECTED.currentHex = INTERSECTED.material.userData.originalEmmisive;
                     INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
                 }
+                // Robot selection event handling
             } else if (INTERSECTED.name.startsWith('Robot')) {
                 if (INTERSECTED.material.selected) {
                     INTERSECTED.material.setValues({ opacity: 0.5 });
