@@ -28,7 +28,13 @@ export default class DatGUI {
 
     load(main, mesh) {
         // Add folders
-        this.gui.add(Config, 'isShowingRobotSnapshots').name('Robot Snapshots');
+        this.gui
+            .add(Config, 'isShowingRobotSnapshots')
+            .name('Robot Snapshots')
+            .onChange((value) => {
+                Config.isShowingRobotSnapshots = value;
+                saveConfig(Config);
+            });
         /* Labels Folder */
         const labelsFolder = this.gui.addFolder('Labels');
         labelsFolder
