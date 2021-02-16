@@ -1,3 +1,5 @@
+let jwt = require('jsonwebtoken');
+
 function getUrlVars() {
     var vars = {};
     var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
@@ -38,15 +40,22 @@ export function getCredentials() {
             username,
             password
         };
-        // TODO: @NuwanJ please review this
-        // Manually returen this for now, we need to discuss the unauthorized verison handling part
-        // For now an alert will pop up.
-        // } else if (storedCredentials === null) {
-        //     return {
-        //         username: 'swarm_user',
-        //         password: 'swarm_usere15'
-        //     };
+    } else if (key !== false) {
+        clearParams();
+        // decode the api key
+        localStorage.setItem(document.location.href.split('?')[0] + '.key', key);
+        console.log(decodeKey(key));
     } else {
+        return -1;
+    }
+}
+function decodeKey() {
+    try {
+        let decoded = jwt.verify(token, 'swarm-visualizer-secret');
+        return decoded;
+    } catch (err) {
+        // err
+        console.log('Token Error');
         return -1;
     }
 }
