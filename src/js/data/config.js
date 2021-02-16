@@ -26,7 +26,7 @@ const config = {
     },
     selectedReality: 'M',
     selectedRealities: {
-        physical: true,
+        real: true,
         virtual: true
     },
     isDev: true,

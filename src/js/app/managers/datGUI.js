@@ -5,11 +5,6 @@ import Config, { saveConfig } from '../../data/config';
 // Refer: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 // Refer: https://github.com/dataarts/dat.gui/blob/master/API.md#GUI+useLocalStorage
 
-const realities = {
-    physical: true,
-    virtual: true
-};
-
 // Manages all dat.GUI interactions
 export default class DatGUI {
     constructor(main) {
@@ -66,7 +61,7 @@ export default class DatGUI {
         const realityFolder = this.gui.addFolder('Reality');
 
         realityFolder
-            .add(Config.selectedRealities, 'physical')
+            .add(Config.selectedRealities, 'real')
             .name('Physical Reality')
             .listen()
             .onChange((value) => {
@@ -110,8 +105,8 @@ export default class DatGUI {
             const reality = obj[1]['reality'];
 
             if (reality !== undefined && reality === 'R') {
-                // obj[1].transparent = Config.selectedRealities.physical;
-                obj[1].material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.05;
+                // obj[1].transparent = Config.selectedRealities.real;
+                obj[1].material.opacity = Config.selectedRealities.real ? 1.0 : 0.05;
             } else if (reality !== undefined && reality === 'V') {
                 // obj[1].transparent = Config.selectedRealities.virtual;
                 obj[1].material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.05;
