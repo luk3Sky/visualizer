@@ -52,6 +52,7 @@ export default class Robot {
                     material.userData.originalColor = new THREE.Color(0x666666);
                     material.userData.labelVisibility = Config.isShowingLables && Config.labelsVisibility.robots;
                     material.selected = false;
+
                     var r = new THREE.Mesh(geometry, material);
                     r.receiveShadow = true;
                     r.robotId = id;
@@ -61,6 +62,7 @@ export default class Robot {
                     r.rotation.x = 90 * THREE.Math.DEG2RAD;
                     r.rotation.y = (heading - 90) * THREE.Math.DEG2RAD;
                     r.reality = reality; // set reality flag
+
                     // TODO: @NuwanJ Please review this reality integration.
                     // Reality toggler is now updated so that every obstacle/robot material should be transparent and depending on the reality selected, we can now change opacity properly.
                     // If the transparent property not set to true, opacity change will not reflect correctly.
@@ -68,7 +70,7 @@ export default class Robot {
                     if (reality === 'V') {
                         // material.visible = Config.selectedRealities.virtual;
                         material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.125;
-                    } else if (reality === 'P') {
+                    } else if (reality === 'R') {
                         // material.visible = Config.selectedRealities.physical;
                         material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.125;
                     }

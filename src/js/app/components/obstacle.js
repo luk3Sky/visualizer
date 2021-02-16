@@ -44,7 +44,7 @@ export default class Obstacle {
         if (mesh.reality === 'V') {
             // material.visible = Config.selectedRealities.virtual;
             material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.05;
-        } else if (mesh.reality === 'P') {
+        } else if (mesh.reality === 'R') {
             // material.visible = Config.selectedRealities.physical;
             material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.05;
         }
