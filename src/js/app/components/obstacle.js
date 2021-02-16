@@ -33,6 +33,7 @@ export default class Obstacle {
         material.userData.labelVisibility = Config.isShowingLables && Config.labelsVisibility.obstacles;
         material.userData.originalEmmisive = material.emissive.getHex();
         material.selected = false;
+        material.transparent = true;
         const id = obstacle.id || 1000 + Math.floor(900 * Math.random());
 
         const reality = obstacle.reality == undefined ? 'V' : obstacle.reality;
@@ -40,8 +41,13 @@ export default class Obstacle {
 
         mesh.name = OBSTACLE_PREFIX + id;
         mesh.reality = reality; // set reality flag
-
-        // TODO: set visibility according to the Config.mixedReality.obstacles
+        if (mesh.reality === 'V') {
+            // material.visible = Config.selectedRealities.virtual;
+            material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.05;
+        } else if (mesh.reality === 'P') {
+            // material.visible = Config.selectedRealities.physical;
+            material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.05;
+        }
 
         // Remove if object is already defined
         this.deleteIfExists(id);
@@ -87,9 +93,8 @@ export default class Obstacle {
             return this.createCylinderGeometry(g.radiusTop, g.radiusBottom, g.height);
         } else if (g.type == 'SphereGeometry') {
             return this.createSphereGeometry(g.radius);
-        } else {
-            throw new TypeError('unsupported geometry type');
         }
+        throw new TypeError('unsupported geometry type');
     }
 
     createBoxGeometry(width, height, depth) {
@@ -139,10 +144,9 @@ export default class Obstacle {
         } else if (m.type == 'MeshStandardMaterial') {
             // https://threejs.org/docs/#api/en/materials/MeshStandardMaterial
             return new THREE.MeshStandardMaterial(m.properties);
-        } else {
-            // Default material type
-            return new THREE.MeshStandardMaterial(m.properties);
         }
+        // Default material type
+        return new THREE.MeshStandardMaterial(m.properties);
     }
 
     calculateZ(obstacle) {
@@ -154,9 +158,8 @@ export default class Obstacle {
             } else if (obstacle.geometry.radius !== undefined) {
                 // Sphere objects
                 return obstacle.geometry.radius;
-            } else {
-                return 0;
             }
+            return 0;
         }
         return obstacle.position.z;
     }

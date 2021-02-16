@@ -30,13 +30,13 @@ import MQTTClient from './managers/mqttClient';
 import Config from './../data/config';
 
 // STLLoader
-let STLLoader = require('three-stl-loader')(THREE);
+const STLLoader = require('three-stl-loader')(THREE);
 
 // Global Variables
 let camera, labelRenderer, INTERSECTED, selectedLabel;
 
 // For click event on robots
-let raycaster = new THREE.Raycaster();
+const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 // This class instantiates and ties all of the components together, starts the loading process and renders the main loop
@@ -110,7 +110,6 @@ export default class Main {
                 // if (Config.mesh.enableHelper) this.meshHelper.enable();
 
                 this.gui.load(this);
-                console.log('gui:', this.gui);
                 this.gui.show();
             }
             // -----------------------------------------------------------------
@@ -140,7 +139,6 @@ export default class Main {
                     if (Config.mesh.enableHelper) this.meshHelper.enable();
 
                     // this.gui.load(this, this.model.obj);
-                    console.log('gui:', this.gui);
                     // this.gui.show();
                 }
 
@@ -171,7 +169,7 @@ export default class Main {
 
         const intersects = raycaster.intersectObjects(scene.children);
         if (intersects.length > 0) {
-            let object = intersects[0].object;
+            const object = intersects[0].object;
             if (INTERSECTED) INTERSECTED.material.setValues({ opacity: INTERSECTED.currentOpacity });
             INTERSECTED = object;
             selectedLabel = INTERSECTED.children[0];
@@ -181,6 +179,7 @@ export default class Main {
                 selectedLabel.visible = !selectedLabel.visible;
             }
             INTERSECTED.material.selected = !INTERSECTED.material.selected;
+            // Obstacle selection event handling
             if (INTERSECTED.name.startsWith('Obstacle')) {
                 if (INTERSECTED.material.selected) {
                     INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
@@ -189,6 +188,7 @@ export default class Main {
                     INTERSECTED.currentHex = INTERSECTED.material.userData.originalEmmisive;
                     INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
                 }
+                // Robot selection event handling
             } else if (INTERSECTED.name.startsWith('Robot')) {
                 if (INTERSECTED.material.selected) {
                     INTERSECTED.material.setValues({ opacity: 0.5 });
@@ -215,7 +215,7 @@ export default class Main {
 
         const intersects = raycaster.intersectObjects(scene.children, true);
         if (intersects.length > 0) {
-            let object = intersects[0].object;
+            const object = intersects[0].object;
             if (INTERSECTED !== object) {
                 if (INTERSECTED) INTERSECTED.material.setValues({ opacity: INTERSECTED.currentOpacity });
                 INTERSECTED = object;
@@ -236,12 +236,12 @@ export default class Main {
         this.renderer.render(this.scene, camera.threeCamera);
 
         // render labels if enabled
-        if (Config.isShowingLables && this.labelRenderer.isShowingLables) {
+        if (Config.isShowingLables) {
             this.labelRenderer.domElement.hidden = false;
-            this.labelRenderer.render(this.scene, camera.threeCamera);
         } else {
             this.labelRenderer.domElement.hidden = true;
         }
+        this.labelRenderer.render(this.scene, camera.threeCamera);
 
         // Delta time is sometimes needed for certain updates
         //const delta = this.clock.getDelta();

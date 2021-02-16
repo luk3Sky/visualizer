@@ -5,6 +5,7 @@ import MQTT from 'paho-mqtt';
 import Config from '../../data/config';
 import Obstacle from '../components/obstacle';
 import Robot from '../components/robot';
+import { getCredentials } from '../helpers/urlHelper';
 
 // -----------------------------------------------------------------------------
 // MQTT Topics
@@ -47,65 +48,73 @@ export default class MQTTClient {
         this.obstacles = new Obstacle(scene);
 
         this.updateChannel();
+        const credentials = getCredentials();
 
-        // create a random client Id
-        const client_id = 'client_' + Math.random().toString(36).substring(2, 15);
-        this.client = new MQTT.Client(Config.mqtt.server, Config.mqtt.port, Config.mqtt.path, client_id);
+        if (credentials === -1) {
+            alert('Unauthorized access! The Visualizer will not work properly.');
+        } else {
+            const { username, password } = credentials;
+            // create a random client Id
+            const client_id = 'client_' + Math.random().toString(36).substring(2, 15);
+            this.client = new MQTT.Client(Config.mqtt.server, Config.mqtt.port, Config.mqtt.path, client_id);
 
-        window.mqtt = this.client;
+            window.mqtt = this.client;
 
-        this.client.connect({
-            userName: Config.mqtt.user,
-            password: Config.mqtt.password,
-            reconnect: true,
-            useSSL: true,
-            cleanSession: false,
-            onSuccess: () => {
-                console.log('MQTT: connected');
+            this.client.connect({
+                userName: username,
+                password: password,
+                reconnect: true,
+                useSSL: true,
+                cleanSession: false,
+                onSuccess: () => {
+                    console.log('MQTT: connected');
 
-                // Subscribe to topics
-                this.subscribe(TOPIC_LOC_INFO_FROM_SERVER);
-                this.subscribe(TOPIC_LOC_INFO_FROM_LOC_SYSTEMS);
+                    // Subscribe to topics
+                    this.subscribe(TOPIC_LOC_INFO_FROM_SERVER);
+                    this.subscribe(TOPIC_LOC_INFO_FROM_LOC_SYSTEMS);
 
-                this.subscribe(TOPIC_ROBOT_CREATE);
-                this.subscribe(TOPIC_ROBOT_DELETE);
-                this.subscribe(TOPIC_ROBOT_BROADCAST);
+                    this.subscribe(TOPIC_ROBOT_CREATE);
+                    this.subscribe(TOPIC_ROBOT_DELETE);
+                    this.subscribe(TOPIC_ROBOT_BROADCAST);
 
-                this.subscribe(TOPIC_CHANGE_COLOR);
-                this.subscribe(TOPIC_OBSTACLES_LIST);
-                this.subscribe(TOPIC_OBSTACLES_DELETE);
-                this.subscribe(TOPIC_OBSTACLES_DELETE_ALL);
-                this.subscribe(TOPIC_MANAGEMENT_VISUALIZER);
-                this.subscribe(TOPIC_MANAGEMENT_SNAPSHOT);
+                    this.subscribe(TOPIC_CHANGE_COLOR);
+                    this.subscribe(TOPIC_OBSTACLES_LIST);
+                    this.subscribe(TOPIC_OBSTACLES_DELETE);
+                    this.subscribe(TOPIC_OBSTACLES_DELETE_ALL);
+                    this.subscribe(TOPIC_MANAGEMENT_VISUALIZER);
+                    this.subscribe(TOPIC_MANAGEMENT_SNAPSHOT);
 
-                // Request for obstacle data
-                // this.publish(TOPIC_OBSTACLE_REQUEST, Config.mixedReality.obstacles);
-                this.publish(TOPIC_OBSTACLE_REQUEST, 'M');
+                    // Request for obstacle data
+                    // this.publish(TOPIC_OBSTACLE_REQUEST, Config.mixedReality.obstacles);
+                    this.publish(TOPIC_OBSTACLE_REQUEST, 'M');
 
-                // Request for coordinate data
-                this.publish(TOPIC_LOC_REQUEST, Config.mixedReality.robots);
+                    // Request for coordinate data
+                    this.publish(TOPIC_LOC_REQUEST, Config.mixedReality.robots);
 
-                // Access globally
-                window.robot = this.robot;
-                window.obstacles = this.obstacles;
+                    // Access globally
+                    window.robot = this.robot;
+                    window.obstacles = this.obstacles;
 
-                this.client.onMessageArrived = this.onMessageArrived;
-                this.client.onConnectionLost = this.onConnectionLost;
-            },
-            onFailure: () => {
-                console.log('MQTT: connection failed');
-            }
-        });
+                    this.client.onMessageArrived = this.onMessageArrived;
+                    this.client.onConnectionLost = this.onConnectionLost;
+                },
+                onFailure: () => {
+                    console.log('MQTT: connection failed');
+                    alert('MQTT: connection failed!');
+                }
+            });
+        }
     }
 
     updateChannel() {
         const channelHash = window.location.hash;
         if ((channelHash != '') & (channelHash.length > 1)) {
-            window.channel = channelHash.substring(1);
+            // window.channel = channelHash.substring(1);
+            window.channel = channelHash.split('#')[1].split('?')[0];
         } else {
             window.channel = Config.mqtt.channel;
         }
-        console.log('MQTT: channel=', window.channel);
+        console.log('MQTT: channel=', window.channel, channelHash);
         return true;
     }
 
@@ -200,7 +209,7 @@ export default class MQTTClient {
                 const m = 'Broadcast Message: ' + msg.split(' ')[0];
                 const t = 1000 + msg.length * 95;
 
-                let disp = document.querySelector('#msg-box');
+                const disp = document.querySelector('#msg-box');
                 disp.innerHTML = m;
                 disp.style.display = 'block';
 
@@ -218,7 +227,7 @@ export default class MQTTClient {
 
                 // Display a popup message
                 // TODO: Do this by a generalized function call
-                let disp = document.querySelector('#msg-box');
+                const disp = document.querySelector('#msg-box');
                 disp.innerHTML = m;
                 disp.style.display = 'block';
 
@@ -230,38 +239,41 @@ export default class MQTTClient {
             }
         } else if (topic == TOPIC_MANAGEMENT_SNAPSHOT) {
             const snapshot = JSON.parse(msg);
-
-            // TODO: @luk3Sky, can you refer the updates on simulator ?
             console.log('Robot:Snapshot', snapshot);
-
-            const { reality, coordinates, data } = snapshot;
-
             if (snapshot !== -1) {
                 let i = 0,
                     subElement;
-                let disp = document.querySelector('#msg-box');
-                for (let variable in snapshot) {
-                    // Commented
-                    // Build Error on GH Actions
-                    // Do not access Object.prototype method 'hasOwnProperty' from target object
-                    // if (snapshot.hasOwnProperty(variable)) {
-                    //     if (i === 0) {
-                    //         subElement = document.createElement('h4');
-                    //     } else {
-                    //         subElement = document.createElement('p');
-                    //     }
-                    //     subElement.textContent = `${variable}: ${JSON.stringify(snapshot[variable])}`;
-                    //     // console.log(`${variable}: ${JSON.stringify(snapshot[variable])}`);
-                    //     disp.appendChild(subElement);
-                    //     i += 1;
-                    // }
+                const disp = document.querySelector('#msg-box');
+                const prevContent = document.getElementById('msg-content');
+                let content = document.createElement('div');
+                content.setAttribute('id', 'msg-content');
+                const titleElement = document.createElement('h3');
+                titleElement.textContent = `Robot [${snapshot.id}] Snapshot`;
+                content.appendChild(titleElement);
+                for (const variable in snapshot) {
+                    if (Object.prototype.hasOwnProperty.call(snapshot, variable)) {
+                        if (i === 0) {
+                            subElement = document.createElement('h4');
+                        } else {
+                            subElement = document.createElement('p');
+                        }
+                        if (variable === 'data') {
+                            for (const [key, value] of Object.entries(snapshot.data)) {
+                                subElement.textContent = `${key}: ${value}`;
+                            }
+                        } else {
+                            subElement.textContent = `${variable}: ${JSON.stringify(snapshot[variable])}`;
+                        }
+                        content.appendChild(subElement);
+                        i += 1;
+                    }
                 }
+                disp.replaceChild(content, prevContent);
                 disp.style.display = 'block';
                 disp.style.opacity = '0.5';
                 setTimeout(function () {
-                    document.querySelector('#msg-box').style.display = '1.0';
-                    document.querySelector('#msg-box').style.display = 'none';
                     disp.style.opacity = '1.0';
+                    disp.style.display = 'none';
                 }, 6000);
             }
         }

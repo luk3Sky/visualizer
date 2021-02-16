@@ -3,19 +3,24 @@ import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRe
 import Config from '../../data/config';
 
 export default function () {
-    let renderer = new CSS2DRenderer();
+    const renderer = new CSS2DRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.domElement.style.position = 'absolute';
     renderer.domElement.style.top = '0px';
     renderer.isShowingLables = Config.isShowingLables;
     renderer.isShowingObstacleLables = Config.labelsVisibility.obstacles;
     renderer.isShowingRobotLables = Config.labelsVisibility.robots;
+    renderer.updateSize = function () {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    document.addEventListener('DOMContentLoaded', () => renderer.updateSize(), false);
+    window.addEventListener('resize', () => renderer.updateSize(), false);
     return renderer;
 }
 
 export const addLabel = (prefix, object, mesh, visibility) => {
     if (mesh !== undefined) {
-        let element = document.createElement('div');
+        const element = document.createElement('div');
         element.className = 'label';
         element.textContent = `${prefix}[${object.id}]`;
         element.style.marginTop = '-1.2em';
