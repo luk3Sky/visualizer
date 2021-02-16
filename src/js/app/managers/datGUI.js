@@ -70,7 +70,7 @@ export default class DatGUI {
             .name('Physical Reality')
             .listen()
             .onChange((value) => {
-                this.toggleReality('physical', 'P');
+                this.toggleReality('real', 'R');
             });
         realityFolder
             .add(Config.selectedRealities, 'virtual')
@@ -108,7 +108,8 @@ export default class DatGUI {
         Object.entries(objects).forEach((obj) => {
             const name = obj[1]['name'];
             const reality = obj[1]['reality'];
-            if (reality !== undefined && reality === 'P') {
+
+            if (reality !== undefined && reality === 'R') {
                 // obj[1].transparent = Config.selectedRealities.physical;
                 obj[1].material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.05;
             } else if (reality !== undefined && reality === 'V') {

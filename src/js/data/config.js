@@ -16,8 +16,8 @@ const config = {
         server: 'swarm-gui.tk',
         port: 8883,
         path: '/socket.io',
-        user: 'swarm_user',
-        password: 'swarm_usere15',
+        user: 'username',
+        password: 'password',
         channel: 'v1'
     },
     mixedReality: {

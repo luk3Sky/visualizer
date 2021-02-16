@@ -15,6 +15,12 @@ function getUrlParam(parameter, defaultvalue) {
 }
 
 export function getCredentials() {
+    // TODO: Add channel, host and port into URL (as optional parameters)
+    // Suggestion: Use JWT insted of exposed credentials
+    // Simulator server can provide the JWT token
+    // @luk3Sky
+    // This isn't an urgent requirement, but better if we can implement this
+
     const storedCredentials = localStorage.getItem(document.location.href.split('?')[0] + '.credentials');
     const username = getUrlParam('username', false);
     const password = getUrlParam('password', false);
