@@ -20,12 +20,28 @@ export function getCredentials() {
     // TODO: Add channel, host and port into URL (as optional parameters)
     // Suggestion: Use JWT insted of exposed credentials
     // Simulator server can provide the JWT token
-    // @luk3Sky
-    // This isn't an urgent requirement, but better if we can implement this
-
     const storedCredentials = localStorage.getItem(document.location.href.split('?')[0] + '.credentials');
     const username = getUrlParam('username', false);
     const password = getUrlParam('password', false);
+    const key = getUrlParam('key', false);
+    const channel = getUrlParam('channel', false);
+    const port = getUrlParam('port', false);
+    const server = getUrlParam('server', false);
+    clearParams();
+    setTimeout(() => {
+        if (server !== false) {
+            localStorage.setItem(document.location.href.split('?')[0] + '.server', server);
+        }
+        if (channel !== false) {
+            localStorage.setItem(document.location.href.split('?')[0] + '.channel', channel);
+        }
+        if (port !== false) {
+            localStorage.setItem(document.location.href.split('?')[0] + '.port', port);
+        }
+        if (key !== false) {
+            localStorage.setItem(document.location.href.split('?')[0] + '.key', key);
+        }
+    }, 2000);
     if (username === false && password === false && storedCredentials !== null) {
         return JSON.parse(storedCredentials);
     } else if (username !== false && password !== false) {
@@ -41,14 +57,26 @@ export function getCredentials() {
             password
         };
     } else if (key !== false) {
-        clearParams();
         // decode the api key
-        localStorage.setItem(document.location.href.split('?')[0] + '.key', key);
-        console.log(decodeKey(key));
+        return decodeKey(key);
     } else {
         return -1;
     }
 }
+
+function clearParams() {
+    console.log('clear');
+    // history.replaceState &&
+    //     history.replaceState(
+    //         null,
+    //         '',
+    //         location.pathname + location.search.replace(/[\?&]message=[^&]+/, '').replace(/^&/, '?')
+    //     );
+    window.history.replaceState({}, document.title, '/' + '');
+    // location.pathname + location.search.replace(/[\?&]message=[^&]+/, '').replace(/^&/, '?') + location.hash
+    // location.pathname + location.search.replace(/[\?&]message=[^&]+/, '').replace(/^&/, '?')
+}
+
 function decodeKey() {
     try {
         let decoded = jwt.verify(token, 'swarm-visualizer-secret');
