@@ -42,6 +42,16 @@ npm run build
 
 Cleans existing build folder while linting js folder and copies over the public assets folder from src. Then sets environment to production and compiles js and css into build.
 
+## Access the visualizer
+
+You need to provide the username and password of the MQTT broker, when you are visiting the web interface for the first time. After the first visit, the login details will be stored in the browser cache.
+
+Example URL (for local run):
+    http://localhost:8080/?username={user_name}&password={password}
+
+Example URL (for production run):
+    http://pera-swarm.github.io/visualizer/?username={user_name}&password={password}
+
 ## Other NPM Scripts
 You can run any of these individually if you'd like with the `npm run` command:
 * `prebuild` - Cleans up build folder and lints `src/js`
