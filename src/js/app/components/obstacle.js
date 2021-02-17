@@ -45,8 +45,8 @@ export default class Obstacle {
             // material.visible = Config.selectedRealities.virtual;
             material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.05;
         } else if (mesh.reality === 'R') {
-            // material.visible = Config.selectedRealities.physical;
-            material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.05;
+            // material.visible = Config.selectedRealities.real;
+            material.opacity = Config.selectedRealities.real ? 1.0 : 0.05;
         }
 
         // Remove if object is already defined

@@ -13,12 +13,10 @@ const config = {
         maxY: 140
     },
     mqtt: {
-        server: 'swarm-gui.tk',
-        port: 8883,
+        server: localStorage.getItem(document.location.href.split('?')[0] + '.server') || 'swarm-gui.tk',
+        port: localStorage.getItem(document.location.href.split('?')[0] + '.port') || 8883,
         path: '/socket.io',
-        user: 'username',
-        password: 'password',
-        channel: 'v1'
+        channel: localStorage.getItem(document.location.href.split('?')[0] + '.channel') || 'v1'
     },
     mixedReality: {
         obstacles: 'M',
@@ -26,7 +24,7 @@ const config = {
     },
     selectedReality: 'M',
     selectedRealities: {
-        physical: true,
+        real: true,
         virtual: true
     },
     isDev: true,

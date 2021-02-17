@@ -71,8 +71,8 @@ export default class Robot {
                         // material.visible = Config.selectedRealities.virtual;
                         material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.125;
                     } else if (reality === 'R') {
-                        // material.visible = Config.selectedRealities.physical;
-                        material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.125;
+                        // material.visible = Config.selectedRealities.real;
+                        material.opacity = Config.selectedRealities.real ? 1.0 : 0.125;
                     }
 
                     // Add robot to the scene
