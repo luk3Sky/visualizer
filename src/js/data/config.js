@@ -27,6 +27,7 @@ const config = {
         real: true,
         virtual: true
     },
+    hiddenOpacity: 0.3,
     isDev: true,
     isShowingStats: true,
     isShowingLables: true,

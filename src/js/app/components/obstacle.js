@@ -41,12 +41,13 @@ export default class Obstacle {
 
         mesh.name = OBSTACLE_PREFIX + id;
         mesh.reality = reality; // set reality flag
+
         if (mesh.reality === 'V') {
             // material.visible = Config.selectedRealities.virtual;
-            material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.05;
+            material.opacity = Config.selectedRealities.virtual ? 1.0 : Config.hiddenOpacity;
         } else if (mesh.reality === 'R') {
             // material.visible = Config.selectedRealities.real;
-            material.opacity = Config.selectedRealities.real ? 1.0 : 0.05;
+            material.opacity = Config.selectedRealities.real ? 1.0 : Config.hiddenOpacity;
         }
 
         // Remove if object is already defined

@@ -69,10 +69,10 @@ export default class Robot {
                     // Refer: https://threejs.org/docs/index.html#api/en/materials/Material.opacity
                     if (reality === 'V') {
                         // material.visible = Config.selectedRealities.virtual;
-                        material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.125;
+                        material.opacity = Config.selectedRealities.virtual ? 1.0 : Config.hiddenOpacity;
                     } else if (reality === 'R') {
                         // material.visible = Config.selectedRealities.real;
-                        material.opacity = Config.selectedRealities.real ? 1.0 : 0.125;
+                        material.opacity = Config.selectedRealities.real ? 1.0 : Config.hiddenOpacity;
                     }
 
                     // Add robot to the scene
