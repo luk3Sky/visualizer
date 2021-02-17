@@ -39,6 +39,10 @@ export default class Obstacle {
         const reality = obstacle.reality == undefined ? 'V' : obstacle.reality;
         const mesh = new THREE.Mesh(geometry, material);
 
+        // TODO: add the name defined in env.config.json as discussed on 2021-02-18
+        //      Need some obstacle protocol revision + simulator updates
+        const name_temp = 'Obs_' + id.toString().substring(0, 8) + '...';
+
         mesh.name = OBSTACLE_PREFIX + id;
         mesh.reality = reality; // set reality flag
 
@@ -79,8 +83,7 @@ export default class Obstacle {
         if (Config.shadow.enabled) mesh.receiveShadow = true;
 
         // Add labels to every obstacle, immediately displayed if enabled
-
-        addLabel(OBSTACLE_PREFIX, obstacle, mesh, Config.labelsVisibility.obstacles);
+        addLabel(OBSTACLE_PREFIX, { id: obstacle.id, name: name_temp }, mesh, Config.labelsVisibility.obstacles);
 
         console.log('Created>', mesh.name);
     }

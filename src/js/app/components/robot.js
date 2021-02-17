@@ -63,10 +63,6 @@ export default class Robot {
                     r.rotation.y = (heading - 90) * THREE.Math.DEG2RAD;
                     r.reality = reality; // set reality flag
 
-                    // TODO: @NuwanJ Please review this reality integration.
-                    // Reality toggler is now updated so that every obstacle/robot material should be transparent and depending on the reality selected, we can now change opacity properly.
-                    // If the transparent property not set to true, opacity change will not reflect correctly.
-                    // Refer: https://threejs.org/docs/index.html#api/en/materials/Material.opacity
                     if (reality === 'V') {
                         // material.visible = Config.selectedRealities.virtual;
                         material.opacity = Config.selectedRealities.virtual ? 1.0 : Config.hiddenOpacity;
@@ -83,7 +79,7 @@ export default class Robot {
                     };
 
                     // Add labels to every robot, immediately displayed if enabled
-                    addLabel(ROBOT_PREFIX, { id }, r, Config.labelsVisibility.robots);
+                    addLabel(ROBOT_PREFIX, { id, name: r.name }, r, Config.labelsVisibility.robots);
 
                     console.log(`Created> Robot: id:${id} | x:${x} y: ${y} heading: ${heading} | reality: ${reality}`);
 
