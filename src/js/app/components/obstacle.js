@@ -29,11 +29,30 @@ export default class Obstacle {
     create(obstacle) {
         const geometry = this.createGeometry(obstacle.geometry);
         const material = this.createMaterial(obstacle.material);
+        material.userData.originalColor = new THREE.Color(0x666666);
+        material.userData.labelVisibility = Config.isShowingLables && Config.labelsVisibility.obstacles;
+        material.userData.originalEmmisive = material.emissive.getHex();
+        material.selected = false;
+        material.transparent = true;
         const id = obstacle.id || 1000 + Math.floor(900 * Math.random());
 
+        const reality = obstacle.reality == undefined ? 'V' : obstacle.reality;
         const mesh = new THREE.Mesh(geometry, material);
 
+        // TODO: add the name defined in env.config.json as discussed on 2021-02-18
+        //      Need some obstacle protocol revision + simulator updates
+        const name_temp = 'Obs_' + id.toString().substring(0, 8) + '...';
+
         mesh.name = OBSTACLE_PREFIX + id;
+        mesh.reality = reality; // set reality flag
+
+        if (mesh.reality === 'V') {
+            // material.visible = Config.selectedRealities.virtual;
+            material.opacity = Config.selectedRealities.virtual ? 1.0 : Config.hiddenOpacity;
+        } else if (mesh.reality === 'R') {
+            // material.visible = Config.selectedRealities.real;
+            material.opacity = Config.selectedRealities.real ? 1.0 : Config.hiddenOpacity;
+        }
 
         // Remove if object is already defined
         this.deleteIfExists(id);
@@ -63,10 +82,8 @@ export default class Obstacle {
         // Show shadows of the object if enabled
         if (Config.shadow.enabled) mesh.receiveShadow = true;
 
-        // Add labels if enabled
-        if (Config.isShowingLables) {
-            addLabel(OBSTACLE_PREFIX, obstacle, mesh);
-        }
+        // Add labels to every obstacle, immediately displayed if enabled
+        addLabel(OBSTACLE_PREFIX, { id: obstacle.id, name: name_temp }, mesh, Config.labelsVisibility.obstacles);
 
         console.log('Created>', mesh.name);
     }
@@ -80,9 +97,8 @@ export default class Obstacle {
             return this.createCylinderGeometry(g.radiusTop, g.radiusBottom, g.height);
         } else if (g.type == 'SphereGeometry') {
             return this.createSphereGeometry(g.radius);
-        } else {
-            throw new TypeError('unsupported geometry type');
         }
+        throw new TypeError('unsupported geometry type');
     }
 
     createBoxGeometry(width, height, depth) {
@@ -116,6 +132,7 @@ export default class Obstacle {
     }
 
     createMaterial(m) {
+        let material;
         if (m.type == 'MeshBasicMaterial') {
             // https://threejs.org/docs/#api/en/materials/MeshBasicMaterial
             return new THREE.MeshBasicMaterial(m.properties);
@@ -131,10 +148,9 @@ export default class Obstacle {
         } else if (m.type == 'MeshStandardMaterial') {
             // https://threejs.org/docs/#api/en/materials/MeshStandardMaterial
             return new THREE.MeshStandardMaterial(m.properties);
-        } else {
-            // Default material type
-            return new THREE.MeshStandardMaterial(m.properties);
         }
+        // Default material type
+        return new THREE.MeshStandardMaterial(m.properties);
     }
 
     calculateZ(obstacle) {
@@ -146,9 +162,8 @@ export default class Obstacle {
             } else if (obstacle.geometry.radius !== undefined) {
                 // Sphere objects
                 return obstacle.geometry.radius;
-            } else {
-                return 0;
             }
+            return 0;
         }
         return obstacle.position.z;
     }
@@ -157,7 +172,6 @@ export default class Obstacle {
         // Delete obstacle if it already exists
         const name = OBSTACLE_PREFIX + id;
         const obstacle = this.scene.getObjectByName(name);
-        console.log(obstacle);
         if (obstacle !== undefined) {
             this.scene.remove(obstacle);
             console.log('Deleted>', name);

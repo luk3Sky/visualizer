@@ -1,7 +1,9 @@
 import TWEEN from '@tweenjs/tween.js';
 
+let resolvedConfig;
+
 // This object contains the state of the app
-export default {
+const config = {
     scale: 1,
     arena: {
         size: 300,
@@ -11,20 +13,29 @@ export default {
         maxY: 140
     },
     mqtt: {
-        server: 'swarm-gui.tk',
-        port: 8883,
+        server: localStorage.getItem(document.location.href.split('?')[0] + '.server') || 'swarm-gui.tk',
+        port: localStorage.getItem(document.location.href.split('?')[0] + '.port') || 8883,
         path: '/socket.io',
-        user: 'swarm_user',
-        password: 'swarm_usere15',
-        channel: 'v1'
+        channel: localStorage.getItem(document.location.href.split('?')[0] + '.channel') || 'v1'
     },
     mixedReality: {
         obstacles: 'M',
         robots: 'M'
     },
+    selectedReality: 'M',
+    selectedRealities: {
+        real: true,
+        virtual: true
+    },
+    hiddenOpacity: 0.3,
     isDev: true,
     isShowingStats: true,
-    isShowingLables: false,
+    isShowingLables: true,
+    labelsVisibility: {
+        obstacles: false,
+        robots: false
+    },
+    isShowingRobotSnapshots: true,
     isLoaded: false,
     isTweening: false,
     isRotating: false,
@@ -124,3 +135,14 @@ export default {
         z: 0
     }
 };
+
+// Check localstorage for updated config, if not use above config
+const storedConfig = localStorage.getItem(document.location.href + '.config');
+resolvedConfig = storedConfig !== null && storedConfig !== undefined ? JSON.parse(storedConfig) : config;
+
+// method to presist config data with localStorage
+export const saveConfig = (data) => {
+    localStorage.setItem(document.location.href + '.config', JSON.stringify({ ...config, ...data }));
+};
+
+export default resolvedConfig;

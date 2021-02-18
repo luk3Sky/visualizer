@@ -16,6 +16,7 @@ package.json
 *.md
 *.sql
 *.min.css
+*.min.js
 **/*.svg
 
 .DS_Store

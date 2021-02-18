@@ -30,10 +30,10 @@ import MQTTClient from './managers/mqttClient';
 import Config from './../data/config';
 
 // STLLoader
-let STLLoader = require('three-stl-loader')(THREE);
+const STLLoader = require('three-stl-loader')(THREE);
 
-// Camera
-let camera, labelRenderer;
+// Global Variables
+let camera, labelRenderer, INTERSECTED, selectedLabel;
 
 // For click event on robots
 const raycaster = new THREE.Raycaster();
@@ -52,6 +52,8 @@ export default class Main {
         this.scene = new THREE.Scene();
         window.scene = this.scene; // config as a global variable
         window.scene_scale = Config.scale;
+        // High level reality flag
+        window.selectedReality = Config.selectedReality;
 
         this.scene.fog = new THREE.FogExp2(Config.fog.color, Config.fog.near);
 
@@ -81,7 +83,6 @@ export default class Main {
         }
 
         if (Config.isShowingLables) {
-            console.log('labels:', label);
             this.labelRenderer = label();
             this.container.appendChild(this.labelRenderer.domElement);
         }
@@ -109,7 +110,6 @@ export default class Main {
                 // if (Config.mesh.enableHelper) this.meshHelper.enable();
 
                 this.gui.load(this);
-                console.log('gui:', this.gui);
                 this.gui.show();
             }
             // -----------------------------------------------------------------
@@ -139,7 +139,6 @@ export default class Main {
                     if (Config.mesh.enableHelper) this.meshHelper.enable();
 
                     // this.gui.load(this, this.model.obj);
-                    console.log('gui:', this.gui);
                     // this.gui.show();
                 }
 
@@ -154,8 +153,10 @@ export default class Main {
         this.render();
         this.container.querySelector('#loading').style.display = 'none';
 
-        // Add eventlistner for catch mouse click events
+        // Eventlistner for catching mouse click events
         window.addEventListener('click', this.onDocumentMouseDown, false);
+        // Eventlistner for catching mouse move events
+        // document.addEventListener('mousemove', this.onDocumentMouseMove);
     }
 
     onDocumentMouseDown(event) {
@@ -168,12 +169,65 @@ export default class Main {
 
         const intersects = raycaster.intersectObjects(scene.children);
         if (intersects.length > 0) {
-            // console.log(intersects);
-            const obj = intersects[0].object;
-
-            if (obj.clickEvent != undefined) {
-                obj.clickEvent(obj);
+            const object = intersects[0].object;
+            if (INTERSECTED) INTERSECTED.material.setValues({ opacity: INTERSECTED.currentOpacity });
+            INTERSECTED = object;
+            selectedLabel = INTERSECTED.children[0];
+            INTERSECTED.currentOpacity = INTERSECTED.material.opacity;
+            INTERSECTED.labelsVisibility = INTERSECTED.material.labelVisibility;
+            if (selectedLabel !== undefined && selectedLabel.visible !== undefined && Config.isShowingLables) {
+                selectedLabel.visible = !selectedLabel.visible;
             }
+            INTERSECTED.material.selected = !INTERSECTED.material.selected;
+            // Obstacle selection event handling
+            if (INTERSECTED.name.startsWith('Obstacle')) {
+                if (INTERSECTED.material.selected) {
+                    INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+                    INTERSECTED.material.emissive.setHex(0xf95f4a);
+                } else {
+                    INTERSECTED.currentHex = INTERSECTED.material.userData.originalEmmisive;
+                    INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+                }
+                // Robot selection event handling
+            } else if (INTERSECTED.name.startsWith('Robot')) {
+                if (INTERSECTED.material.selected) {
+                    INTERSECTED.material.setValues({ opacity: 0.5 });
+                } else {
+                    INTERSECTED.material.setValues({ opacity: 1 });
+                }
+                if (INTERSECTED.clickEvent !== undefined) {
+                    INTERSECTED.clickEvent(INTERSECTED);
+                }
+            }
+        } else {
+            if (INTERSECTED) INTERSECTED.material.setValues({ opacity: INTERSECTED.currentOpacity });
+            INTERSECTED = null;
+        }
+    }
+
+    onDocumentMouseMove(event) {
+        event.preventDefault();
+
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera.threeCamera);
+
+        const intersects = raycaster.intersectObjects(scene.children, true);
+        if (intersects.length > 0) {
+            const object = intersects[0].object;
+            if (INTERSECTED !== object) {
+                if (INTERSECTED) INTERSECTED.material.setValues({ opacity: INTERSECTED.currentOpacity });
+                INTERSECTED = object;
+                selectedLabel = INTERSECTED.children[0];
+                INTERSECTED.currentOpacity = INTERSECTED.material.opacity;
+                INTERSECTED.currentColor = INTERSECTED.material.opacity;
+                INTERSECTED.material.setValues({ color: 0x03dffc, opacity: 0.75 });
+            }
+        } else {
+            if (INTERSECTED)
+                INTERSECTED.material.setValues({ opacity: 1.0, color: INTERSECTED.material.userData.originalColor });
+            INTERSECTED = null;
         }
     }
 
@@ -183,13 +237,11 @@ export default class Main {
 
         // render labels if enabled
         if (Config.isShowingLables) {
-            this.labelRenderer.render(this.scene, camera.threeCamera);
+            this.labelRenderer.domElement.hidden = false;
+        } else {
+            this.labelRenderer.domElement.hidden = true;
         }
-
-        // update stats if dev environment
-        if (Config.isDev && Config.isShowingStats) {
-            this.stats.update();
-        }
+        this.labelRenderer.render(this.scene, camera.threeCamera);
 
         // Delta time is sometimes needed for certain updates
         //const delta = this.clock.getDelta();
@@ -197,6 +249,13 @@ export default class Main {
         // Call any vendor or module frame updates here
         TWEEN.update();
         this.controls.threeControls.update();
+
+        camera.threeCamera.updateMatrixWorld();
+
+        // update stats if dev environment
+        if (Config.isDev && Config.isShowingStats) {
+            this.stats.update();
+        }
 
         // RAF
         requestAnimationFrame(this.render.bind(this)); // Bind the main class instead of window object

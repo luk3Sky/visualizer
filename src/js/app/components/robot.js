@@ -2,10 +2,11 @@ import * as THREE from 'three';
 import TWEEN, { update } from '@tweenjs/tween.js';
 
 import Config from '../../data/config';
+import { addLabel, removeLabel } from './label';
 
 var STLLoader = require('three-stl-loader')(THREE);
 
-const ROBOT_PREFIX = 'robot_';
+const ROBOT_PREFIX = 'Robot_';
 
 export default class Robot {
     constructor(scene) {
@@ -20,9 +21,7 @@ export default class Robot {
             //console.log("Color> id:", id, " | R:", R, "G:", G, "B:", B);
 
             if (callback != null) callback('success');
-        } else {
-            if (callback != null) callback('undefined');
-        }
+        } else if (callback != null) callback('undefined');
 
         return r;
     }
@@ -50,9 +49,13 @@ export default class Robot {
                         opacity: opacity,
                         transparent: true
                     });
+                    material.userData.originalColor = new THREE.Color(0x666666);
+                    material.userData.labelVisibility = Config.isShowingLables && Config.labelsVisibility.robots;
+                    material.selected = false;
 
                     var r = new THREE.Mesh(geometry, material);
                     r.receiveShadow = true;
+                    r.robotId = id;
                     r.name = ROBOT_PREFIX + id;
                     r.scale.set(scene_scale, scene_scale, scene_scale);
                     r.position.set(x, y, 0);
@@ -60,12 +63,23 @@ export default class Robot {
                     r.rotation.y = (heading - 90) * THREE.Math.DEG2RAD;
                     r.reality = reality; // set reality flag
 
+                    if (reality === 'V') {
+                        // material.visible = Config.selectedRealities.virtual;
+                        material.opacity = Config.selectedRealities.virtual ? 1.0 : Config.hiddenOpacity;
+                    } else if (reality === 'R') {
+                        // material.visible = Config.selectedRealities.real;
+                        material.opacity = Config.selectedRealities.real ? 1.0 : Config.hiddenOpacity;
+                    }
+
                     // Add robot to the scene
                     window.scene.add(r);
 
                     r.clickEvent = function (m) {
                         window.robot.alert(m);
                     };
+
+                    // Add labels to every robot, immediately displayed if enabled
+                    addLabel(ROBOT_PREFIX, { id, name: r.name }, r, Config.labelsVisibility.robots);
 
                     console.log(`Created> Robot: id:${id} | x:${x} y: ${y} heading: ${heading} | reality: ${reality}`);
 
@@ -75,18 +89,16 @@ export default class Robot {
             } else {
                 console.error(`Creation Failed> Robot: id:${id}  reality: ${reality}!=${REALITY}`);
             }
-        } else {
-            if (reality === REALITY || REALITY === 'M') {
-                // Reality matches
+        } else if (reality === REALITY || REALITY === 'M') {
+            // Reality matches
 
-                this.setReality(id, reality);
-                this.move(id, x, y, heading, () => {
-                    if (callback != undefined) callback('already defined, so moved');
-                });
-            } else {
-                // Robot reality not matching with environment reality
-                this.delete(id);
-            }
+            this.setReality(id, reality);
+            this.move(id, x, y, heading, () => {
+                if (callback != undefined) callback('already defined, so moved');
+            });
+        } else {
+            // Robot reality not matching with environment reality
+            this.delete(id);
         }
         return r;
     }
@@ -99,12 +111,8 @@ export default class Robot {
                 scene.remove(r);
                 console.log('Deleted> id:', id);
                 if (callback != undefined) callback('success');
-            } else {
-                if (callback != undefined) callback('not found');
-            }
-        } else {
-            if (callback != undefined) callback('id not specified');
-        }
+            } else if (callback != undefined) callback('not found');
+        } else if (callback != undefined) callback('id not specified');
     }
 
     deleteAll() {
@@ -116,6 +124,7 @@ export default class Robot {
 
             if (name.startsWith(ROBOT_PREFIX)) {
                 console.log('Deleted>', name);
+                removeLabel(obj[1]);
                 this.scene.remove(obj[1]);
             }
         });
@@ -180,9 +189,8 @@ export default class Robot {
                 r.rotation.y = newHeading;
             }
             return r;
-        } else {
-            if (callback != null) callback('undefined');
         }
+        if (callback != null) callback('undefined');
     }
 
     get_coordinates(id) {
@@ -190,23 +198,43 @@ export default class Robot {
         if (r != undefined) {
             console.log(`${r.position.x},${r.position.y},${r.position.z}`);
             return r;
-        } else {
-            return null;
         }
+        return null;
     }
 
     update() {
         TWEEN.update();
     }
 
+    requestSnapshot(mesh) {
+        return new Promise((resolve, reject) => {
+            const req = window.mqtt.publish(
+                window.channel + '/mgt/robots/snapshot',
+                JSON.stringify({ id: mesh.robotId })
+            );
+            resolve(!req);
+        });
+    }
+
     alert(mesh) {
         // Display an alert on window
-        let disp = document.querySelector('#msg-box');
-        disp.innerHTML = `${mesh.name} [${mesh.reality}]`;
+        const disp = document.querySelector('#msg-box');
+        const prevContent = document.getElementById('msg-content');
+        let content = document.createElement('div');
+        content.setAttribute('id', 'msg-content');
+        let nodeContent;
+        if (Config.isShowingRobotSnapshots) {
+            nodeContent = document.createTextNode(`${mesh.name} Snapshot Loading...`);
+            this.requestSnapshot(mesh);
+        } else {
+            nodeContent = document.createTextNode(`${mesh.name}`);
+        }
+        content.appendChild(nodeContent);
+        disp.replaceChild(content, prevContent);
         disp.style.display = 'block';
-
         setTimeout(function () {
-            document.querySelector('#msg-box').style.display = 'none';
-        }, 1000);
+            disp.style.opacity = '1.0';
+            disp.style.display = 'none';
+        }, 10000);
     }
 }
