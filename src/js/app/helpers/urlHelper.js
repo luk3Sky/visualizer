@@ -72,7 +72,9 @@ function clearParams() {
     //         '',
     //         location.pathname + location.search.replace(/[\?&]message=[^&]+/, '').replace(/^&/, '?')
     //     );
-    window.history.replaceState({}, document.title, '/' + '');
+
+    // TODO: bug in here 
+    // window.history.replaceState({}, document.title, '/' + '');
     // location.pathname + location.search.replace(/[\?&]message=[^&]+/, '').replace(/^&/, '?') + location.hash
     // location.pathname + location.search.replace(/[\?&]message=[^&]+/, '').replace(/^&/, '?')
 }
