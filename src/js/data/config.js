@@ -6,11 +6,11 @@ let resolvedConfig;
 const config = {
     scale: 1,
     arena: {
-        size: 300,
-        minX: -140,
-        maxX: 140,
-        minY: -140,
-        maxY: 140
+        size: 180,
+        minX: -85,
+        maxX: 85,
+        minY: -85,
+        maxY: 85
     },
     mqtt: {
         server: localStorage.getItem(document.location.href.split('?')[0] + '.server') || 'swarm-gui.tk',

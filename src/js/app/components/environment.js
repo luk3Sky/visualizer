@@ -6,7 +6,8 @@ export default class Environment {
     constructor() {
         console.log(`Environment: Scale: ${scene_scale}`);
 
-        var geometry = new THREE.PlaneBufferGeometry(Config.arena.size, Config.arena.size);
+        // var geometry = new THREE.PlaneBufferGeometry(Config.arena.size, Config.arena.size);
+        var geometry = new THREE.PlaneBufferGeometry(180, 180);
         var material = new THREE.MeshPhongMaterial({
             color: 0x999999,
             depthWrite: false
@@ -21,7 +22,8 @@ export default class Environment {
         scene.add(ground);
 
         // Grid
-        var grid = new THREE.GridHelper(Config.arena.size, 30, 0x000000, 0x5b5b5b);
+        // var grid = new THREE.GridHelper(Config.arena.size, 18, 0x000000, 0x5b5b5b);
+        var grid = new THREE.GridHelper(180, 18, 0x000000, 0x5b5b5b);
         grid.rotation.x = -Math.PI / 2;
         grid.scale.set(scene_scale, scene_scale, scene_scale);
         grid.position.set(0, 0, 0);
