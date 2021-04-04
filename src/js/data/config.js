@@ -12,10 +12,11 @@ const config = {
         minY: -85,
         maxY: 85
     },
+
     mqtt: {
-        server: localStorage.getItem(document.location.href.split('?')[0] + '.server') || 'swarm-gui.tk',
+        server: localStorage.getItem(document.location.href.split('?')[0] + '.server') || 'webservices.ceykod.com',
         port: localStorage.getItem(document.location.href.split('?')[0] + '.port') || 8883,
-        path: '/socket.io',
+        path: '/mqtt',
         channel: localStorage.getItem(document.location.href.split('?')[0] + '.channel') || 'v1'
     },
     mixedReality: {
