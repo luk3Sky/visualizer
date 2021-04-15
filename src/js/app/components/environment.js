@@ -21,7 +21,7 @@ export default class Environment {
         scene.add(ground);
 
         // Grid
-        var grid = new THREE.GridHelper(Config.arena.size, Math.round(Config.arena.size/10), 0x000000, 0x5b5b5b);
+        var grid = new THREE.GridHelper(Config.arena.size, Math.round(Config.arena.size / 10), 0x000000, 0x5b5b5b);
         grid.rotation.x = -Math.PI / 2;
         grid.scale.set(scene_scale, scene_scale, scene_scale);
         grid.position.set(0, 0, 0);
