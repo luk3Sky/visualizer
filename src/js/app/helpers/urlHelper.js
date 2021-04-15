@@ -45,19 +45,8 @@ export function getCredentials() {
         }
     }, 2000);
 
-    if (username === false && password === false && storedCredentials !== null) {
-        // Having stored credentials
-        console.log('Credentails: Loaded from local storage');
-        return JSON.parse(storedCredentials);
-    } else if (username !== false && password !== false) {
-        // Having URL parameters
-        console.log('Credentails: Loaded from URL parameters');
-        localStorage.setItem('pera-swarm-credentials', JSON.stringify({ username, password }));
-        return {
-            username,
-            password
-        };
-    } else if (key !== false) {
+    // Load the credentails
+    if (key !== false) {
         // Having JWT Token
         // TODO: manage token expiring
 
@@ -79,6 +68,18 @@ export function getCredentials() {
             username,
             password
         };
+    } else if (username !== false && password !== false) {
+        // Having URL parameters
+        console.log('Credentails: Loaded from URL parameters');
+        localStorage.setItem('pera-swarm-credentials', JSON.stringify({ username, password }));
+        return {
+            username,
+            password
+        };
+    } else if (username === false && password === false && storedCredentials !== null) {
+        // Having stored credentials
+        console.log('Credentails: Loaded from local storage');
+        return JSON.parse(storedCredentials);
     }
     return -1;
 }
