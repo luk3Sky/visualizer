@@ -12,6 +12,17 @@ export default class Robot {
     constructor(scene) {
         this.scene = scene;
         console.log('Robot Reality:', Config.mixedReality.robots);
+        const that = this;
+
+        // This will check for duplicated instances of robots and delete them
+        this.created = true;
+        setInterval(() => {
+            if (this.created === true) {
+                // console.log('call prune');
+                that.prune();
+                this.created = false;
+            }
+        }, 2500);
     }
 
     changeColor(id, R, G, B, ambient, callback) {
@@ -100,6 +111,8 @@ export default class Robot {
             // Robot reality not matching with environment reality
             this.delete(id);
         }
+
+        this.created = true; // asked to prune in next cycle
         return r;
     }
 
@@ -108,6 +121,7 @@ export default class Robot {
             var r = this.scene.getObjectByName(ROBOT_PREFIX + id);
 
             if (r != undefined) {
+                removeLabel(r);
                 scene.remove(r);
                 console.log('Deleted> id:', id);
                 if (callback != undefined) callback('success');
@@ -236,5 +250,28 @@ export default class Robot {
             disp.style.opacity = '1.0';
             disp.style.display = 'none';
         }, 10000);
+    }
+
+    prune() {
+        // Delete all duplicate robots
+        const objects = this.scene.children;
+        let valid = [];
+        Object.entries(objects).forEach((obj) => {
+            const name = obj[1]['name'];
+            // console.log('checking: ', name);
+
+            if (name.startsWith(ROBOT_PREFIX)) {
+                if (valid[name] === undefined) {
+                    // mark as valid
+                    valid[name] = 'valid';
+                } else {
+                    // this is a duplicate
+                    // console.log(obj[1]);
+                    removeLabel(obj[1]);
+                    this.scene.remove(obj[1]);
+                    console.log(name, ': duplicate');
+                }
+            }
+        });
     }
 }

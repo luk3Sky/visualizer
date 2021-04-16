@@ -12,12 +12,11 @@ const config = {
         minY: -85,
         maxY: 85
     },
-
     mqtt: {
-        server: localStorage.getItem(document.location.href.split('?')[0] + '.server') || 'webservices.ceykod.com',
-        port: localStorage.getItem(document.location.href.split('?')[0] + '.port') || 8883,
-        path: '/mqtt',
-        channel: localStorage.getItem(document.location.href.split('?')[0] + '.channel') || 'v1'
+        server: localStorage.getItem('pera-swarm-server') || 'webservices.ceykod.com',
+        port: parseInt(localStorage.getItem('pera-swarm-port')) || 8883,
+        path: localStorage.getItem('pera-swarm-path') || '/mqtt',
+        channel: localStorage.getItem('pera-swarm-channel') || 'v1'
     },
     mixedReality: {
         obstacles: 'M',

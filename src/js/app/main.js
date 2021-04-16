@@ -179,17 +179,18 @@ export default class Main {
                 selectedLabel.visible = !selectedLabel.visible;
             }
             INTERSECTED.material.selected = !INTERSECTED.material.selected;
-            // Obstacle selection event handling
             if (INTERSECTED.name.startsWith('Obstacle')) {
-                if (INTERSECTED.material.selected) {
-                    INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-                    INTERSECTED.material.emissive.setHex(0xf95f4a);
-                } else {
-                    INTERSECTED.currentHex = INTERSECTED.material.userData.originalEmmisive;
-                    INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
-                }
-                // Robot selection event handling
+                // Obstacle selection event handling
+                // if (INTERSECTED.material.selected) {
+                //     INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+                //     INTERSECTED.material.emissive.setHex(0xf95f4a);
+                // } else {
+                //     INTERSECTED.currentHex = INTERSECTED.material.userData.originalEmmisive;
+                //     INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+                // }
             } else if (INTERSECTED.name.startsWith('Robot')) {
+                // Robot selection event handling
+                // TODO: Consider Reality filtering too...
                 if (INTERSECTED.material.selected) {
                     INTERSECTED.material.setValues({ opacity: 0.5 });
                 } else {

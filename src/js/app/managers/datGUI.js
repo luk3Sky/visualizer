@@ -75,10 +75,9 @@ export default class DatGUI {
                 this.toggleReality('virtual', 'V');
             });
 
-        this.gui.open();
-
         /* Global */
-        //this.gui.close();
+        // this.gui.open();
+        this.gui.close();
 
         // this.model = main.model;
         // this.meshHelper = main.meshHelper;
