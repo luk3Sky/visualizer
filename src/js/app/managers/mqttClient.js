@@ -130,7 +130,7 @@ export default class MQTTClient {
         const t = packet.destinationName;
         const topic = t.substring(t.indexOf('/') + 1);
 
-        console.log('MQTT: ' + topic + ' > ' + msg);
+        // console.log('MQTT: ' + topic + ' > ' + msg);
 
         if (topic == TOPIC_ROBOT_CREATE) {
             try {

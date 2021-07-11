@@ -75,10 +75,9 @@ export default class DatGUI {
                 this.toggleReality('virtual', 'V');
             });
 
-        this.gui.open();
-
         /* Global */
-        //this.gui.close();
+        // this.gui.open();
+        this.gui.close();
 
         // this.model = main.model;
         // this.meshHelper = main.meshHelper;
@@ -106,10 +105,10 @@ export default class DatGUI {
 
             if (reality !== undefined && reality === 'R') {
                 // obj[1].transparent = Config.selectedRealities.real;
-                obj[1].material.opacity = Config.selectedRealities.real ? 1.0 : 0.05;
+                obj[1].material.opacity = Config.selectedRealities.real ? 1.0 : Config.hiddenOpacity;
             } else if (reality !== undefined && reality === 'V') {
                 // obj[1].transparent = Config.selectedRealities.virtual;
-                obj[1].material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.05;
+                obj[1].material.opacity = Config.selectedRealities.virtual ? 1.0 : Config.hiddenOpacity;
             }
         });
     }

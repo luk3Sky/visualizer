@@ -6,17 +6,17 @@ let resolvedConfig;
 const config = {
     scale: 1,
     arena: {
-        size: 300,
-        minX: -140,
-        maxX: 140,
-        minY: -140,
-        maxY: 140
+        size: 180,
+        minX: -85,
+        maxX: 85,
+        minY: -85,
+        maxY: 85
     },
     mqtt: {
-        server: localStorage.getItem(document.location.href.split('?')[0] + '.server') || 'swarm-gui.tk',
-        port: localStorage.getItem(document.location.href.split('?')[0] + '.port') || 8883,
-        path: '/socket.io',
-        channel: localStorage.getItem(document.location.href.split('?')[0] + '.channel') || 'v1'
+        server: localStorage.getItem('pera-swarm-server') || 'webservices.ceykod.com',
+        port: parseInt(localStorage.getItem('pera-swarm-port')) || 8883,
+        path: localStorage.getItem('pera-swarm-path') || '/mqtt',
+        channel: localStorage.getItem('pera-swarm-channel') || 'v1'
     },
     mixedReality: {
         obstacles: 'M',
@@ -27,6 +27,7 @@ const config = {
         real: true,
         virtual: true
     },
+    hiddenOpacity: 0.3,
     isDev: true,
     isShowingStats: true,
     isShowingLables: true,

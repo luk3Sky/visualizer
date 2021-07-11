@@ -22,7 +22,10 @@ export const addLabel = (prefix, object, mesh, visibility) => {
     if (mesh !== undefined) {
         const element = document.createElement('div');
         element.className = 'label';
-        element.textContent = `${prefix}[${object.id}]`;
+
+        // TODO: use names, insted of IDs
+        element.textContent = object.name + ' [' + mesh.reality + ']';
+
         element.style.marginTop = '-1.2em';
         const elementLabel = new CSS2DObject(element);
         elementLabel.name = `Label[${object.id}]`;

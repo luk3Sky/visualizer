@@ -12,6 +12,17 @@ export default class Robot {
     constructor(scene) {
         this.scene = scene;
         console.log('Robot Reality:', Config.mixedReality.robots);
+
+        // This will check for duplicated instances of robots and delete them
+        const that = this;
+        this.created = true;
+        setInterval(() => {
+            if (this.created === true) {
+                // console.log('call prune');
+                that.prune();
+                this.created = false;
+            }
+        }, 2500);
     }
 
     changeColor(id, R, G, B, ambient, callback) {
@@ -63,16 +74,12 @@ export default class Robot {
                     r.rotation.y = (heading - 90) * THREE.Math.DEG2RAD;
                     r.reality = reality; // set reality flag
 
-                    // TODO: @NuwanJ Please review this reality integration.
-                    // Reality toggler is now updated so that every obstacle/robot material should be transparent and depending on the reality selected, we can now change opacity properly.
-                    // If the transparent property not set to true, opacity change will not reflect correctly.
-                    // Refer: https://threejs.org/docs/index.html#api/en/materials/Material.opacity
                     if (reality === 'V') {
                         // material.visible = Config.selectedRealities.virtual;
-                        material.opacity = Config.selectedRealities.virtual ? 1.0 : 0.125;
+                        material.opacity = Config.selectedRealities.virtual ? 1.0 : Config.hiddenOpacity;
                     } else if (reality === 'R') {
                         // material.visible = Config.selectedRealities.real;
-                        material.opacity = Config.selectedRealities.real ? 1.0 : 0.125;
+                        material.opacity = Config.selectedRealities.real ? 1.0 : Config.hiddenOpacity;
                     }
 
                     // Add robot to the scene
@@ -83,7 +90,7 @@ export default class Robot {
                     };
 
                     // Add labels to every robot, immediately displayed if enabled
-                    addLabel(ROBOT_PREFIX, { id }, r, Config.labelsVisibility.robots);
+                    addLabel(ROBOT_PREFIX, { id, name: r.name }, r, Config.labelsVisibility.robots);
 
                     console.log(`Created> Robot: id:${id} | x:${x} y: ${y} heading: ${heading} | reality: ${reality}`);
 
@@ -104,6 +111,8 @@ export default class Robot {
             // Robot reality not matching with environment reality
             this.delete(id);
         }
+
+        this.created = true; // asked to prune in next cycle
         return r;
     }
 
@@ -112,6 +121,7 @@ export default class Robot {
             var r = this.scene.getObjectByName(ROBOT_PREFIX + id);
 
             if (r != undefined) {
+                removeLabel(r);
                 scene.remove(r);
                 console.log('Deleted> id:', id);
                 if (callback != undefined) callback('success');
@@ -240,5 +250,28 @@ export default class Robot {
             disp.style.opacity = '1.0';
             disp.style.display = 'none';
         }, 10000);
+    }
+
+    prune() {
+        // Delete all duplicate robots
+        const objects = this.scene.children;
+        let valid = [];
+        Object.entries(objects).forEach((obj) => {
+            const name = obj[1]['name'];
+            // console.log('checking: ', name);
+
+            if (name.startsWith(ROBOT_PREFIX)) {
+                if (valid[name] === undefined) {
+                    // mark as valid
+                    valid[name] = 'valid';
+                } else {
+                    // this is a duplicate
+                    // console.log(obj[1]);
+                    removeLabel(obj[1]);
+                    this.scene.remove(obj[1]);
+                    console.log(name, ': duplicate');
+                }
+            }
+        });
     }
 }

@@ -26,8 +26,20 @@ export default class Controls {
         this.threeControls.dampingFactor = Config.controls.dampingFactor;
 
         this.threeControls.enableRotate = true;
-        this.threeControls.minAzimuthAngle = Config.controls.minAzimuthAngle;
-        this.threeControls.maxAzimuthAngle = Config.controls.maxAzimuthAngle;
+
+        // Avoid null situations
+        if (Config.controls.minAzimuthAngle == null) {
+            this.threeControls.minAzimuthAngle = -Infinity;
+        } else {
+            this.threeControls.minAzimuthAngle = Config.controls.minAzimuthAngle;
+        }
+
+        // Avoid null situations
+        if (Config.controls.maxAzimuthAngle == null) {
+            this.threeControls.maxAzimuthAngle = Infinity;
+        } else {
+            this.threeControls.maxAzimuthAngle = Config.controls.maxAzimuthAngle;
+        }
 
         /*this.threeControls.mouseButtons = {
             LEFT: THREE.MOUSE.ROTATE,
