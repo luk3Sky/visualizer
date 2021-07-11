@@ -12,9 +12,9 @@ export default class Robot {
     constructor(scene) {
         this.scene = scene;
         console.log('Robot Reality:', Config.mixedReality.robots);
-        const that = this;
 
         // This will check for duplicated instances of robots and delete them
+        const that = this;
         this.created = true;
         setInterval(() => {
             if (this.created === true) {

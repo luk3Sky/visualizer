@@ -28,16 +28,16 @@ export default class Controls {
         this.threeControls.enableRotate = true;
 
         // Avoid null situations
-        if(Config.controls.minAzimuthAngle == null){
+        if (Config.controls.minAzimuthAngle == null) {
             this.threeControls.minAzimuthAngle = -Infinity;
-        }else{
+        } else {
             this.threeControls.minAzimuthAngle = Config.controls.minAzimuthAngle;
         }
 
         // Avoid null situations
-        if(Config.controls.maxAzimuthAngle == null){
+        if (Config.controls.maxAzimuthAngle == null) {
             this.threeControls.maxAzimuthAngle = Infinity;
-        }else{
+        } else {
             this.threeControls.maxAzimuthAngle = Config.controls.maxAzimuthAngle;
         }
 
