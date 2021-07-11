@@ -1,4 +1,5 @@
-![Webpack CI](https://github.com/Pera-Swarm/visualizer/workflows/Webpack%20CI/badge.svg)
+![Webpack CI](https://github.com/Pera-Swarm/visualizer/workflows/Webpack%20CI/badge.svg) 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 
 A basic boilerplate for a Three.js project including the use of Webpack and ES6 syntax via Babel.
